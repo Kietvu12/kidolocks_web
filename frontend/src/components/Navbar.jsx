@@ -1,15 +1,13 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import logoImage from '/logo.png'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCountryOpen, setIsCountryOpen] = useState(false)
     const navigate = useNavigate()
-    
-    // Check if user is logged in
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
-    const userType = localStorage.getItem('userType')
+    const { user, isAuthenticated, isAdmin, logout } = useAuth()
 
     return (
         <div className="w-full">
@@ -404,7 +402,7 @@ const Navbar = () => {
 
                             {/* User Account Section - Hidden on mobile */}
                             <div className="relative hidden sm:block">
-                                {isLoggedIn ? (
+                                {isAuthenticated ? (
                                     <div className="flex items-center space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg" style={{backgroundColor: '#eff6ff'}}>
                                         <div className="flex items-center space-x-2">
                                             <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -414,19 +412,15 @@ const Navbar = () => {
                                             </svg>
                                             <div className="text-left">
                                                 <div className="text-xs font-medium" style={{color: '#111827'}}>
-                                                    {userType === 'admin' ? 'Quản trị viên' : 'Phụ huynh'}
+                                                    {isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}
                                                 </div>
                                                 <div className="text-xs font-semibold" style={{color: '#2563eb'}}>
-                                                    {userType === 'admin' ? 'ADMIN' : 'PREMIUM'}
+                                                    {isAdmin() ? 'ADMIN' : 'PREMIUM'}
                                                 </div>
                                             </div>
                                         </div>
                                         <button 
-                                            onClick={() => {
-                                                localStorage.removeItem('isLoggedIn')
-                                                localStorage.removeItem('userType')
-                                                navigate('/')
-                                            }}
+                                            onClick={() => logout()}
                                             className="transition-colors"
                                             style={{color: '#6b7280'}}
                                             onMouseEnter={(e) => e.target.style.color = '#dc2626'}
@@ -509,9 +503,43 @@ const Navbar = () => {
                                 <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Tìm hiểu về chúng tôi</button>
                                 <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Liên hệ với chúng tôi</button>
                                 <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Nghề nghiệp</button>
+                            </div>
+                            
+                            {/* Mobile Authentication Section */}
+                            <div className="space-y-1 sm:space-y-2 border-t border-gray-200 pt-4">
+                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Tài khoản</div>
+                                {isAuthenticated ? (
+                                    <>
+                                        <div className="px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
+                                            <div className="font-medium">{isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}</div>
+                                            <div className="text-blue-600 font-semibold">{isAdmin() ? 'ADMIN' : 'PREMIUM'}</div>
                                         </div>
-                                        </div>
-                                    </div>
+                                        <button 
+                                            onClick={() => logout()}
+                                            className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-red-600 hover:text-red-700 transition-colors rounded-lg"
+                                        >
+                                            Đăng xuất
+                                        </button>
+                                    </>
+                                ) : (
+                                    <>
+                                        <button 
+                                            onClick={() => navigate('/login')}
+                                            className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                        >
+                                            Đăng nhập
+                                        </button>
+                                        <button 
+                                            onClick={() => navigate('/register')}
+                                            className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                        >
+                                            Đăng ký
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 )}
 
                 {/* Country Selector Dropdown */}

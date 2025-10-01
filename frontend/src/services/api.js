@@ -1,16 +1,61 @@
-const API_BASE_URL = 'https://kidolock.com/api_kidolocks/api';
+const API_BASE_URL = 'http://localhost:7000/api';
 
 class ApiService {
   constructor() {
     this.baseURL = API_BASE_URL;
   }
 
+  // Get token from localStorage
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
+  // Set token to localStorage
+  setToken(token) {
+    localStorage.setItem('token', token);
+  }
+
+  // Remove token from localStorage
+  removeToken() {
+    localStorage.removeItem('token');
+  }
+
+  // Get user info from localStorage
+  getUser() {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  }
+
+  // Set user info to localStorage
+  setUser(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+
+  // Remove user info from localStorage
+  removeUser() {
+    localStorage.removeItem('user');
+  }
+
+  // Check if user is authenticated
+  isAuthenticated() {
+    return !!this.getToken();
+  }
+
+  // Check if user is admin
+  isAdmin() {
+    const user = this.getUser();
+    return user && user.la_admin === true;
+  }
+
   // Generic request method
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
+    const token = this.getToken();
+    
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        ...(token && { 'Authorization': `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
@@ -21,6 +66,15 @@ class ApiService {
       const data = await response.json();
 
       if (!response.ok) {
+        // If token is invalid, clear auth data
+        if (response.status === 401 || response.status === 403) {
+          this.removeToken();
+          this.removeUser();
+          // Redirect to login page if not already there
+          if (window.location.pathname !== '/login') {
+            window.location.href = '/login';
+          }
+        }
         throw new Error(data.message || 'Có lỗi xảy ra');
       }
 
@@ -57,6 +111,73 @@ class ApiService {
     return this.request(endpoint, { method: 'DELETE' });
   }
 
+  // ==================== AUTHENTICATION API ====================
+  // Gửi OTP cho đăng ký
+  async sendRegistrationOTP(phone) {
+    return this.post('/auth/send-registration-otp', { sdt: phone });
+  }
+
+  // Đăng ký phụ huynh với OTP
+  async registerPhuHuynh(data) {
+    const response = await this.post('/auth/register', data);
+    if (response.success && response.data.token) {
+      this.setToken(response.data.token);
+      this.setUser(response.data.user);
+    }
+    return response;
+  }
+
+  // Gửi OTP cho đăng nhập
+  async sendLoginOTP(phone) {
+    return this.post('/auth/send-login-otp', { sdt: phone });
+  }
+
+  // Đăng nhập với OTP
+  async loginWithOTP(phone, otp) {
+    const response = await this.post('/auth/login-otp', { sdt: phone, otp });
+    if (response.success && response.data.token) {
+      this.setToken(response.data.token);
+      this.setUser(response.data.user);
+    }
+    return response;
+  }
+
+  // Đăng nhập với mật khẩu
+  async loginPhuHuynh(email, password) {
+    const response = await this.post('/auth/login', { email_phu_huynh: email, mat_khau: password });
+    if (response.success && response.data.token) {
+      this.setToken(response.data.token);
+      this.setUser(response.data.user);
+    }
+    return response;
+  }
+
+  // Gửi OTP cho reset password
+  async sendResetPasswordOTP(phone) {
+    return this.post('/auth/send-reset-otp', { sdt: phone });
+  }
+
+  // Reset password với OTP
+  async resetPassword(phone, otp, newPassword) {
+    return this.post('/auth/reset-password', { 
+      sdt: phone, 
+      otp, 
+      mat_khau_moi: newPassword 
+    });
+  }
+
+  // Lấy thông tin user hiện tại
+  async getCurrentUser() {
+    return this.get('/auth/me');
+  }
+
+  // Đăng xuất
+  logout() {
+    this.removeToken();
+    this.removeUser();
+    window.location.href = '/login';
+  }
+
   // ==================== PHỤ HUYNH API ====================
   async getAllPhuHuynh() {
     return this.get('/phu-huynh');
@@ -76,10 +197,6 @@ class ApiService {
 
   async deletePhuHuynh(id) {
     return this.delete(`/phu-huynh/${id}`);
-  }
-
-  async loginPhuHuynh(email, password) {
-    return this.post('/phu-huynh/login', { email_phu_huynh: email, mat_khau: password });
   }
 
   // ==================== TRẺ EM API ====================
@@ -207,6 +324,23 @@ class ApiService {
   // ==================== CHANGE PACKAGE API ====================
   async changePackageForDevice(thietBiId, goiId) {
     return this.put(`/thiet-bi/${thietBiId}/change-goi`, { thong_tin_goi_id: goiId });
+  }
+
+  // ==================== PAYMENT API ====================
+  async createPayment(data) {
+    return this.post('/payment/create', data);
+  }
+
+  async getPurchasedPackages(phuHuynhId) {
+    return this.get(`/payment/purchased/${phuHuynhId}`);
+  }
+
+  async getUnassignedPackages(phuHuynhId) {
+    return this.get(`/payment/unassigned/${phuHuynhId}`);
+  }
+
+  async assignPackageToDevice(data) {
+    return this.post('/payment/assign', data);
   }
 
   // ==================== HEALTH CHECK ====================

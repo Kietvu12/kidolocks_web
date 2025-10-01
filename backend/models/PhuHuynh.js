@@ -52,6 +52,12 @@ module.exports = (sequelize) => {
         }
       },
       comment: 'Mật khẩu (đã mã hóa)'
+    },
+    la_admin: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      comment: 'Phân quyền admin (true: admin, false: user thường)'
     }
   }, {
     tableName: 'phu_huynh',

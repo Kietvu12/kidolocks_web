@@ -1,4 +1,4 @@
-const { passwordEncrypt, passwordDecrypt } = require('./utils/cryptoUtils');
+const { passwordEncrypt, passwordDecrypt } = require('./utils/cryptoHelper');
 
 // Test mã hóa và giải mã
 console.log('=== TEST MÃ HÓA/GIẢI MÃ MẬT KHẨU ===\n');

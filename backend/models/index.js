@@ -23,6 +23,7 @@ const ThongTinGoi = require('./ThongTinGoi')(sequelize);
 const NoiDungGoi = require('./NoiDungGoi')(sequelize);
 const GoiDichVu = require('./GoiDichVu')(sequelize);
 const NguoiDung = require('./NguoiDung')(sequelize);
+const OtpVerification = require('./OtpVerification')(sequelize);
 
 // Định nghĩa các mối quan hệ
 const models = {
@@ -31,7 +32,8 @@ const models = {
   ThongTinGoi,
   NoiDungGoi,
   GoiDichVu,
-  NguoiDung
+  NguoiDung,
+  OtpVerification
 };
 
 // Khởi tạo các mối quan hệ

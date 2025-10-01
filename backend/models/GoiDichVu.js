@@ -16,22 +16,22 @@ module.exports = (sequelize) => {
     },
     nguoi_dung_id: {
       type: DataTypes.STRING(50),
-      allowNull: false,
+      allowNull: true, // Changed to nullable for payment integration
       references: {
         model: 'nguoi_dung',
         key: 'nguoi_dung_id'
       },
-      comment: 'ID người dùng (khóa ngoại)'
+      comment: 'ID người dùng (khóa ngoại) - nullable until assigned'
     },
     ngay_bat_dau: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true, // Changed to nullable for payment integration
       validate: {
         isDate: {
           msg: 'Ngày bắt đầu không hợp lệ'
         }
       },
-      comment: 'Ngày bắt đầu sử dụng gói'
+      comment: 'Ngày bắt đầu sử dụng gói - nullable until activated'
     },
     ngay_ket_thuc: {
       type: DataTypes.DATE,
@@ -55,9 +55,9 @@ module.exports = (sequelize) => {
       comment: 'Giá gói đã mua'
     },
     trang_thai: {
-      type: DataTypes.ENUM('DANG_HOAT_DONG', 'HET_HAN', 'HUY'),
+      type: DataTypes.ENUM('CHUA_THANH_TOAN', 'CHUA_GAN_THIET_BI', 'DANG_HOAT_DONG', 'HET_HAN', 'HUY'),
       allowNull: false,
-      defaultValue: 'DANG_HOAT_DONG',
+      defaultValue: 'CHUA_THANH_TOAN',
       comment: 'Trạng thái gói dịch vụ'
     },
     phuong_thuc_thanh_toan: {
@@ -79,6 +79,45 @@ module.exports = (sequelize) => {
         key: 'id'
       },
       comment: 'ID gói dịch vụ (khóa ngoại)'
+    },
+    phu_huynh_id: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'phu_huynh',
+        key: 'ma_phu_huynh'
+      },
+      comment: 'ID phụ huynh mua gói'
+    },
+    ngay_mua: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      validate: {
+        isDate: {
+          msg: 'Ngày mua không hợp lệ'
+        }
+      },
+      comment: 'Ngày mua gói'
+    },
+    vnp_txn_ref: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: 'Mã giao dịch VNPay'
+    },
+    vnp_order_info: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      comment: 'Thông tin đơn hàng VNPay'
+    },
+    vnp_response_code: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      comment: 'Mã phản hồi từ VNPay'
+    },
+    vnp_transaction_status: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: 'Trạng thái giao dịch VNPay'
     }
   }, {
     tableName: 'goi_dich_vu',
@@ -92,6 +131,15 @@ module.exports = (sequelize) => {
       },
       {
         fields: ['trang_thai']
+      },
+      {
+        fields: ['phu_huynh_id']
+      },
+      {
+        fields: ['ngay_mua']
+      },
+      {
+        fields: ['vnp_txn_ref']
       },
       {
         unique: true,
@@ -113,7 +161,7 @@ module.exports = (sequelize) => {
 
   // Định nghĩa các mối quan hệ
   GoiDichVu.associate = (models) => {
-    // Một gói dịch vụ thuộc về một người dùng
+    // Một gói dịch vụ thuộc về một người dùng (nullable)
     GoiDichVu.belongsTo(models.NguoiDung, {
       foreignKey: 'nguoi_dung_id',
       as: 'nguoiDung',
@@ -124,6 +172,13 @@ module.exports = (sequelize) => {
     GoiDichVu.belongsTo(models.ThongTinGoi, {
       foreignKey: 'thong_tin_goi_id',
       as: 'thongTinGoi',
+      onDelete: 'CASCADE'
+    });
+
+    // Một gói dịch vụ thuộc về một phụ huynh
+    GoiDichVu.belongsTo(models.PhuHuynh, {
+      foreignKey: 'phu_huynh_id',
+      as: 'phuHuynh',
       onDelete: 'CASCADE'
     });
   };
