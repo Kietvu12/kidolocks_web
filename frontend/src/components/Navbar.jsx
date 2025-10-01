@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import logoImage from '/logo.png'
@@ -6,8 +6,26 @@ import logoImage from '/logo.png'
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCountryOpen, setIsCountryOpen] = useState(false)
+    const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
     const navigate = useNavigate()
     const { user, isAuthenticated, isAdmin, logout } = useAuth()
+
+    // Close dropdowns when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (isUserDropdownOpen && !event.target.closest('.user-dropdown')) {
+                setIsUserDropdownOpen(false);
+            }
+            if (isCountryOpen && !event.target.closest('.country-dropdown')) {
+                setIsCountryOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isUserDropdownOpen, isCountryOpen]);
 
     return (
         <div className="w-full">
@@ -368,7 +386,7 @@ const Navbar = () => {
                         {/* Header Actions */}
                         <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
                             {/* Country Selector - Hidden on mobile */}
-                            <div className="relative hidden sm:block">
+                            <div className="relative hidden sm:block country-dropdown">
                                 <button 
                                     onClick={() => setIsCountryOpen(!isCountryOpen)}
                                     className="p-2 sm:p-3 transition-colors rounded-lg"
@@ -403,13 +421,20 @@ const Navbar = () => {
                             {/* User Account Section - Hidden on mobile */}
                             <div className="relative hidden sm:block">
                                 {isAuthenticated ? (
-                                    <div className="flex items-center space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg" style={{backgroundColor: '#eff6ff'}}>
-                                        <div className="flex items-center space-x-2">
-                                            <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M.75 12v-.02a2.6 2.6 0 0 1 2.67-2.65h2.45L8 14.43l2.13-5.1h2.45a2.6 2.6 0 0 1 2.67 2.65v.04l.75 5.3H0L.75 12ZM8 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"
-                                                    fill="currentColor"></path>
-                                            </svg>
+                                    <div className="relative user-dropdown">
+                                        {/* Avatar Button */}
+                                        <button 
+                                            onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                                            className="flex items-center space-x-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-colors"
+                                            style={{backgroundColor: '#eff6ff'}}
+                                            onMouseEnter={(e) => e.target.style.backgroundColor = '#dbeafe'}
+                                            onMouseLeave={(e) => e.target.style.backgroundColor = '#eff6ff'}
+                                        >
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                                <span className="text-white text-sm font-bold">
+                                                    {user?.ten_phu_huynh?.charAt(0) || 'U'}
+                                                </span>
+                                            </div>
                                             <div className="text-left">
                                                 <div className="text-xs font-medium" style={{color: '#111827'}}>
                                                     {isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}
@@ -418,19 +443,83 @@ const Navbar = () => {
                                                     {isAdmin() ? 'ADMIN' : 'PREMIUM'}
                                                 </div>
                                             </div>
-                                        </div>
-                                        <button 
-                                            onClick={() => logout()}
-                                            className="transition-colors"
-                                            style={{color: '#6b7280'}}
-                                            onMouseEnter={(e) => e.target.style.color = '#dc2626'}
-                                            onMouseLeave={(e) => e.target.style.color = '#6b7280'}
-                                            title="Đăng xuất"
-                                        >
-                                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M6 14H3.333A1.333 1.333 0 0 1 2 12.667V3.333A1.333 1.333 0 0 1 3.333 2H6M10.667 11.333L14 8l-3.333-3.333M10.667 8H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                            <svg 
+                                                className={`w-4 h-4 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`}
+                                                fill="currentColor" 
+                                                viewBox="0 0 20 20"
+                                                style={{color: '#6b7280'}}
+                                            >
+                                                <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                                             </svg>
                                         </button>
+
+                                        {/* Dropdown Menu */}
+                                        {isUserDropdownOpen && (
+                                            <div className="absolute right-0 mt-2 w-64 rounded-xl shadow-xl border z-50" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
+                                                <div className="py-2">
+                                                    {/* User Info Header */}
+                                                    <div className="px-4 py-3 border-b" style={{borderColor: '#e5e7eb'}}>
+                                                        <div className="flex items-center space-x-3">
+                                                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                                                                <span className="text-white font-bold">
+                                                                    {user?.ten_phu_huynh?.charAt(0) || 'U'}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <div className="font-semibold text-gray-900">{user?.ten_phu_huynh}</div>
+                                                                <div className="text-sm text-gray-500">{user?.email_phu_huynh}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Menu Items */}
+                                                    <div className="py-2">
+                                                        <button 
+                                                            onClick={() => {
+                                                                setIsUserDropdownOpen(false);
+                                                                navigate('/wallet');
+                                                            }}
+                                                            className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                                            </svg>
+                                                            Ví gói
+                                                        </button>
+                                                        
+                                                        <button 
+                                                            onClick={() => {
+                                                                setIsUserDropdownOpen(false);
+                                                                // TODO: Navigate to purchase history
+                                                                console.log('Navigate to purchase history');
+                                                            }}
+                                                            className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                            </svg>
+                                                            Lịch sử mua hàng
+                                                            <span className="ml-auto text-xs text-gray-400">Sắp có</span>
+                                                        </button>
+
+                                                        <div className="border-t my-2" style={{borderColor: '#e5e7eb'}}></div>
+
+                                                        <button 
+                                                            onClick={() => {
+                                                                setIsUserDropdownOpen(false);
+                                                                logout();
+                                                            }}
+                                                            className="w-full flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                                        >
+                                                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                            </svg>
+                                                            Đăng xuất
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 ) : (
                                     <button 

@@ -27,7 +27,7 @@ const SubscriptionWorkflowSection = () => {
                 {/* Content Sections */}
                 <div className="space-y-6">
                     {/* Section 1: CÁC MỨC GIÁ */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: '#f9fafb'}}>
+                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
                         <div className="flex items-center mb-4">
                             <button 
                                 onClick={() => toggleSection('pricingLevels')}
@@ -50,7 +50,7 @@ const SubscriptionWorkflowSection = () => {
                     </div>
 
                     {/* Section 2: TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: '#f9fafb'}}>
+                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
                         <div className="flex items-center mb-4">
                             <button 
                                 onClick={() => toggleSection('autoRenewal')}
@@ -73,7 +73,7 @@ const SubscriptionWorkflowSection = () => {
                     </div>
 
                     {/* Section 3: HỦY BỎ TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: '#f9fafb'}}>
+                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
                         <div className="flex items-center mb-4">
                             <button 
                                 onClick={() => toggleSection('cancelAutoRenewal')}

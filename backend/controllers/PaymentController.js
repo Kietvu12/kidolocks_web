@@ -242,41 +242,32 @@ class PaymentController {
           trang_thai: 'CHUA_GAN_THIET_BI'
         });
 
-        res.json({
-          success: true,
-          message: 'Thanh toán thành công',
-          data: {
-            order_id: vnp_TxnRef,
-            amount: goiDichVu.gia,
-            package_name: goiDichVu.thongTinGoi?.ten,
-            status: 'SUCCESS',
-            goi_dich_vu_id: goiDichVu.id
-          }
-        });
+        // Redirect về frontend với thông tin thành công
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const redirectUrl = `${frontendUrl}/payment/callback?vnp_ResponseCode=${vnp_ResponseCode}&vnp_TxnRef=${vnp_TxnRef}&vnp_Amount=${query.vnp_Amount}&vnp_TransactionStatus=${vnp_TransactionStatus}`;
+        
+        res.redirect(redirectUrl);
       } else {
         // Thanh toán thất bại
         await goiDichVu.update({
           trang_thai: 'HUY'
         });
 
-        res.json({
-          success: false,
-          message: 'Thanh toán thất bại',
-          data: {
-            order_id: vnp_TxnRef,
-            response_code: vnp_ResponseCode,
-            status: 'FAILED'
-          }
-        });
+        // Redirect về frontend với thông tin thất bại
+        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const redirectUrl = `${frontendUrl}/payment/callback?vnp_ResponseCode=${vnp_ResponseCode}&vnp_TxnRef=${vnp_TxnRef}&vnp_Amount=${query.vnp_Amount}&vnp_TransactionStatus=${vnp_TransactionStatus}`;
+        
+        res.redirect(redirectUrl);
       }
 
     } catch (error) {
       console.error('Error handling VNPay return:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Lỗi server khi xử lý callback',
-        error: error.message
-      });
+      
+      // Redirect về frontend với thông tin lỗi
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const redirectUrl = `${frontendUrl}/payment/callback?error=server_error`;
+      
+      res.redirect(redirectUrl);
     }
   }
 
