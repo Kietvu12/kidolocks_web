@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { loginWithPassword } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -36,9 +40,11 @@ const LoginPage = () => {
       
       if (result.success) {
         setMessage('Đăng nhập thành công!');
+        setLoading(false);
+        setRedirecting(true);
         setTimeout(() => {
           navigate('/admin');
-        }, 1000);
+        }, 2000);
       } else {
         setError(result.message);
       }
@@ -112,18 +118,29 @@ const LoginPage = () => {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Mật khẩu
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Nhập mật khẩu"
                 />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -183,6 +200,12 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Loading Overlay */}
+      <LoadingOverlay 
+        isVisible={redirecting} 
+        message="Đăng nhập thành công!" 
+      />
     </div>
   );
 };

@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { Eye, EyeOff } from 'lucide-react';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { sendRegistrationOTP, register } = useAuth();
   const [step, setStep] = useState(1); // 1: Form info, 2: OTP verification
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
@@ -77,7 +82,6 @@ const RegisterPage = () => {
         setMessage('Mã OTP đã được gửi đến số điện thoại của bạn');
         // Trong development, hiển thị OTP để test
         if (result.data && result.data.otp) {
-          setMessage(`Mã OTP: ${result.data.otp} (chỉ để test)`);
         }
         setStep(2);
       } else {
@@ -112,7 +116,9 @@ const RegisterPage = () => {
       });
       
       if (result.success) {
-        setMessage('Đăng ký thành công! Đang chuyển hướng...');
+        setMessage('Đăng ký thành công!');
+        setLoading(false);
+        setRedirecting(true);
         setTimeout(() => {
           navigate('/admin');
         }, 2000);
@@ -251,18 +257,29 @@ const RegisterPage = () => {
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Mật khẩu
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 relative">
                   <input
                     id="password"
                     name="password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     required
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
                   />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -270,18 +287,29 @@ const RegisterPage = () => {
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                   Xác nhận mật khẩu
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 relative">
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     autoComplete="new-password"
                     required
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     placeholder="Nhập lại mật khẩu"
                   />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
                 </div>
               </div>
 
@@ -369,6 +397,12 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
+      
+      {/* Loading Overlay */}
+      <LoadingOverlay 
+        isVisible={redirecting} 
+        message="Đăng ký thành công!" 
+      />
     </div>
   );
 };

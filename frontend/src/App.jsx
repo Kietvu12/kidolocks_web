@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
+import ChangePasswordPage from './pages/ChangePasswordPage'
 import PaymentPage from './pages/PaymentPage'
 import PaymentCallbackPage from './pages/PaymentCallbackPage'
 import WalletPage from './pages/WalletPage'
@@ -29,6 +30,16 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            
+            {/* Change Password Route - Protected */}
+            <Route 
+              path="/change-password" 
+              element={
+                <ProtectedRoute>
+                  <ChangePasswordPage />
+                </ProtectedRoute>
+              } 
+            />
             
             {/* Payment Routes */}
             <Route 

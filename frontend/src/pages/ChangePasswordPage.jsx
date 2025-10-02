@@ -4,23 +4,24 @@ import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 
-const ResetPasswordPage = () => {
+const ChangePasswordPage = () => {
   const navigate = useNavigate();
-  const { sendResetPasswordOTP, resetPassword } = useAuth();
-  const [step, setStep] = useState(1); // 1: Send OTP, 2: Reset Password
+  const { sendChangePasswordOTP, changePasswordWithOTP } = useAuth();
+  const [step, setStep] = useState(1); // 1: Send OTP, 2: Change Password
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Form states
   const [formData, setFormData] = useState({
-    phone: '',
-    otp: '',
+    oldPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    otp: ''
   });
 
   const handleInputChange = (e) => {
@@ -34,18 +35,23 @@ const ResetPasswordPage = () => {
   };
 
   const validatePassword = () => {
-    if (!formData.newPassword || !formData.confirmPassword) {
+    if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
       setError('Vui lòng điền đầy đủ thông tin');
       return false;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setError('Mật khẩu mới xác nhận không khớp');
       return false;
     }
 
     if (formData.newPassword.length < 6) {
-      setError('Mật khẩu phải có ít nhất 6 ký tự');
+      setError('Mật khẩu mới phải có ít nhất 6 ký tự');
+      return false;
+    }
+
+    if (formData.oldPassword === formData.newPassword) {
+      setError('Mật khẩu mới phải khác mật khẩu cũ');
       return false;
     }
 
@@ -53,8 +59,7 @@ const ResetPasswordPage = () => {
   };
 
   const handleSendOTP = async () => {
-    if (!formData.phone) {
-      setError('Vui lòng nhập số điện thoại');
+    if (!validatePassword()) {
       return;
     }
 
@@ -63,7 +68,7 @@ const ResetPasswordPage = () => {
     setMessage('');
 
     try {
-      const result = await sendResetPasswordOTP(formData.phone);
+      const result = await sendChangePasswordOTP();
       
       if (result.success) {
         setMessage('Mã OTP đã được gửi đến số điện thoại của bạn');
@@ -81,13 +86,9 @@ const ResetPasswordPage = () => {
     }
   };
 
-  const handleResetPassword = async (e) => {
+  const handleChangePassword = async (e) => {
     e.preventDefault();
     
-    if (!validatePassword()) {
-      return;
-    }
-
     if (!formData.otp) {
       setError('Vui lòng nhập mã OTP');
       return;
@@ -98,14 +99,18 @@ const ResetPasswordPage = () => {
     setMessage('');
 
     try {
-      const result = await resetPassword(formData.phone, formData.otp, formData.newPassword);
+      const result = await changePasswordWithOTP(
+        formData.oldPassword, 
+        formData.newPassword, 
+        formData.otp
+      );
       
       if (result.success) {
-        setMessage('Đặt lại mật khẩu thành công!');
+        setMessage('Đổi mật khẩu thành công!');
         setLoading(false);
         setRedirecting(true);
         setTimeout(() => {
-          navigate('/login');
+          navigate('/admin');
         }, 2000);
       } else {
         setError(result.message);
@@ -127,16 +132,10 @@ const ResetPasswordPage = () => {
             className="mx-auto h-16 w-auto"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Đặt lại mật khẩu
+            Đổi mật khẩu
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Hoặc{' '}
-            <button
-              onClick={() => navigate('/login')}
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              quay lại đăng nhập
-            </button>
+            Thay đổi mật khẩu của bạn một cách an toàn
           </p>
         </div>
       </div>
@@ -151,7 +150,7 @@ const ResetPasswordPage = () => {
               }`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Xác thực</span>
+              <span className="ml-2 text-sm font-medium">Nhập mật khẩu</span>
             </div>
             <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
             <div className={`flex items-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
@@ -160,7 +159,7 @@ const ResetPasswordPage = () => {
               }`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Đặt mật khẩu</span>
+              <span className="ml-2 text-sm font-medium">Xác thực OTP</span>
             </div>
           </div>
 
@@ -177,72 +176,36 @@ const ResetPasswordPage = () => {
             </div>
           )}
 
-          {/* Step 1: Send OTP */}
+          {/* Step 1: Password Form */}
           {step === 1 && (
             <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSendOTP(); }}>
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Số điện thoại đã đăng ký
+                <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">
+                  Mật khẩu hiện tại
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 relative">
                   <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
+                    id="oldPassword"
+                    name="oldPassword"
+                    type={showOldPassword ? "text" : "password"}
                     required
-                    value={formData.phone}
+                    value={formData.oldPassword}
                     onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập số điện thoại đã đăng ký"
+                    className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder="Nhập mật khẩu hiện tại"
                   />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                  >
+                    {showOldPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                    )}
+                  </button>
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Chúng tôi sẽ gửi mã OTP đến số điện thoại này để xác thực
-                </p>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Đang gửi OTP...' : 'Gửi mã OTP'}
-                </button>
-              </div>
-            </form>
-          )}
-
-          {/* Step 2: Reset Password Form */}
-          {step === 2 && (
-            <form className="space-y-6" onSubmit={handleResetPassword}>
-              <div className="text-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">Xác thực số điện thoại</h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  Mã OTP đã được gửi đến số điện thoại: <strong>{formData.phone}</strong>
-                </p>
-              </div>
-
-              <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                  Mã OTP
-                </label>
-                <div className="mt-1">
-                  <input
-                    id="otp"
-                    name="otp"
-                    type="text"
-                    required
-                    value={formData.otp}
-                    onChange={handleInputChange}
-                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center text-lg tracking-widest"
-                    placeholder="Nhập mã OTP"
-                    maxLength="6"
-                  />
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Mã OTP có hiệu lực trong 5 phút
-                </p>
               </div>
 
               <div>
@@ -254,7 +217,6 @@ const ResetPasswordPage = () => {
                     id="newPassword"
                     name="newPassword"
                     type={showNewPassword ? "text" : "password"}
-                    autoComplete="new-password"
                     required
                     value={formData.newPassword}
                     onChange={handleInputChange}
@@ -284,7 +246,6 @@ const ResetPasswordPage = () => {
                     id="confirmPassword"
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    autoComplete="new-password"
                     required
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
@@ -305,6 +266,50 @@ const ResetPasswordPage = () => {
                 </div>
               </div>
 
+              <div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {loading ? 'Đang gửi OTP...' : 'Gửi mã OTP'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Step 2: OTP Verification */}
+          {step === 2 && (
+            <form className="space-y-6" onSubmit={handleChangePassword}>
+              <div className="text-center mb-6">
+                <h3 className="text-lg font-medium text-gray-900">Xác thực OTP</h3>
+                <p className="mt-2 text-sm text-gray-600">
+                  Mã OTP đã được gửi đến số điện thoại của bạn
+                </p>
+              </div>
+
+              <div>
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+                  Mã OTP
+                </label>
+                <div className="mt-1">
+                  <input
+                    id="otp"
+                    name="otp"
+                    type="text"
+                    required
+                    value={formData.otp}
+                    onChange={handleInputChange}
+                    className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center text-lg tracking-widest"
+                    placeholder="Nhập mã OTP"
+                    maxLength="6"
+                  />
+                </div>
+                <p className="mt-1 text-xs text-gray-500">
+                  Mã OTP có hiệu lực trong 5 phút
+                </p>
+              </div>
+
               <div className="flex space-x-3">
                 <button
                   type="button"
@@ -318,7 +323,7 @@ const ResetPasswordPage = () => {
                   disabled={loading}
                   className="flex-1 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang đặt lại...' : 'Đặt lại mật khẩu'}
+                  {loading ? 'Đang đổi mật khẩu...' : 'Đổi mật khẩu'}
                 </button>
               </div>
             </form>
@@ -336,10 +341,10 @@ const ResetPasswordPage = () => {
 
             <div className="mt-6">
               <button
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/admin')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
-                Quay lại đăng nhập
+                Quay lại trang chủ
               </button>
             </div>
           </div>
@@ -349,10 +354,10 @@ const ResetPasswordPage = () => {
       {/* Loading Overlay */}
       <LoadingOverlay 
         isVisible={redirecting} 
-        message="Đặt lại mật khẩu thành công!" 
+        message="Đổi mật khẩu thành công!" 
       />
     </div>
   );
 };
 
-export default ResetPasswordPage;
+export default ChangePasswordPage;

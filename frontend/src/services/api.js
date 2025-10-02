@@ -127,20 +127,6 @@ class ApiService {
     return response;
   }
 
-  // Gửi OTP cho đăng nhập
-  async sendLoginOTP(phone) {
-    return this.post('/auth/send-login-otp', { sdt: phone });
-  }
-
-  // Đăng nhập với OTP
-  async loginWithOTP(phone, otp) {
-    const response = await this.post('/auth/login-otp', { sdt: phone, otp });
-    if (response.success && response.data.token) {
-      this.setToken(response.data.token);
-      this.setUser(response.data.user);
-    }
-    return response;
-  }
 
   // Đăng nhập với mật khẩu
   async loginPhuHuynh(email, password) {
@@ -341,6 +327,21 @@ class ApiService {
 
   async assignPackageToDevice(data) {
     return this.post('/payment/assign', data);
+  }
+
+  // ==================== CHANGE PASSWORD WITH OTP ====================
+  // Gửi OTP cho đổi mật khẩu (user đã đăng nhập)
+  async sendChangePasswordOTP() {
+    return this.post('/auth/send-change-password-otp');
+  }
+
+  // Đổi mật khẩu với OTP (user đã đăng nhập)
+  async changePasswordWithOTP(oldPassword, newPassword, otp) {
+    return this.post('/auth/change-password', {
+      mat_khau_cu: oldPassword,
+      mat_khau_moi: newPassword,
+      otp: otp
+    });
   }
 
   // ==================== HEALTH CHECK ====================

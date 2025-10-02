@@ -133,9 +133,65 @@ async function sendRegistrationOTP(phone) {
   }
 }
 
+
+/**
+ * Gửi OTP cho reset password
+ */
+async function sendResetPasswordOTP(phone) {
+  try {
+    console.log('=== Starting sendResetPasswordOTP ===');
+    console.log('Input phone:', phone);
+    
+    const otp = generateOTP(6);
+    console.log('Generated OTP:', otp);
+    
+    // Format số điện thoại
+    let formattedPhone = phone;
+    if (!phone.startsWith('84')) {
+      formattedPhone = '84' + phone.replace(/^0/, '');
+    }
+    console.log('Formatted phone:', formattedPhone);
+    
+    // Tạo content với OTP
+    const content = `Ma xac thuc SPEEDSMS.VN cua ban la ${otp}`;
+    const type = 3; // brandname mặc định
+    const sender = "SPEEDSMS.VN";
+    
+    console.log('Content:', content);
+    
+    // Gọi API SpeedSMS
+    const response = await api.sendSMS(formattedPhone, content, type, sender);
+    console.log('=== SpeedSMS response ===');
+    console.log('Response:', response);
+    
+    // Trả về OTP để lưu vào database
+    const result = {
+      success: response.status === 'success',
+      otp: response.status === 'success' ? otp : null,
+      data: response
+    };
+    
+    console.log('=== Final result ===');
+    console.log('Result:', result);
+    
+    return result;
+  } catch (error) {
+    console.error('=== Error in sendResetPasswordOTP ===');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    return {
+      success: false,
+      otp: null,
+      error: error.message
+    };
+  }
+}
+
 module.exports = {
   SpeedSMSAPI,
   api,
   generateOTP,
-  sendRegistrationOTP
+  sendRegistrationOTP,
+  sendResetPasswordOTP
 };

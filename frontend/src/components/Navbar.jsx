@@ -502,6 +502,19 @@ const Navbar = () => {
                                                             <span className="ml-auto text-xs text-gray-400">Sắp có</span>
                                                         </button>
 
+                                                        <button 
+                                                            onClick={() => {
+                                                                setIsUserDropdownOpen(false);
+                                                                navigate('/change-password');
+                                                            }}
+                                                            className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                        >
+                                                            <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                                            </svg>
+                                                            Đổi mật khẩu
+                                                        </button>
+
                                                         <div className="border-t my-2" style={{borderColor: '#e5e7eb'}}></div>
 
                                                         <button 
@@ -603,6 +616,27 @@ const Navbar = () => {
                                             <div className="font-medium">{isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}</div>
                                             <div className="text-blue-600 font-semibold">{isAdmin() ? 'ADMIN' : 'PREMIUM'}</div>
                                         </div>
+                                        
+                                        <button 
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                navigate('/wallet');
+                                            }}
+                                            className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                        >
+                                            Ví gói
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                navigate('/change-password');
+                                            }}
+                                            className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                        >
+                                            Đổi mật khẩu
+                                        </button>
+                                        
                                         <button 
                                             onClick={() => logout()}
                                             className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-red-600 hover:text-red-700 transition-colors rounded-lg"

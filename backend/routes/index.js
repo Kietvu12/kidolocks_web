@@ -18,11 +18,6 @@ router.post('/auth/send-registration-otp', PhuHuynhController.sendRegistrationOT
 // Đăng ký phụ huynh với OTP
 router.post('/auth/register', PhuHuynhController.registerPhuHuynh);
 
-// Gửi OTP cho đăng nhập
-router.post('/auth/send-login-otp', PhuHuynhController.sendLoginOTP);
-
-// Đăng nhập với OTP
-router.post('/auth/login-otp', PhuHuynhController.loginWithOTP);
 
 // Đăng nhập với mật khẩu
 router.post('/auth/login', PhuHuynhController.loginPhuHuynh);
@@ -32,6 +27,12 @@ router.post('/auth/send-reset-otp', PhuHuynhController.sendResetPasswordOTP);
 
 // Reset password với OTP
 router.post('/auth/reset-password', PhuHuynhController.resetPassword);
+
+// Gửi OTP cho đổi mật khẩu (user đã đăng nhập)
+router.post('/auth/send-change-password-otp', authenticateToken, PhuHuynhController.sendChangePasswordOTP);
+
+// Đổi mật khẩu với OTP (user đã đăng nhập)
+router.post('/auth/change-password', authenticateToken, PhuHuynhController.changePasswordWithOTP);
 
 // Lấy thông tin user hiện tại
 router.get('/auth/me', authenticateToken, PhuHuynhController.getCurrentUser);

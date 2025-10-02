@@ -2,14 +2,26 @@ const { PhuHuynh, TreEm, NguoiDung, OtpVerification, sequelize } = require('../m
 const { deleteRelatedDeviceData } = require('../utils/deleteUtils');
 const { passwordEncrypt, passwordDecrypt } = require('../utils/cryptoHelper');
 const { generateToken, verifyToken } = require('../utils/jwtUtils');
-const { sendRegistrationOTP, sendLoginOTP, sendResetPasswordOTP } = require('../utils/smsService');
+const { sendRegistrationOTP, sendResetPasswordOTP } = require('../utils/smsService');
 
 class PhuHuynhController {
+  // Helper method để normalize phone number
+  static normalizePhone(phone) {
+    // Chuyển về format 0xxxxxxxxx (10 số)
+    if (phone.startsWith('84')) {
+      return '0' + phone.substring(2);
+    }
+    return phone;
+  }
+
   // Helper method để xác thực OTP
   static async verifyOTP(phone, otp, purpose) {
+    // Normalize phone number
+    const normalizedPhone = PhuHuynhController.normalizePhone(phone);
+
     const otpRecord = await OtpVerification.findOne({
       where: {
-        phone: phone,
+        phone: normalizedPhone,
         otp_code: otp,
         purpose: purpose,
         is_used: false,
@@ -386,10 +398,25 @@ class PhuHuynhController {
         });
       }
 
-      // Lưu OTP vào database
+      // Normalize phone number
+      const normalizedPhone = PhuHuynhController.normalizePhone(sdt);
+
+      // Xóa tất cả OTP cũ chưa sử dụng cho purpose này
+      await OtpVerification.update(
+        { is_used: true, used_at: new Date() },
+        {
+          where: {
+            phone: normalizedPhone,
+            purpose: 'registration',
+            is_used: false
+          }
+        }
+      );
+
+      // Lưu OTP mới vào database
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 phút
       await OtpVerification.create({
-        phone: sdt,
+        phone: normalizedPhone,
         otp_code: result.otp,
         purpose: 'registration',
         expires_at: expiresAt
@@ -500,131 +527,7 @@ class PhuHuynhController {
     }
   }
 
-  // Gửi OTP cho đăng nhập
-  static async sendLoginOTP(req, res) {
-    try {
-      const { sdt } = req.body;
 
-      if (!sdt) {
-        return res.status(400).json({
-          success: false,
-          message: 'Số điện thoại là bắt buộc'
-        });
-      }
-
-      // Kiểm tra số điện thoại có tồn tại không
-      const phuHuynh = await PhuHuynh.findOne({
-        where: { sdt }
-      });
-
-      if (!phuHuynh) {
-        return res.status(404).json({
-          success: false,
-          message: 'Số điện thoại chưa được đăng ký'
-        });
-      }
-
-      // Gửi OTP
-      console.log('Sending login OTP to phone:', sdt);
-      const result = await sendLoginOTP(sdt);
-      console.log('Login OTP result:', result);
-
-      if (!result.success) {
-        return res.status(500).json({
-          success: false,
-          message: 'Không thể gửi mã OTP',
-          error: result.error
-        });
-      }
-
-      // Lưu OTP vào database
-      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 phút
-      await OtpVerification.create({
-        phone: sdt,
-        otp_code: result.otp,
-        purpose: 'login',
-        expires_at: expiresAt
-      });
-
-      res.status(200).json({
-        success: true,
-        message: 'Mã OTP đã được gửi đến số điện thoại của bạn',
-        data: {
-          phone: sdt,
-          // Trong thực tế không nên trả về OTP, chỉ để test
-          otp: result.otp
-        }
-      });
-    } catch (error) {
-      console.error('Lỗi khi gửi OTP đăng nhập:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Lỗi server khi gửi OTP',
-        error: error.message
-      });
-    }
-  }
-
-  // Đăng nhập với OTP
-  static async loginWithOTP(req, res) {
-    try {
-      const { sdt, otp } = req.body;
-
-      if (!sdt || !otp) {
-        return res.status(400).json({
-          success: false,
-          message: 'Số điện thoại và mã OTP là bắt buộc'
-        });
-      }
-
-      // Tìm phụ huynh theo số điện thoại
-      const phuHuynh = await PhuHuynh.findOne({
-        where: { sdt }
-      });
-
-      if (!phuHuynh) {
-        return res.status(404).json({
-          success: false,
-          message: 'Số điện thoại chưa được đăng ký'
-        });
-      }
-
-      // Xác thực OTP
-      const otpVerification = await PhuHuynhController.verifyOTP(sdt, otp, 'login');
-      if (!otpVerification.success) {
-        return res.status(400).json({
-          success: false,
-          message: otpVerification.message
-        });
-      }
-
-      // Tạo JWT token
-      const token = generateToken({
-        ma_phu_huynh: phuHuynh.ma_phu_huynh,
-        email_phu_huynh: phuHuynh.email_phu_huynh,
-        la_admin: phuHuynh.la_admin
-      });
-
-      // Trả về thông tin phụ huynh (không bao gồm mật khẩu)
-      const { mat_khau: _, ...phuHuynhData } = phuHuynh.toJSON();
-
-      res.status(200).json({
-        success: true,
-        message: 'Đăng nhập thành công',
-        data: {
-          user: phuHuynhData,
-          token: token
-        }
-      });
-    } catch (error) {
-      console.error('Lỗi khi đăng nhập với OTP:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Lỗi server khi đăng nhập',
-        error: error.message
-      });
-    }
-  }
 
   // Gửi OTP cho reset password
   static async sendResetPasswordOTP(req, res) {
@@ -663,10 +566,25 @@ class PhuHuynhController {
         });
       }
 
-      // Lưu OTP vào database
+      // Normalize phone number
+      const normalizedPhone = PhuHuynhController.normalizePhone(sdt);
+
+      // Xóa tất cả OTP cũ chưa sử dụng cho purpose này
+      await OtpVerification.update(
+        { is_used: true, used_at: new Date() },
+        {
+          where: {
+            phone: normalizedPhone,
+            purpose: 'reset_password',
+            is_used: false
+          }
+        }
+      );
+
+      // Lưu OTP mới vào database
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 phút
       await OtpVerification.create({
-        phone: sdt,
+        phone: normalizedPhone,
         otp_code: result.otp,
         purpose: 'reset_password',
         expires_at: expiresAt
@@ -741,6 +659,141 @@ class PhuHuynhController {
       res.status(500).json({
         success: false,
         message: 'Lỗi server khi đặt lại mật khẩu',
+        error: error.message
+      });
+    }
+  }
+
+  // Gửi OTP cho đổi mật khẩu (dành cho user đã đăng nhập)
+  static async sendChangePasswordOTP(req, res) {
+    try {
+      // req.user được set bởi authenticateToken middleware
+      const { ma_phu_huynh } = req.user;
+
+      // Tìm phụ huynh để lấy số điện thoại
+      const phuHuynh = await PhuHuynh.findByPk(ma_phu_huynh);
+      if (!phuHuynh) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy thông tin người dùng'
+        });
+      }
+
+      // Gửi OTP
+      console.log('Sending change password OTP to phone:', phuHuynh.sdt);
+      const result = await sendResetPasswordOTP(phuHuynh.sdt);
+      console.log('Change password OTP result:', result);
+
+      if (!result.success) {
+        return res.status(500).json({
+          success: false,
+          message: 'Không thể gửi mã OTP',
+          error: result.error
+        });
+      }
+
+      // Normalize phone number
+      const normalizedPhone = PhuHuynhController.normalizePhone(phuHuynh.sdt);
+
+      // Xóa tất cả OTP cũ chưa sử dụng cho purpose này
+      await OtpVerification.update(
+        { is_used: true, used_at: new Date() },
+        {
+          where: {
+            phone: normalizedPhone,
+            purpose: 'reset_password', // DÙNG CHUNG VỚI RESET PASSWORD
+            is_used: false
+          }
+        }
+      );
+
+      // Lưu OTP mới vào database
+      const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 phút
+      await OtpVerification.create({
+        phone: normalizedPhone,
+        otp_code: result.otp,
+        purpose: 'reset_password', // DÙNG CHUNG VỚI RESET PASSWORD
+        expires_at: expiresAt
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Mã OTP đã được gửi đến số điện thoại của bạn',
+        data: {
+          phone: phuHuynh.sdt,
+          // Trong thực tế không nên trả về OTP, chỉ để test
+          otp: result.otp
+        }
+      });
+    } catch (error) {
+      console.error('Lỗi khi gửi OTP đổi mật khẩu:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi gửi OTP',
+        error: error.message
+      });
+    }
+  }
+
+  // Đổi mật khẩu với OTP (dành cho user đã đăng nhập) - COPY LOGIC TỪ RESET PASSWORD
+  static async changePasswordWithOTP(req, res) {
+    try {
+      const { mat_khau_cu, mat_khau_moi, otp } = req.body;
+      // req.user được set bởi authenticateToken middleware
+      const { ma_phu_huynh } = req.user;
+
+      if (!mat_khau_cu || !mat_khau_moi || !otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'Vui lòng điền đầy đủ thông tin'
+        });
+      }
+
+      // Tìm phụ huynh
+      const phuHuynh = await PhuHuynh.findByPk(ma_phu_huynh);
+      if (!phuHuynh) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy thông tin người dùng'
+        });
+      }
+
+      // Kiểm tra mật khẩu cũ
+      const decryptedOldPassword = passwordDecrypt(phuHuynh.mat_khau, 'encryptionkey');
+      if (decryptedOldPassword !== mat_khau_cu) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mật khẩu cũ không đúng'
+        });
+      }
+
+      // COPY LOGIC TỪ RESET PASSWORD - Xác thực OTP với CÙNG SĐT như lúc gửi
+      const sdt = phuHuynh.sdt; // Dùng cùng biến sdt như lúc gửi OTP
+      const otpVerification = await PhuHuynhController.verifyOTP(sdt, otp, 'reset_password'); // DÙNG CHUNG VỚI RESET PASSWORD
+      if (!otpVerification.success) {
+        return res.status(400).json({
+          success: false,
+          message: otpVerification.message
+        });
+      }
+
+      // COPY LOGIC TỪ RESET PASSWORD - Mã hóa mật khẩu mới
+      const encryptedPassword = passwordEncrypt(mat_khau_moi, 'encryptionkey');
+
+      // COPY LOGIC TỪ RESET PASSWORD - Cập nhật mật khẩu
+      await phuHuynh.update({
+        mat_khau: encryptedPassword
+      });
+
+      res.status(200).json({
+        success: true,
+        message: 'Đổi mật khẩu thành công'
+      });
+    } catch (error) {
+      console.error('Lỗi khi đổi mật khẩu:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi đổi mật khẩu',
         error: error.message
       });
     }

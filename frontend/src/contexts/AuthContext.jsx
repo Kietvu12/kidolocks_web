@@ -55,20 +55,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Login with OTP
-  const loginWithOTP = async (phone, otp) => {
-    try {
-      const response = await apiService.loginWithOTP(phone, otp);
-      
-      if (response.success) {
-        setUser(response.data.user);
-        setIsAuthenticated(true);
-        return { success: true, message: response.message };
-      }
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  };
 
   // Register
   const register = async (userData) => {
@@ -95,15 +81,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Send OTP for login
-  const sendLoginOTP = async (phone) => {
-    try {
-      const response = await apiService.sendLoginOTP(phone);
-      return { success: response.success, message: response.message, data: response.data };
-    } catch (error) {
-      return { success: false, message: error.message };
-    }
-  };
 
   // Send OTP for reset password
   const sendResetPasswordOTP = async (phone) => {
@@ -119,6 +96,26 @@ export const AuthProvider = ({ children }) => {
   const resetPassword = async (phone, otp, newPassword) => {
     try {
       const response = await apiService.resetPassword(phone, otp, newPassword);
+      return { success: response.success, message: response.message };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Send OTP for change password (user đã đăng nhập)
+  const sendChangePasswordOTP = async () => {
+    try {
+      const response = await apiService.sendChangePasswordOTP();
+      return { success: response.success, message: response.message, data: response.data };
+    } catch (error) {
+      return { success: false, message: error.message };
+    }
+  };
+
+  // Change password with OTP (user đã đăng nhập)
+  const changePasswordWithOTP = async (oldPassword, newPassword, otp) => {
+    try {
+      const response = await apiService.changePasswordWithOTP(oldPassword, newPassword, otp);
       return { success: response.success, message: response.message };
     } catch (error) {
       return { success: false, message: error.message };
@@ -155,12 +152,12 @@ export const AuthProvider = ({ children }) => {
     loading,
     isAuthenticated,
     loginWithPassword,
-    loginWithOTP,
     register,
     sendRegistrationOTP,
-    sendLoginOTP,
     sendResetPasswordOTP,
     resetPassword,
+    sendChangePasswordOTP,
+    changePasswordWithOTP,
     logout,
     isAdmin,
     getCurrentUser
