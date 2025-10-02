@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:7000/api';
+const API_BASE_URL = 'https://kidolock.com/api_kidolocks/api';
 
 class ApiService {
   constructor() {

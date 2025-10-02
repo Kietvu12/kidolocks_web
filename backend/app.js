@@ -74,7 +74,7 @@ const startServer = async () => {
     await testConnection();
     
     // Start server
-    app.listen(PORT, () => {
+    app.listen(PORT,"0.0.0.0", () => {
       console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
       console.log(`📚 API Documentation: http://localhost:${PORT}/api/health`);
       console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);

@@ -6,7 +6,14 @@ const { GoiDichVu, ThongTinGoi, PhuHuynh } = require('../models');
 const vnp_TmnCode = process.env.VNP_TMN_CODE || "DHXDTEST";
 const vnp_HashSecret = process.env.VNP_HASH_SECRET || "00N0EYXHIRGRWYSVYU2J5YJQFKINETWE";
 const vnp_Url = process.env.VNP_URL || "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-const vnp_ReturnUrl = process.env.VNP_RETURN_URL || "http://localhost:7000/api/payment/vnpay-return";
+const vnp_ReturnUrl = process.env.VNP_RETURN_URL || "https://kidolock.com/api_kidolocks/api/payment/vnpay-return";
+
+// Debug environment variables
+console.log('=== ENVIRONMENT VARIABLES DEBUG ===');
+console.log('process.env.FRONTEND_URL:', process.env.FRONTEND_URL);
+console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('vnp_ReturnUrl:', vnp_ReturnUrl);
+console.log('=== END ENV DEBUG ===');
 
 // Helper: lấy IP client
 function getClientIp(req) {
@@ -144,6 +151,8 @@ class PaymentController {
       console.log(signature);
       console.log("=== PAYMENT URL ===");
       console.log(url);
+      console.log("=== VNP RETURN URL IN PAYMENT ===");
+      console.log("vnp_ReturnUrl used:", vnp_ReturnUrl);
 
       res.json({
         success: true,
@@ -169,6 +178,12 @@ class PaymentController {
 
   // Xử lý callback từ VNPay
   static async handleVnpayReturn(req, res) {
+    console.log('=== VNPAY CALLBACK RECEIVED ===');
+    console.log('Request URL:', req.url);
+    console.log('Request Query:', req.query);
+    console.log('Request Headers:', req.headers);
+    console.log('=== END CALLBACK INFO ===');
+    
     try {
       const query = { ...req.query };
       const secureHash = query.vnp_SecureHash;
@@ -243,8 +258,13 @@ class PaymentController {
         });
 
         // Redirect về frontend với thông tin thành công
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const frontendUrl = process.env.FRONTEND_URL || 'https://kidolock.com';
         const redirectUrl = `${frontendUrl}/payment/callback?vnp_ResponseCode=${vnp_ResponseCode}&vnp_TxnRef=${vnp_TxnRef}&vnp_Amount=${query.vnp_Amount}&vnp_TransactionStatus=${vnp_TransactionStatus}`;
+        
+        console.log('=== PAYMENT SUCCESS REDIRECT DEBUG ===');
+        console.log('frontendUrl:', frontendUrl);
+        console.log('redirectUrl:', redirectUrl);
+        console.log('=== END DEBUG ===');
         
         res.redirect(redirectUrl);
       } else {
@@ -254,7 +274,7 @@ class PaymentController {
         });
 
         // Redirect về frontend với thông tin thất bại
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        const frontendUrl = process.env.FRONTEND_URL || 'https://kidolock.com';
         const redirectUrl = `${frontendUrl}/payment/callback?vnp_ResponseCode=${vnp_ResponseCode}&vnp_TxnRef=${vnp_TxnRef}&vnp_Amount=${query.vnp_Amount}&vnp_TransactionStatus=${vnp_TransactionStatus}`;
         
         res.redirect(redirectUrl);
@@ -264,7 +284,7 @@ class PaymentController {
       console.error('Error handling VNPay return:', error);
       
       // Redirect về frontend với thông tin lỗi
-      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+      const frontendUrl = process.env.FRONTEND_URL || 'https://kidolock.com';
       const redirectUrl = `${frontendUrl}/payment/callback?error=server_error`;
       
       res.redirect(redirectUrl);
