@@ -41,9 +41,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login with password
-  const loginWithPassword = async (email, password) => {
+  const loginWithPassword = async (phone, password) => {
     try {
-      const response = await apiService.loginPhuHuynh(email, password);
+      const response = await apiService.loginPhuHuynh(phone, password);
       
       if (response.success) {
         setUser(response.data.user);

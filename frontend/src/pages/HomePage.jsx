@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import bannerImage from '../assets/banner.png'
+import bannerImage from '../assets/banner.jpg'
 import Navbar from '../components/Navbar'
 import WhyKidolock from '../components/WhyKidolock'
 import FeaturesSection from '../components/FeaturesSection'

@@ -127,8 +127,8 @@ const WalletPage = () => {
                 <Navbar />
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
                     <div className="text-center">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                        <p className="text-gray-600">Đang tải ví gói...</p>
+                        <div className="animate-spin rounded-full h-12 w-12 mx-auto mb-4" style={{borderBottomColor: '#2563eb', borderBottomWidth: '2px'}}></div>
+                        <p style={{color: '#4b5563'}}>Đang tải ví gói...</p>
                     </div>
                 </div>
             </>
@@ -141,12 +141,15 @@ const WalletPage = () => {
                 <Navbar />
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
                     <div className="text-center">
-                        <div className="text-red-500 text-6xl mb-4">⚠️</div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">Có lỗi xảy ra</h2>
-                        <p className="text-gray-600 mb-4">{error}</p>
+                        <div style={{color: '#ef4444', fontSize: '3.75rem'}} className="mb-4">⚠️</div>
+                        <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Có lỗi xảy ra</h2>
+                        <p className="mb-4" style={{color: '#4b5563'}}>{error}</p>
                         <button
                             onClick={() => navigate('/')}
-                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="px-6 py-3 rounded-lg transition-colors"
+                            style={{backgroundColor: '#2563eb', color: '#ffffff'}}
+                            onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                            onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                         >
                             Về trang chủ
                         </button>
@@ -159,28 +162,28 @@ const WalletPage = () => {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+            <div className="min-h-screen py-8" style={{background: 'linear-gradient(to bottom right, #dbeafe, #e0e7ff)'}}>
             <div className="container mx-auto px-4">
                 {/* Header */}
 
                 {/* User Info */}
                 <div className="mx-auto mb-8">
-                    <div className="bg-white rounded-2xl p-6 shadow-lg">
+                    <div className="rounded-2xl p-6 shadow-lg" style={{backgroundColor: '#ffffff'}}>
                         <div className="flex items-center justify-between mb-6">
                             <div className="flex items-center">
                                 <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-4">
-                                    <span className="text-white text-xl font-bold">
+                                    <span className="text-xl font-bold" style={{color: '#ffffff'}}>
                                         {userInfo?.ten_phu_huynh?.charAt(0) || 'U'}
                                     </span>
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-800">{userInfo?.ten_phu_huynh}</h3>
-                                    <p className="text-gray-600">{userInfo?.email_phu_huynh}</p>
+                                    <h3 className="text-xl font-bold" style={{color: '#1f2937'}}>{userInfo?.ten_phu_huynh}</h3>
+                                    <p style={{color: '#4b5563'}}>{userInfo?.email_phu_huynh}</p>
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm text-gray-500">Tổng gói chưa gán</p>
-                                <p className="text-2xl font-bold text-blue-600">{packages.length}</p>
+                                <p className="text-sm" style={{color: '#6b7280'}}>Tổng gói chưa gán</p>
+                                <p className="text-2xl font-bold" style={{color: '#2563eb'}}>{packages.length}</p>
                             </div>
                         </div>
 
@@ -189,7 +192,7 @@ const WalletPage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {/* Search */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Tìm kiếm</label>
                                     <input
                                         type="text"
                                         placeholder="Tên gói hoặc mã đơn..."
@@ -201,7 +204,7 @@ const WalletPage = () => {
 
                                 {/* Sort By */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Sắp xếp theo</label>
                                     <select
                                         value={filters.sortBy}
                                         onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
@@ -215,7 +218,7 @@ const WalletPage = () => {
 
                                 {/* Sort Order */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Thứ tự</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Thứ tự</label>
                                     <select
                                         value={filters.sortOrder}
                                         onChange={(e) => setFilters({...filters, sortOrder: e.target.value})}
@@ -228,7 +231,7 @@ const WalletPage = () => {
 
                                 {/* Price Range */}
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Khoảng giá</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Khoảng giá</label>
                                     <select
                                         value={filters.priceRange}
                                         onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
@@ -244,7 +247,7 @@ const WalletPage = () => {
 
                             {/* Results Count */}
                             <div className="mt-4 flex justify-between items-center">
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm" style={{color: '#4b5563'}}>
                                     Hiển thị {filteredPackages.length} / {packages.length} gói
                                 </p>
                                 <button
@@ -254,7 +257,10 @@ const WalletPage = () => {
                                         sortOrder: 'desc',
                                         priceRange: 'all'
                                     })}
-                                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                    className="text-sm font-medium"
+                                    style={{color: '#2563eb'}}
+                                    onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
+                                    onMouseLeave={(e) => e.target.style.color = '#2563eb'}
                                 >
                                     Xóa bộ lọc
                                 </button>
@@ -267,21 +273,24 @@ const WalletPage = () => {
                 <div className="mx-auto">
                     {packages.length === 0 ? (
                         <div className="text-center py-12">
-                            <div className="text-gray-400 text-6xl mb-4">📦</div>
-                            <h3 className="text-2xl font-bold text-gray-800 mb-2">Chưa có gói nào</h3>
-                            <p className="text-gray-600 mb-6">Bạn chưa có gói dịch vụ nào chưa được gán thiết bị</p>
+                            <div style={{color: '#9ca3af', fontSize: '3.75rem'}} className="mb-4">📦</div>
+                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Chưa có gói nào</h3>
+                            <p className="mb-6" style={{color: '#4b5563'}}>Bạn chưa có gói dịch vụ nào chưa được gán thiết bị</p>
                             <button
                                 onClick={() => navigate('/')}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                className="px-6 py-3 rounded-lg transition-colors"
+                                style={{backgroundColor: '#2563eb', color: '#ffffff'}}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                             >
                                 Mua gói dịch vụ
                             </button>
                         </div>
                     ) : filteredPackages.length === 0 ? (
                         <div className="text-center py-12">
-                            <div className="text-gray-400 text-6xl mb-4">🔍</div>
-                            <h3 className="text-2xl font-bold text-gray-800 mb-2">Không tìm thấy gói</h3>
-                            <p className="text-gray-600 mb-6">Không có gói nào phù hợp với bộ lọc hiện tại</p>
+                            <div style={{color: '#9ca3af', fontSize: '3.75rem'}} className="mb-4">🔍</div>
+                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Không tìm thấy gói</h3>
+                            <p className="mb-6" style={{color: '#4b5563'}}>Không có gói nào phù hợp với bộ lọc hiện tại</p>
                             <button
                                 onClick={() => setFilters({
                                     search: '',
@@ -289,7 +298,10 @@ const WalletPage = () => {
                                     sortOrder: 'desc',
                                     priceRange: 'all'
                                 })}
-                                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                className="px-6 py-3 rounded-lg transition-colors"
+                                style={{backgroundColor: '#2563eb', color: '#ffffff'}}
+                                onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
+                                onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                             >
                                 Xóa bộ lọc
                             </button>
@@ -297,45 +309,45 @@ const WalletPage = () => {
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredPackages.map((pkg) => (
-                                <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow">
+                                <div key={pkg.id} className="rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow" style={{backgroundColor: '#ffffff'}}>
                                     {/* Package Header */}
                                     <div className="text-center mb-4">
                                         <div className="rounded-full px-4 py-2 text-center mb-3 inline-block" 
                                              style={{background: 'linear-gradient(to right, #3b82f6, #4ade80)'}}>
-                                            <span className="font-bold text-white">{getPackageDuration(pkg.thongTinGoi?.thoi_han_thang)}</span>
+                                            <span className="font-bold" style={{color: '#ffffff'}}>{getPackageDuration(pkg.thongTinGoi?.thoi_han_thang)}</span>
                                         </div>
-                                        <h3 className="text-lg font-bold text-gray-800 mb-1">{pkg.thongTinGoi?.ten}</h3>
-                                        <p className="text-sm text-gray-600">{pkg.thongTinGoi?.mo_ta}</p>
+                                        <h3 className="text-lg font-bold mb-1" style={{color: '#1f2937'}}>{pkg.thongTinGoi?.ten}</h3>
+                                        <p className="text-sm" style={{color: '#4b5563'}}>{pkg.thongTinGoi?.mo_ta}</p>
                                     </div>
 
                                     {/* Package Details */}
                                     <div className="space-y-2 mb-4">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Giá:</span>
-                                            <span className="font-semibold text-green-600">{formatPrice(pkg.gia)} VND</span>
+                                            <span style={{color: '#4b5563'}}>Giá:</span>
+                                            <span className="font-semibold" style={{color: '#16a34a'}}>{formatPrice(pkg.gia)} VND</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Ngày mua:</span>
+                                            <span style={{color: '#4b5563'}}>Ngày mua:</span>
                                             <span className="font-semibold">{new Date(pkg.ngay_mua).toLocaleDateString('vi-VN')}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Mã đơn:</span>
+                                            <span style={{color: '#4b5563'}}>Mã đơn:</span>
                                             <span className="font-semibold text-xs">{pkg.vnp_txn_ref}</span>
                                         </div>
                                     </div>
 
                                     {/* Features Preview */}
                                     <div className="mb-4">
-                                        <h4 className="text-sm font-semibold text-gray-800 mb-2">Tính năng:</h4>
+                                        <h4 className="text-sm font-semibold mb-2" style={{color: '#1f2937'}}>Tính năng:</h4>
                                         <div className="space-y-1">
                                             {pkg.thongTinGoi?.noiDungList?.slice(0, 3).map((feature, idx) => (
                                                 <div key={idx} className="flex items-center">
-                                                    <div className="w-3 h-3 rounded-full bg-blue-500 mr-2 flex-shrink-0"></div>
-                                                    <span className="text-xs text-gray-600">{feature.noi_dung}</span>
+                                                    <div className="w-3 h-3 rounded-full mr-2 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}></div>
+                                                    <span className="text-xs" style={{color: '#4b5563'}}>{feature.noi_dung}</span>
                                                 </div>
                                             ))}
                                             {pkg.thongTinGoi?.noiDungList?.length > 3 && (
-                                                <div className="text-xs text-gray-500 italic">
+                                                <div className="text-xs italic" style={{color: '#6b7280'}}>
                                                     +{pkg.thongTinGoi.noiDungList.length - 3} tính năng khác
                                                 </div>
                                             )}
@@ -365,7 +377,10 @@ const WalletPage = () => {
                 <div className="text-center mt-8">
                     <button
                         onClick={() => navigate('/')}
-                        className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                        className="px-6 py-3 rounded-lg transition-colors"
+                        style={{backgroundColor: '#4b5563', color: '#ffffff'}}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#374151'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = '#4b5563'}
                     >
                         Về trang chủ
                     </button>

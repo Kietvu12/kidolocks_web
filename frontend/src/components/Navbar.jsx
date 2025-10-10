@@ -33,7 +33,7 @@ const Navbar = () => {
                 aria-label="Menu điều hướng chính"
                 role="navigation"
                 className="shadow-lg sticky top-0 z-50 font-sans"
-                style={{backgroundColor: 'white'}}
+                style={{backgroundColor: '#ffffff'}}
             >
                 <div className="w-full px-3 sm:px-4 lg:px-8">
                     <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
@@ -52,7 +52,7 @@ const Navbar = () => {
                                         alt="Kidolock Logo" 
                                         className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 object-contain"
                                     />
-                                    <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight" style={{color: '#111827'}}>idolock</span>
+                                    <span className="text-lg sm:text-xl lg:text-2xl font-bold tracking-tight" style={{color: '#111827'}}>Kidolock</span>
                                 </div>
                                 <span className="sr-only">Logo Kidolock</span>
                             </button>
@@ -63,7 +63,7 @@ const Navbar = () => {
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
                                     Dành cho gia đình
                                 </button>
-                                <div className="absolute left-0 mt-2 w-[900px] sm:w-[700px] md:w-[800px] lg:w-[900px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
+                                <div className="absolute left-0 mt-2 w-[900px] sm:w-[700px] md:w-[800px] lg:w-[900px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: '#ffffff', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Giải pháp bảo mật */}
@@ -74,31 +74,31 @@ const Navbar = () => {
                                                     <div>
                                                         <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ CAO CẤP</div>
                                                         <a href="/premium" className="block group">
-                                                            <div className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>Kidolock Premium</div>
-                                                            <div className="inline-block bg-purple-100 text-purple-800 text-xs font-bold px-4 py-2 rounded-full mb-3">SẢN PHẨM BÁN CHẠY NHẤT</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Bảo vệ toàn diện cho các thiết bị, quyền riêng tư & danh tính trực tuyến của bạn</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Premium</div>
+                                                            <div className="inline-block text-xs font-bold px-4 py-2 rounded-full mb-3" style={{backgroundColor: '#f3e8ff', color: '#6b21a8'}}>SẢN PHẨM BÁN CHẠY NHẤT</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Bảo vệ toàn diện cho các thiết bị, quyền riêng tư & danh tính trực tuyến của bạn</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">BẢO VỆ NÂNG CAO</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ NÂNG CAO</div>
                                                         <a href="/plus" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Plus</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Kết hợp các tính năng bảo mật, hiệu năng & quyền riêng tư trong một ứng dụng</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Plus</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Kết hợp các tính năng bảo mật, hiệu năng & quyền riêng tư trong một ứng dụng</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">BẢO VỆ TIÊU CHUẨN</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ TIÊU CHUẨN</div>
                                                         <a href="/standard" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Standard</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Bảo vệ nâng cao kèm công cụ tăng cường hiệu năng thiết bị</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Standard</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Bảo vệ nâng cao kèm công cụ tăng cường hiệu năng thiết bị</div>
                                                         </a>
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="mt-8 pt-6 border-t border-gray-200">
-                                                    <a href="/home-security" className="text-green-600 hover:text-green-700 font-semibold text-sm flex items-center group">
+                                                <div className="mt-8 pt-6" style={{borderTopColor: '#e5e7eb', borderTopWidth: '1px'}}>
+                                                    <a href="/home-security" className="font-semibold text-sm flex items-center group" style={{color: '#16a34a'}} onMouseEnter={(e) => e.target.style.color = '#15803d'} onMouseLeave={(e) => e.target.style.color = '#16a34a'}>
                                                         Xem tất cả các giải pháp 
                                                         <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -109,11 +109,11 @@ const Navbar = () => {
                                             
                                             {/* Cột 2: Quyền riêng tư & Trẻ nhỏ */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Quyền riêng tư & Trẻ nhỏ</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>Quyền riêng tư & Trẻ nhỏ</h3>
                                                 
                                                 <div className="space-y-8">
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">CHỨC NĂNG QUẢN LÝ NGƯỜI DÙNG</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>CHỨC NĂNG QUẢN LÝ NGƯỜI DÙNG</div>
                                                         <a href="/safe-kids" className="block group">
                                                             <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Safe Kids</div>
                                                             <div className="text-sm text-gray-600 leading-relaxed">Giải pháp kiểm soát linh hoạt dành cho cha mẹ & thiết bị theo dõi qua GPS dành cho con bạn.</div>

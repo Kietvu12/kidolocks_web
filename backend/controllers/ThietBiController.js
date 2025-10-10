@@ -130,6 +130,20 @@ class ThietBiController {
         });
       }
 
+      // Kiểm tra mã thiết bị đã tồn tại chưa
+      if (ma_thiet_bi) {
+        const existingDevice = await NguoiDung.findOne({
+          where: { ma_thiet_bi: ma_thiet_bi }
+        });
+        
+        if (existingDevice) {
+          return res.status(400).json({
+            success: false,
+            message: 'Mã thiết bị đã tồn tại trong hệ thống'
+          });
+        }
+      }
+
       // Tạo ID người dùng mới
       const nguoiDungId = uuidv4();
 
@@ -177,6 +191,23 @@ class ThietBiController {
           success: false,
           message: 'Không tìm thấy thiết bị'
         });
+      }
+
+      // Kiểm tra mã thiết bị đã tồn tại chưa (nếu có thay đổi)
+      if (ma_thiet_bi && ma_thiet_bi !== thietBi.ma_thiet_bi) {
+        const existingDevice = await NguoiDung.findOne({
+          where: { 
+            ma_thiet_bi: ma_thiet_bi,
+            nguoi_dung_id: { [require('sequelize').Op.ne]: id } // Loại trừ thiết bị hiện tại
+          }
+        });
+        
+        if (existingDevice) {
+          return res.status(400).json({
+            success: false,
+            message: 'Mã thiết bị đã tồn tại trong hệ thống'
+          });
+        }
       }
 
       // Cập nhật thông tin

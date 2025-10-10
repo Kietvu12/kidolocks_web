@@ -15,6 +15,13 @@ const ChangePasswordPage = () => {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false
+  });
 
   // Form states
   const [formData, setFormData] = useState({
@@ -30,9 +37,44 @@ const ChangePasswordPage = () => {
       ...prev,
       [name]: value
     }));
+    
+    // Validate password requirements when new password changes
+    if (name === 'newPassword') {
+      validatePasswordRequirements(value);
+    }
+    
     setError('');
     setMessage('');
   };
+
+  const validatePasswordRequirements = (password) => {
+    setPasswordRequirements({
+      length: password.length >= 6,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    });
+  };
+
+  const isPasswordValid = () => {
+    return Object.values(passwordRequirements).every(requirement => requirement);
+  };
+
+  const RequirementItem = ({ met, text }) => (
+    <div className={`flex items-center space-x-2 text-sm ${met ? 'text-green-600' : 'text-gray-500'}`}>
+      {met ? (
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+      ) : (
+        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+        </svg>
+      )}
+      <span>{text}</span>
+    </div>
+  );
 
   const validatePassword = () => {
     if (!formData.oldPassword || !formData.newPassword || !formData.confirmPassword) {
@@ -45,8 +87,8 @@ const ChangePasswordPage = () => {
       return false;
     }
 
-    if (formData.newPassword.length < 6) {
-      setError('Mật khẩu mới phải có ít nhất 6 ký tự');
+    if (!isPasswordValid()) {
+      setError('Mật khẩu mới chưa đáp ứng yêu cầu bảo mật');
       return false;
     }
 
@@ -221,7 +263,7 @@ const ChangePasswordPage = () => {
                     value={formData.newPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+                    placeholder="Nhập mật khẩu mới"
                   />
                   <button
                     type="button"
@@ -235,6 +277,33 @@ const ChangePasswordPage = () => {
                     )}
                   </button>
                 </div>
+                
+                {/* Password Requirements */}
+                {formData.newPassword && (
+                  <div className="mt-3 p-3 rounded-md space-y-2" style={{backgroundColor: '#f9fafb'}}>
+                    <p className="text-sm font-medium" style={{color: '#374151'}}>Yêu cầu mật khẩu:</p>
+                    <RequirementItem 
+                      met={passwordRequirements.length} 
+                      text="Ít nhất 6 ký tự" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.uppercase} 
+                      text="Có ít nhất 1 chữ in hoa (A-Z)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.lowercase} 
+                      text="Có ít nhất 1 chữ in thường (a-z)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.number} 
+                      text="Có ít nhất 1 chữ số (0-9)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.specialChar} 
+                      text="Có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)" 
+                    />
+                  </div>
+                )}
               </div>
 
               <div>

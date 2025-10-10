@@ -228,7 +228,7 @@ class PaymentController {
       const vnp_TransactionStatus = query.vnp_TransactionStatus;
 
       // Tìm gói dịch vụ theo mã giao dịch
-      const goiDichVu = await GoiDichVu.findOne({
+      const g = await GoiDichVu.findOne({
         where: { vnp_txn_ref: vnp_TxnRef },
         include: [
           { model: ThongTinGoi, as: 'thongTinGoi' },

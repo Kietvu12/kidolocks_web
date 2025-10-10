@@ -11,7 +11,8 @@ module.exports = (sequelize) => {
     ma_thiet_bi: {
       type: DataTypes.STRING(100),
       allowNull: true,
-      comment: 'Mã thiết bị'
+      unique: true,
+      comment: 'Mã thiết bị (duy nhất)'
     },
     ma_tre_em: {
       type: DataTypes.INTEGER,
@@ -58,7 +59,8 @@ module.exports = (sequelize) => {
         fields: ['ma_tre_em']
       },
       {
-        fields: ['ma_thiet_bi']
+        fields: ['ma_thiet_bi'],
+        unique: true
       },
       {
         fields: ['loai_thiet_bi']

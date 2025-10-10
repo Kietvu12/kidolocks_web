@@ -15,7 +15,7 @@ const LoginPage = () => {
 
   // Form states
   const [formData, setFormData] = useState({
-    email: '',
+    phone: '',
     password: ''
   });
 
@@ -36,7 +36,7 @@ const LoginPage = () => {
     setMessage('');
 
     try {
-      const result = await loginWithPassword(formData.email, formData.password);
+      const result = await loginWithPassword(formData.phone, formData.password);
       
       if (result.success) {
         setMessage('Đăng nhập thành công!');
@@ -56,7 +56,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8" style={{backgroundColor: '#f9fafb'}}>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <img 
@@ -64,14 +64,17 @@ const LoginPage = () => {
             alt="KidsLock" 
             className="mx-auto h-16 w-auto"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-extrabold" style={{color: '#111827'}}>
             Đăng nhập vào tài khoản của bạn
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-center text-sm" style={{color: '#4b5563'}}>
             Hoặc{' '}
             <button
               onClick={() => navigate('/register')}
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium"
+              style={{color: '#2563eb'}}
+              onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
+              onMouseLeave={(e) => e.target.style.color = '#2563eb'}
             >
               đăng ký tài khoản mới
             </button>
@@ -80,42 +83,42 @@ const LoginPage = () => {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="py-8 px-4 shadow sm:rounded-lg sm:px-10" style={{backgroundColor: '#ffffff'}}>
           {/* Messages */}
           {message && (
-            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md">
+            <div className="mb-4 px-4 py-3 rounded-md" style={{backgroundColor: '#f0fdf4', borderColor: '#bbf7d0', borderWidth: '1px', color: '#166534'}}>
               {message}
             </div>
           )}
           
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="mb-4 px-4 py-3 rounded-md" style={{backgroundColor: '#fef2f2', borderColor: '#fecaca', borderWidth: '1px', color: '#dc2626'}}>
               {error}
             </div>
           )}
 
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
+              <label htmlFor="phone" className="block text-sm font-medium" style={{color: '#374151'}}>
+                Số điện thoại
               </label>
               <div className="mt-1">
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  autoComplete="tel"
                   required
-                  value={formData.email}
+                  value={formData.phone}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Nhập email của bạn"
+                  placeholder="Nhập số điện thoại của bạn"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="password" className="block text-sm font-medium" style={{color: '#374151'}}>
                 Mật khẩu
               </label>
               <div className="mt-1 relative">
@@ -152,7 +155,7 @@ const LoginPage = () => {
                   type="checkbox"
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                <label htmlFor="remember-me" className="ml-2 block text-sm" style={{color: '#111827'}}>
                   Ghi nhớ đăng nhập
                 </label>
               </div>
@@ -161,7 +164,10 @@ const LoginPage = () => {
                 <button
                   type="button"
                   onClick={() => navigate('/reset-password')}
-                  className="font-medium text-blue-600 hover:text-blue-500"
+                  className="font-medium"
+                  style={{color: '#2563eb'}}
+                  onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
+                  onMouseLeave={(e) => e.target.style.color = '#2563eb'}
                 >
                   Quên mật khẩu?
                 </button>
@@ -172,7 +178,10 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{backgroundColor: '#2563eb', color: '#ffffff'}}
+                onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#1d4ed8')}
+                onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#2563eb')}
               >
                 {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
               </button>
@@ -185,14 +194,17 @@ const LoginPage = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Hoặc</span>
+                <span className="px-2" style={{backgroundColor: '#ffffff', color: '#6b7280'}}>Hoặc</span>
               </div>
             </div>
 
             <div className="mt-6">
               <button
                 onClick={() => navigate('/register')}
-                className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+                className="w-full inline-flex justify-center py-2 px-4 border rounded-md shadow-sm text-sm font-medium transition-colors"
+                style={{borderColor: '#d1d5db', color: '#6b7280', backgroundColor: '#ffffff'}}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
               >
                 Tạo tài khoản mới
               </button>

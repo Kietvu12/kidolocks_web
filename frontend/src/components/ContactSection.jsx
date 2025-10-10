@@ -115,14 +115,14 @@ const ContactSection = () => {
                                         <span className="sm:hidden">Email</span>
                                         <span className="hidden sm:inline">Email :</span>
                                     </span>
-                                    <span>admin@rsdic.edu.vn</span>
+                                    <span>admin@rdsic.edu.vn</span>
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-20 sm:w-24 mb-1 sm:mb-0">
                                         <span className="sm:hidden">Website</span>
                                         <span className="hidden sm:inline">Website :</span>
                                     </span>
-                                    <span>rsdic.edu.vn</span>
+                                    <span>rdsic.edu.vn</span>
                                 </div>
                             </div>
                         </div>

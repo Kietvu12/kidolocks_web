@@ -12,6 +12,8 @@ const ThietBiPage = () => {
   const [showGoiModal, setShowGoiModal] = useState(false);
   const [editingThietBi, setEditingThietBi] = useState(null);
   const [selectedThietBi, setSelectedThietBi] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [formData, setFormData] = useState({
     ma_tre_em: '',
     ma_thiet_bi: '',
@@ -83,37 +85,57 @@ const ThietBiPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setErrorMessage('');
+      setSuccessMessage('');
+      
       if (editingThietBi) {
         await apiService.updateThietBi(editingThietBi.nguoi_dung_id, formData);
+        setSuccessMessage('Cập nhật thiết bị thành công!');
       } else {
         await apiService.createThietBi(formData);
+        setSuccessMessage('Tạo thiết bị thành công!');
       }
+      
       setShowModal(false);
       setEditingThietBi(null);
       resetForm();
       loadData();
+      
+      // Auto hide success message after 3 seconds
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error saving thiet bi:', error);
-      alert('Có lỗi xảy ra khi lưu thông tin');
+      
+      // Check if it's a device code duplicate error
+      if (error.response?.data?.message?.includes('Mã thiết bị đã tồn tại')) {
+        setErrorMessage('Mã thiết bị này đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.');
+      } else {
+        setErrorMessage('Có lỗi xảy ra khi lưu thông tin: ' + (error.response?.data?.message || error.message));
+      }
     }
   };
 
   const handleGoiSubmit = async (e) => {
     e.preventDefault();
     try {
+      setErrorMessage('');
       await apiService.changeGoiDichVu(selectedThietBi.nguoi_dung_id, goiFormData);
+      setSuccessMessage('Thay đổi gói dịch vụ thành công!');
       setShowGoiModal(false);
       setSelectedThietBi(null);
       resetGoiForm();
       loadData();
+      setTimeout(() => setSuccessMessage(''), 3000);
     } catch (error) {
       console.error('Error changing goi:', error);
-      alert('Có lỗi xảy ra khi thay đổi gói dịch vụ');
+      setErrorMessage('Có lỗi xảy ra khi thay đổi gói dịch vụ: ' + (error.response?.data?.message || error.message));
     }
   };
 
   const handleEdit = (thietBi) => {
     setEditingThietBi(thietBi);
+    setErrorMessage('');
+    setSuccessMessage('');
     setFormData({
       ma_tre_em: thietBi.ma_tre_em,
       ma_thiet_bi: thietBi.ma_thiet_bi || '',
@@ -126,11 +148,14 @@ const ThietBiPage = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa thiết bị này?')) {
       try {
+        setErrorMessage('');
         await apiService.deleteThietBi(id);
+        setSuccessMessage('Xóa thiết bị thành công!');
         loadData();
+        setTimeout(() => setSuccessMessage(''), 3000);
       } catch (error) {
         console.error('Error deleting thiet bi:', error);
-        alert('Có lỗi xảy ra khi xóa thiết bị');
+        setErrorMessage('Có lỗi xảy ra khi xóa thiết bị: ' + (error.response?.data?.message || error.message));
       }
     }
   };
@@ -148,6 +173,8 @@ const ThietBiPage = () => {
 
   const openCreateModal = () => {
     setEditingThietBi(null);
+    setErrorMessage('');
+    setSuccessMessage('');
     resetForm();
     setShowModal(true);
   };
@@ -173,6 +200,8 @@ const ThietBiPage = () => {
   const closeModal = () => {
     setShowModal(false);
     setEditingThietBi(null);
+    setErrorMessage('');
+    setSuccessMessage('');
     resetForm();
   };
 
@@ -216,6 +245,58 @@ const ThietBiPage = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Global Error Message */}
+        {errorMessage && !showModal && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                {errorMessage}
+              </div>
+              <button
+                onClick={() => setErrorMessage('')}
+                className="text-red-500 hover:text-red-700"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Global Success Message */}
+        {successMessage && !showModal && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                {successMessage}
+              </div>
+              <button
+                onClick={() => setSuccessMessage('')}
+                className="text-green-500 hover:text-green-700"
+              >
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* Stats */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -377,6 +458,31 @@ const ThietBiPage = () => {
             <h2 className="text-xl font-bold mb-4">
               {editingThietBi ? 'Sửa thông tin thiết bị' : 'Thêm thiết bị mới'}
             </h2>
+            
+            {/* Error Message */}
+            {errorMessage && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  {errorMessage}
+                </div>
+              </div>
+            )}
+            
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {successMessage}
+                </div>
+              </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

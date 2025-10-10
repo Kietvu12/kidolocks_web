@@ -75,7 +75,14 @@ class ApiService {
             window.location.href = '/login';
           }
         }
-        throw new Error(data.message || 'Có lỗi xảy ra');
+        
+        // Create error object with full response data
+        const error = new Error(data.message || 'Có lỗi xảy ra');
+        error.response = {
+          status: response.status,
+          data: data
+        };
+        throw error;
       }
 
       return data;
@@ -128,9 +135,9 @@ class ApiService {
   }
 
 
-  // Đăng nhập với mật khẩu
-  async loginPhuHuynh(email, password) {
-    const response = await this.post('/auth/login', { email_phu_huynh: email, mat_khau: password });
+  // Đăng nhập với mật khẩu bằng số điện thoại
+  async loginPhuHuynh(phone, password) {
+    const response = await this.post('/auth/login', { sdt: phone, mat_khau: password });
     if (response.success && response.data.token) {
       this.setToken(response.data.token);
       this.setUser(response.data.user);

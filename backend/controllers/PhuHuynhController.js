@@ -45,31 +45,53 @@ class PhuHuynhController {
   }
   // Lấy danh sách tất cả phụ huynh
   static async getAllPhuHuynh(req, res) {
-    try {
-      const phuHuynhList = await PhuHuynh.findAll({
-        include: [{
-          model: TreEm,
-          as: 'treEmList',
-          attributes: ['ma_tre_em', 'ten_tre', 'lop', 'gioi_tinh']
-        }]
-        // Bao gồm mat_khau để admin có thể xem (cần xác thực)
-      });
+  try {
+    const phuHuynhList = await PhuHuynh.findAll({
+      include: [{
+        model: TreEm,
+        as: 'treEmList',
+        attributes: ['ma_tre_em', 'ten_tre', 'lop', 'gioi_tinh']
+      }]
+    });
 
-      res.status(200).json({
-        success: true,
-        message: 'Lấy danh sách phụ huynh thành công',
-        data: phuHuynhList
-      });
-    } catch (error) {
-      console.error('Lỗi khi lấy danh sách phụ huynh:', error);
-      res.status(500).json({
-        success: false,
-        message: 'Lỗi server khi lấy danh sách phụ huynh',
-        error: error.message
-      });
-    }
+    const decryptedList = phuHuynhList.map(ph => {
+      const phObj = ph.toJSON();
+
+      // Kiểm tra mật khẩu có khả năng giải mã không
+      if (phObj.mat_khau && typeof phObj.mat_khau === 'string') {
+        try {
+          // Kiểm tra xem chuỗi có hợp lệ dạng Base64 hay không
+          const isBase64 = /^[A-Za-z0-9+/=]+$/.test(phObj.mat_khau.trim());
+          if (isBase64) {
+            phObj.mat_khau = passwordDecrypt(phObj.mat_khau, 'encryptionkey');
+          } else {
+            phObj.mat_khau = '[Chuỗi không hợp lệ]';
+          }
+        } catch (err) {
+          console.warn(`⚠️ Giải mã thất bại cho ID ${phObj.ma_phu_huynh}: ${err.message}`);
+          phObj.mat_khau = '[Giải mã lỗi]';
+        }
+      } else {
+        phObj.mat_khau = '';
+      }
+
+      return phObj;
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Lấy danh sách phụ huynh thành công',
+      data: decryptedList
+    });
+  } catch (error) {
+    console.error('Lỗi khi lấy danh sách phụ huynh:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Lỗi server khi lấy danh sách phụ huynh',
+      error: error.message
+    });
   }
-
+}
   // Lấy thông tin phụ huynh theo ID
   static async getPhuHuynhById(req, res) {
     try {
@@ -120,6 +142,20 @@ class PhuHuynhController {
           success: false,
           message: 'Email đã được sử dụng'
         });
+      }
+
+      // Kiểm tra số điện thoại đã tồn tại chưa
+      if (sdt) {
+        const existingPhone = await PhuHuynh.findOne({
+          where: { sdt }
+        });
+
+        if (existingPhone) {
+          return res.status(400).json({
+            success: false,
+            message: 'Số điện thoại đã được sử dụng'
+          });
+        }
       }
 
       // Mã hóa mật khẩu trước khi lưu
@@ -174,6 +210,20 @@ class PhuHuynhController {
           return res.status(400).json({
             success: false,
             message: 'Email đã được sử dụng'
+          });
+        }
+      }
+
+      // Kiểm tra số điện thoại trùng lặp (nếu có thay đổi số điện thoại)
+      if (sdt && sdt !== phuHuynh.sdt) {
+        const existingPhone = await PhuHuynh.findOne({
+          where: { sdt }
+        });
+
+        if (existingPhone) {
+          return res.status(400).json({
+            success: false,
+            message: 'Số điện thoại đã được sử dụng'
           });
         }
       }
@@ -306,20 +356,23 @@ class PhuHuynhController {
     }
   }
 
-  // Đăng nhập phụ huynh với mật khẩu
+  // Đăng nhập phụ huynh với mật khẩu bằng số điện thoại
   static async loginPhuHuynh(req, res) {
     try {
-      const { email_phu_huynh, mat_khau } = req.body;
+      const { sdt, mat_khau } = req.body;
 
-      // Tìm phụ huynh theo email
+      // Normalize phone number
+      const normalizedPhone = PhuHuynhController.normalizePhone(sdt);
+
+      // Tìm phụ huynh theo số điện thoại
       const phuHuynh = await PhuHuynh.findOne({
-        where: { email_phu_huynh }
+        where: { sdt: normalizedPhone }
       });
 
       if (!phuHuynh) {
         return res.status(401).json({
           success: false,
-          message: 'Email hoặc mật khẩu không đúng'
+          message: 'Số điện thoại hoặc mật khẩu không đúng'
         });
       }
 
@@ -329,7 +382,7 @@ class PhuHuynhController {
       if (decryptedPassword !== mat_khau) {
         return res.status(401).json({
           success: false,
-          message: 'Email hoặc mật khẩu không đúng'
+          message: 'Số điện thoại hoặc mật khẩu không đúng'
         });
       }
 

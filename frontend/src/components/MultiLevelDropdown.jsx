@@ -18,6 +18,8 @@ import {
   Search,
   X,
   ArrowLeft,
+  CheckCircle,
+  XCircle,
   Check
 } from 'lucide-react';
 import apiService from '../services/api';
@@ -124,9 +126,9 @@ const SearchableInput = ({
                 onClick={() => handleOptionClick(option)}
                 className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center justify-between transition-colors"
               >
-                <span className="text-sm text-gray-700">{option}</span>
+                <span className="text-sm" style={{color: '#374151'}}>{option}</span>
                 {value === option && (
-                  <Check className="w-4 h-4 text-blue-500" />
+                  <Check className="w-4 h-4" style={{color: '#3b82f6'}} />
                 )}
               </div>
             ))}
@@ -156,6 +158,16 @@ const MultiLevelDropdown = () => {
   const [selectedPhuHuynh, setSelectedPhuHuynh] = useState(null);
   const [showPassword, setShowPassword] = useState({});
   
+  // Password form states
+  const [showPasswordInForm, setShowPasswordInForm] = useState(false);
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    specialChar: false
+  });
+  
   // Goi management states
   const [showGoiManagement, setShowGoiManagement] = useState(false);
   const [selectedThietBiForGoi, setSelectedThietBiForGoi] = useState(null);
@@ -178,6 +190,8 @@ const MultiLevelDropdown = () => {
   const [selectedThietBi, setSelectedThietBi] = useState(null);
   const [goiList, setGoiList] = useState([]);
   const [phoneError, setPhoneError] = useState('');
+  const [thietBiError, setThietBiError] = useState('');
+  const [thietBiSuccess, setThietBiSuccess] = useState('');
 
   // Form data
   const [phuHuynhForm, setPhuHuynhForm] = useState({
@@ -210,6 +224,32 @@ const MultiLevelDropdown = () => {
     loadPhuHuynhList();
     loadGoiList();
   }, []);
+
+  // Password validation functions
+  const validatePasswordRequirements = (password) => {
+    setPasswordRequirements({
+      length: password.length >= 6,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /[0-9]/.test(password),
+      specialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    });
+  };
+
+  const isPasswordValid = () => {
+    return Object.values(passwordRequirements).every(requirement => requirement);
+  };
+
+  const RequirementItem = ({ met, text }) => (
+    <div className={`flex items-center space-x-2 text-sm ${met ? 'text-green-600' : 'text-gray-500'}`}>
+      {met ? (
+        <CheckCircle className="h-4 w-4" />
+      ) : (
+        <XCircle className="h-4 w-4" />
+      )}
+      <span>{text}</span>
+    </div>
+  );
 
   // Apply filters for phu huynh
   useEffect(() => {
@@ -408,8 +448,10 @@ const MultiLevelDropdown = () => {
       alert('Vui lòng nhập mật khẩu');
       return;
     }
-    if (phuHuynhForm.mat_khau.length < 6) {
-      alert('Mật khẩu phải có ít nhất 6 ký tự');
+    
+    // Password validation with requirements
+    if (!isPasswordValid()) {
+      alert('Mật khẩu chưa đáp ứng yêu cầu bảo mật');
       return;
     }
     
@@ -431,11 +473,45 @@ const MultiLevelDropdown = () => {
         resetPhuHuynhForm();
         alert('Tạo phụ huynh thành công!');
       } else {
-        alert('Lỗi khi tạo phụ huynh: ' + response.message);
+        // Handle specific error cases
+        console.log('Response error:', response);
+        if (response.message) {
+          if (response.message.includes('Email đã được sử dụng') || response.message.includes('email')) {
+            alert('Email này đã được sử dụng. Vui lòng chọn email khác.');
+          } else if (response.message.includes('Số điện thoại đã được sử dụng') || response.message.includes('số điện thoại')) {
+            alert('Số điện thoại này đã được sử dụng. Vui lòng chọn số điện thoại khác.');
+          } else {
+            alert('Lỗi khi tạo phụ huynh: ' + response.message);
+          }
+        } else {
+          alert('Lỗi khi tạo phụ huynh: ' + (response.error || 'Không xác định'));
+        }
       }
     } catch (error) {
       console.error('Error creating phu huynh:', error);
-      alert('Lỗi khi tạo phụ huynh');
+      console.log('Error details:', error.response);
+      
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        console.log('Error data:', errorData);
+        
+        if (errorData.message) {
+          if (errorData.message.includes('Email đã được sử dụng') || errorData.message.includes('email')) {
+            alert('Email này đã được sử dụng. Vui lòng chọn email khác.');
+          } else if (errorData.message.includes('Số điện thoại đã được sử dụng') || errorData.message.includes('số điện thoại')) {
+            alert('Số điện thoại này đã được sử dụng. Vui lòng chọn số điện thoại khác.');
+          } else {
+            alert('Lỗi khi tạo phụ huynh: ' + errorData.message);
+          }
+        } else if (errorData.error) {
+          alert('Lỗi khi tạo phụ huynh: ' + errorData.error);
+        } else {
+          alert('Lỗi khi tạo phụ huynh: ' + error.message);
+        }
+      } else {
+        alert('Lỗi khi tạo phụ huynh: ' + error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -459,9 +535,12 @@ const MultiLevelDropdown = () => {
       return;
     }
     
-    if (phuHuynhForm.mat_khau && phuHuynhForm.mat_khau.length < 6) {
-      alert('Mật khẩu phải có ít nhất 6 ký tự');
-      return;
+    // Password validation with requirements (only if password is provided)
+    if (phuHuynhForm.mat_khau && phuHuynhForm.mat_khau.trim()) {
+      if (!isPasswordValid()) {
+        alert('Mật khẩu chưa đáp ứng yêu cầu bảo mật');
+        return;
+      }
     }
     
     // Phone number validation
@@ -489,11 +568,45 @@ const MultiLevelDropdown = () => {
         resetPhuHuynhForm();
         alert('Cập nhật phụ huynh thành công!');
       } else {
-        alert('Lỗi khi cập nhật phụ huynh: ' + response.message);
+        // Handle specific error cases
+        console.log('Response error:', response);
+        if (response.message) {
+          if (response.message.includes('Email đã được sử dụng') || response.message.includes('email')) {
+            alert('Email này đã được sử dụng. Vui lòng chọn email khác.');
+          } else if (response.message.includes('Số điện thoại đã được sử dụng') || response.message.includes('số điện thoại')) {
+            alert('Số điện thoại này đã được sử dụng. Vui lòng chọn số điện thoại khác.');
+          } else {
+            alert('Lỗi khi cập nhật phụ huynh: ' + response.message);
+          }
+        } else {
+          alert('Lỗi khi cập nhật phụ huynh: ' + (response.error || 'Không xác định'));
+        }
       }
     } catch (error) {
       console.error('Error updating phu huynh:', error);
-      alert('Lỗi khi cập nhật phụ huynh');
+      console.log('Error details:', error.response);
+      
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        console.log('Error data:', errorData);
+        
+        if (errorData.message) {
+          if (errorData.message.includes('Email đã được sử dụng') || errorData.message.includes('email')) {
+            alert('Email này đã được sử dụng. Vui lòng chọn email khác.');
+          } else if (errorData.message.includes('Số điện thoại đã được sử dụng') || errorData.message.includes('số điện thoại')) {
+            alert('Số điện thoại này đã được sử dụng. Vui lòng chọn số điện thoại khác.');
+          } else {
+            alert('Lỗi khi cập nhật phụ huynh: ' + errorData.message);
+          }
+        } else if (errorData.error) {
+          alert('Lỗi khi cập nhật phụ huynh: ' + errorData.error);
+        } else {
+          alert('Lỗi khi cập nhật phụ huynh: ' + error.message);
+        }
+      } else {
+        alert('Lỗi khi cập nhật phụ huynh: ' + error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -661,10 +774,14 @@ const MultiLevelDropdown = () => {
   const handleCreateThietBi = async (treEmId) => {
     try {
       setIsLoading(true);
+      setThietBiError('');
+      setThietBiSuccess('');
+      
       const response = await apiService.createThietBi({
         ...thietBiForm,
         ma_tre_em: treEmId
       });
+      
       if (response.success) {
         // Reload data for popup
         if (showThietBiPopup && selectedTreEmForPopup) {
@@ -674,13 +791,43 @@ const MultiLevelDropdown = () => {
         await loadPhuHuynhList();
         setShowThietBiForm(false);
         resetThietBiForm();
-        alert('Tạo thiết bị thành công!');
+        setThietBiSuccess('Tạo thiết bị thành công!');
+        
+        // Auto hide success message after 3 seconds
+        setTimeout(() => setThietBiSuccess(''), 3000);
       } else {
-        alert('Lỗi khi tạo thiết bị: ' + response.message);
+        // Handle specific error cases
+        if (response.message) {
+          if (response.message.includes('Mã thiết bị đã tồn tại')) {
+            setThietBiError('Mã thiết bị này đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.');
+          } else {
+            setThietBiError('Lỗi khi tạo thiết bị: ' + response.message);
+          }
+        } else {
+          setThietBiError('Lỗi khi tạo thiết bị: ' + (response.error || 'Không xác định'));
+        }
       }
     } catch (error) {
       console.error('Error creating thiet bi:', error);
-      alert('Lỗi khi tạo thiết bị');
+      
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        
+        if (errorData.message) {
+          if (errorData.message.includes('Mã thiết bị đã tồn tại')) {
+            setThietBiError('Mã thiết bị này đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.');
+          } else {
+            setThietBiError('Lỗi khi tạo thiết bị: ' + errorData.message);
+          }
+        } else if (errorData.error) {
+          setThietBiError('Lỗi khi tạo thiết bị: ' + errorData.error);
+        } else {
+          setThietBiError('Lỗi khi tạo thiết bị: ' + error.message);
+        }
+      } else {
+        setThietBiError('Lỗi khi tạo thiết bị: ' + error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -689,7 +836,11 @@ const MultiLevelDropdown = () => {
   const handleUpdateThietBi = async (id) => {
     try {
       setIsLoading(true);
+      setThietBiError('');
+      setThietBiSuccess('');
+      
       const response = await apiService.updateThietBi(id, thietBiForm);
+      
       if (response.success) {
         // Reload data for popup
         if (showThietBiPopup && selectedTreEmForPopup) {
@@ -700,13 +851,43 @@ const MultiLevelDropdown = () => {
         setShowThietBiForm(false);
         setEditingItem(null);
         resetThietBiForm();
-        alert('Cập nhật thiết bị thành công!');
+        setThietBiSuccess('Cập nhật thiết bị thành công!');
+        
+        // Auto hide success message after 3 seconds
+        setTimeout(() => setThietBiSuccess(''), 3000);
       } else {
-        alert('Lỗi khi cập nhật thiết bị: ' + response.message);
+        // Handle specific error cases
+        if (response.message) {
+          if (response.message.includes('Mã thiết bị đã tồn tại')) {
+            setThietBiError('Mã thiết bị này đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.');
+          } else {
+            setThietBiError('Lỗi khi cập nhật thiết bị: ' + response.message);
+          }
+        } else {
+          setThietBiError('Lỗi khi cập nhật thiết bị: ' + (response.error || 'Không xác định'));
+        }
       }
     } catch (error) {
       console.error('Error updating thiet bi:', error);
-      alert('Lỗi khi cập nhật thiết bị');
+      
+      // Handle different types of errors
+      if (error.response && error.response.data) {
+        const errorData = error.response.data;
+        
+        if (errorData.message) {
+          if (errorData.message.includes('Mã thiết bị đã tồn tại')) {
+            setThietBiError('Mã thiết bị này đã tồn tại trong hệ thống. Vui lòng sử dụng mã khác.');
+          } else {
+            setThietBiError('Lỗi khi cập nhật thiết bị: ' + errorData.message);
+          }
+        } else if (errorData.error) {
+          setThietBiError('Lỗi khi cập nhật thiết bị: ' + errorData.error);
+        } else {
+          setThietBiError('Lỗi khi cập nhật thiết bị: ' + error.message);
+        }
+      } else {
+        setThietBiError('Lỗi khi cập nhật thiết bị: ' + error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -779,6 +960,14 @@ const MultiLevelDropdown = () => {
       dia_chi: '',
       mat_khau: ''
     });
+    setPasswordRequirements({
+      length: false,
+      uppercase: false,
+      lowercase: false,
+      number: false,
+      specialChar: false
+    });
+    setShowPasswordInForm(false);
     setPhoneError('');
   };
 
@@ -798,6 +987,8 @@ const MultiLevelDropdown = () => {
       loai_thiet_bi: '',
       ma_thiet_bi: ''
     });
+    setThietBiError('');
+    setThietBiSuccess('');
   };
 
   const openEditForm = (type, item) => {
@@ -827,6 +1018,8 @@ const MultiLevelDropdown = () => {
         loai_thiet_bi: item.loai_thiet_bi || '',
         ma_thiet_bi: item.ma_thiet_bi || ''
       });
+      setThietBiError('');
+      setThietBiSuccess('');
       setShowThietBiForm(true);
     }
   };
@@ -1265,10 +1458,10 @@ const MultiLevelDropdown = () => {
         {/* Phụ huynh Filter System */}
         <div className="mb-6">
           <div className="bg-white rounded-lg p-4 shadow-sm border">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Bộ lọc phụ huynh</h3>
+            <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc phụ huynh</h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tên phụ huynh</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên phụ huynh</label>
                 <SearchableInput
                   value={phuHuynhFilters.ten}
                   onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, ten: value})}
@@ -1277,7 +1470,7 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Email</label>
                 <SearchableInput
                   value={phuHuynhFilters.email}
                   onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, email: value})}
@@ -1286,7 +1479,7 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Số điện thoại</label>
                 <SearchableInput
                   value={phuHuynhFilters.sdt}
                   onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, sdt: value})}
@@ -1295,7 +1488,7 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Loại tài khoản</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại tài khoản</label>
                 <select
                   value={phuHuynhFilters.loaiTaiKhoan}
                   onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, loaiTaiKhoan: e.target.value})}
@@ -1413,11 +1606,11 @@ const MultiLevelDropdown = () => {
                   </td>
                   <td className="px-4 py-4 text-center">
                     {isPremiumUser(phuHuynh) ? (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white shadow-md" style={{ background: 'linear-gradient(to right, #fbbf24, #f59e0b)' }}>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #fbbf24, #f59e0b)', color: '#ffffff' }}>
                         Premium
                       </span>
                     ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)' }}>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)', color: '#ffffff' }}>
                         Free
                       </span>
                     )}
@@ -1464,7 +1657,7 @@ const MultiLevelDropdown = () => {
 
 
         {filteredPhuHuynhList.length === 0 && !isLoading && (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12" style={{color: '#6b7280'}}>
             <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
             <h3 className="text-xl font-semibold mb-2">
               {phuHuynhList.length === 0 ? 'Chưa có phụ huynh nào' : 'Không tìm thấy kết quả phù hợp'}
@@ -1477,7 +1670,7 @@ const MultiLevelDropdown = () => {
             </p>
             {phuHuynhList.length > 0 && (
               <div className="mt-4 p-4 bg-yellow-50 rounded-lg border border-yellow-200 max-w-md mx-auto">
-                <div className="text-sm text-yellow-800">
+                <div className="text-sm" style={{color: '#92400e'}}>
                   <strong>Gợi ý:</strong> Kiểm tra lại điều kiện lọc:
                   <br />• Tên phụ huynh/trẻ em có đúng chính tả?
                   <br />• Lớp và trường có khớp với dữ liệu?
@@ -1493,7 +1686,7 @@ const MultiLevelDropdown = () => {
 
       {/* Trẻ em Popup */}
       {showTreEmPopup && selectedPhuHuynhForPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-green-50 to-green-100">
@@ -1502,13 +1695,13 @@ const MultiLevelDropdown = () => {
                   onClick={handleCloseTreEmPopup}
                   className="mr-4 p-2 rounded-lg hover:bg-green-200 transition-colors"
                 >
-                  <ArrowLeft className="w-5 h-5 text-green-600" />
+                  <ArrowLeft className="w-5 h-5" style={{color: '#16a34a'}} />
                 </button>
                 <div>
-                  <h2 className="text-2xl font-bold text-green-800">
+                  <h2 className="text-2xl font-bold" style={{color: '#166534'}}>
                     Trẻ em của {selectedPhuHuynhForPopup.ten_phu_huynh}
                   </h2>
-                  <p className="text-sm text-green-600">
+                  <p className="text-sm" style={{color: '#16a34a'}}>
                     Email: {selectedPhuHuynhForPopup.email_phu_huynh}
                   </p>
                 </div>
@@ -1517,16 +1710,16 @@ const MultiLevelDropdown = () => {
                 onClick={handleCloseTreEmPopup}
                 className="p-2 rounded-lg hover:bg-green-200 transition-colors"
               >
-                <X className="w-5 h-5 text-green-600" />
+                <X className="w-5 h-5" style={{color: '#16a34a'}} />
               </button>
             </div>
 
             {/* Filter Section */}
             <div className="p-6 border-b bg-gray-50">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Bộ lọc trẻ em</h3>
+              <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc trẻ em</h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tên trẻ em</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên trẻ em</label>
                   <SearchableInput
                     value={treEmFilters.ten}
                     onChange={(value) => setTreEmFilters({...treEmFilters, ten: value})}
@@ -1535,7 +1728,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lớp</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Lớp</label>
                   <SearchableInput
                     value={treEmFilters.lop}
                     onChange={(value) => setTreEmFilters({...treEmFilters, lop: value})}
@@ -1544,7 +1737,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Trường</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Trường</label>
                   <SearchableInput
                     value={treEmFilters.truong}
                     onChange={(value) => setTreEmFilters({...treEmFilters, truong: value})}
@@ -1553,7 +1746,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Giới tính</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Giới tính</label>
                   <SearchableInput
                     value={treEmFilters.gioiTinh}
                     onChange={(value) => setTreEmFilters({...treEmFilters, gioiTinh: value})}
@@ -1687,7 +1880,7 @@ const MultiLevelDropdown = () => {
 
       {/* Thiết bị Popup */}
       {showThietBiPopup && selectedTreEmForPopup && selectedPhuHuynhForPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-white bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
             {/* Header */}
             <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-purple-50 to-purple-100">
@@ -1696,13 +1889,13 @@ const MultiLevelDropdown = () => {
                   onClick={handleCloseThietBiPopup}
                   className="mr-4 p-2 rounded-lg hover:bg-purple-200 transition-colors"
                 >
-                  <ArrowLeft className="w-5 h-5 text-purple-600" />
+                  <ArrowLeft className="w-5 h-5" style={{color: '#9333ea'}} />
                 </button>
                 <div>
-                  <h2 className="text-2xl font-bold text-purple-800">
+                  <h2 className="text-2xl font-bold" style={{color: '#6b21a8'}}>
                     Thiết bị của {selectedTreEmForPopup.ten_tre} - {selectedPhuHuynhForPopup.ten_phu_huynh}
                   </h2>
-                  <p className="text-sm text-purple-600">
+                  <p className="text-sm" style={{color: '#9333ea'}}>
                     Trẻ em: {selectedTreEmForPopup.ten_tre} • Phụ huynh: {selectedPhuHuynhForPopup.ten_phu_huynh}
                   </p>
                 </div>
@@ -1711,16 +1904,16 @@ const MultiLevelDropdown = () => {
                 onClick={handleCloseThietBiPopup}
                 className="p-2 rounded-lg hover:bg-purple-200 transition-colors"
               >
-                <X className="w-5 h-5 text-purple-600" />
+                <X className="w-5 h-5" style={{color: '#9333ea'}} />
               </button>
             </div>
 
             {/* Filter Section */}
             <div className="p-6 border-b bg-gray-50">
-              <h3 className="text-lg font-semibold mb-4 text-gray-800">Bộ lọc thiết bị</h3>
+              <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc thiết bị</h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tên thiết bị</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên thiết bị</label>
                   <SearchableInput
                     value={thietBiFilters.tenThietBi}
                     onChange={(value) => setThietBiFilters({...thietBiFilters, tenThietBi: value})}
@@ -1729,7 +1922,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Loại thiết bị</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại thiết bị</label>
                   <SearchableInput
                     value={thietBiFilters.loaiThietBi}
                     onChange={(value) => setThietBiFilters({...thietBiFilters, loaiThietBi: value})}
@@ -1738,7 +1931,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mã thiết bị</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Mã thiết bị</label>
                   <SearchableInput
                     value={thietBiFilters.maThietBi}
                     onChange={(value) => setThietBiFilters({...thietBiFilters, maThietBi: value})}
@@ -1747,7 +1940,7 @@ const MultiLevelDropdown = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Gói dịch vụ</label>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Gói dịch vụ</label>
                   <SearchableInput
                     value={thietBiFilters.goiDichVu}
                     onChange={(value) => setThietBiFilters({...thietBiFilters, goiDichVu: value})}
@@ -1763,7 +1956,7 @@ const MultiLevelDropdown = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
-                  <span className="text-white text-lg font-bold">TB</span>
+                  <span className="text-lg font-bold" style={{color: '#ffffff'}}>TB</span>
                 </div>
               </div>
                 <div className="flex gap-2">
@@ -1788,11 +1981,11 @@ const MultiLevelDropdown = () => {
               <table className="w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                 <thead className="bg-gradient-to-r from-purple-50 to-purple-100">
                   <tr>
-                    <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">Thiết bị</th>
-                    <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider min-w-[120px]">Loại</th>
-                    <th className="px-4 py-4 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider min-w-[150px]">Mã thiết bị</th>
-                    <th className="px-4 py-4 text-center text-sm font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">Gói dịch vụ</th>
-                    <th className="px-4 py-4 text-center text-sm font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">Thao tác</th>
+                    <th className="px-4 py-4 text-left text-sm font-semibold uppercase tracking-wider min-w-[200px]" style={{color: '#374151'}}>Thiết bị</th>
+                    <th className="px-4 py-4 text-left text-sm font-semibold uppercase tracking-wider min-w-[120px]" style={{color: '#374151'}}>Loại</th>
+                    <th className="px-4 py-4 text-left text-sm font-semibold uppercase tracking-wider min-w-[150px]" style={{color: '#374151'}}>Mã thiết bị</th>
+                    <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[200px]" style={{color: '#374151'}}>Gói dịch vụ</th>
+                    <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[200px]" style={{color: '#374151'}}>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: '#ffffff', borderTopColor: '#e5e7eb' }}>
@@ -1803,39 +1996,39 @@ const MultiLevelDropdown = () => {
                         <td className="px-4 py-4">
                                               <div className="flex items-center">
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-4 shadow-md">
-                              <span className="text-white text-sm font-bold">TB</span>
+                              <span className="text-sm font-bold" style={{color: '#ffffff'}}>TB</span>
                                                 </div>
                                                 <div>
-                              <div className="text-base font-semibold text-gray-900">
+                              <div className="text-base font-semibold" style={{color: '#111827'}}>
                                                     {thietBi.ten_thiet_bi || 'Chưa đặt tên'}
                                                       </div>
-                              <div className="text-sm text-gray-500">ID: {thietBi.nguoi_dung_id}</div>
+                              <div className="text-sm" style={{color: '#6b7280'}}>ID: {thietBi.nguoi_dung_id}</div>
                                                     </div>
                                                 </div>
                         </td>
                         <td className="px-4 py-4">
-                          <div className="text-sm text-gray-900 font-medium">{thietBi.loai_thiet_bi || 'Chưa xác định'}</div>
-                          <div className="text-xs text-gray-500">Loại thiết bị</div>
+                          <div className="text-sm font-medium" style={{color: '#111827'}}>{thietBi.loai_thiet_bi || 'Chưa xác định'}</div>
+                          <div className="text-xs" style={{color: '#6b7280'}}>Loại thiết bị</div>
                         </td>
                         <td className="px-4 py-4">
-                          <div className="text-sm text-gray-900 font-medium font-mono">{thietBi.ma_thiet_bi || 'Chưa có mã'}</div>
-                          <div className="text-xs text-gray-500">Mã định danh</div>
+                          <div className="text-sm font-medium font-mono" style={{color: '#111827'}}>{thietBi.ma_thiet_bi || 'Chưa có mã'}</div>
+                          <div className="text-xs" style={{color: '#6b7280'}}>Mã định danh</div>
                         </td>
                         <td className="px-4 py-4 text-center">
                           {activeGoi && activeGoi.thongTinGoi && activeGoi.thong_tin_goi_id ? (
                             <div className="inline-flex flex-col items-center">
-                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white shadow-md mb-1" style={{ background: 'linear-gradient(to right, #4ade80, #22c55e)' }}>
+                              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md mb-1" style={{ background: 'linear-gradient(to right, #4ade80, #22c55e)', color: '#ffffff' }}>
                                 {activeGoi.thongTinGoi.ten}
                               </span>
-                              <div className="text-xs text-gray-600">
+                              <div className="text-xs" style={{color: '#4b5563'}}>
                                 {formatPrice(activeGoi.thongTinGoi.gia)}
                                               </div>
-                              <div className="text-xs text-gray-500">
+                              <div className="text-xs" style={{color: '#6b7280'}}>
                                 {new Date(activeGoi.ngay_bat_dau).toLocaleDateString('vi-VN')} - {new Date(activeGoi.ngay_ket_thuc).toLocaleDateString('vi-VN')}
                               </div>
                             </div>
                           ) : (
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)' }}>
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)', color: '#ffffff' }}>
                               Chưa có gói
                             </span>
                           )}
@@ -1868,14 +2061,16 @@ const MultiLevelDropdown = () => {
                                                     setSelectedThietBiForGoi(thietBi);
                                                     setShowGoiManagement(true);
                                                   }}
-                              className="text-purple-600 hover:text-purple-800 text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-purple-200 hover:bg-purple-50 transition-all font-medium flex items-center min-w-fit bg-white shadow-sm"
+                              className="text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border transition-all font-medium flex items-center min-w-fit bg-white shadow-sm"
+                              style={{ color: '#9333ea', borderColor: '#d8b4fe', backgroundColor: '#ffffff' }}
                                                 >
                                                   <Calendar className="w-3 h-3 mr-1 flex-shrink-0" />
                                                   <span className="hidden sm:inline">Quản lý gói</span>
                                                 </button>
                                                 <button
                                                   onClick={() => handleDeleteThietBi(thietBi.nguoi_dung_id)}
-                              className="text-red-600 hover:text-red-800 text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-red-200 hover:bg-red-50 transition-all font-medium flex items-center min-w-fit bg-white shadow-sm"
+                              className="text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border transition-all font-medium flex items-center min-w-fit bg-white shadow-sm"
+                              style={{ color: '#dc2626', borderColor: '#fecaca', backgroundColor: '#ffffff' }}
                                                 >
                                                   <Trash2 className="w-3 h-3 mr-1" />
                                                   Xóa
@@ -1898,7 +2093,7 @@ const MultiLevelDropdown = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">Xác thực mật khẩu</h3>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm mb-4" style={{color: '#4b5563'}}>
               Nhập mật khẩu để xem mật khẩu của phụ huynh
             </p>
             <div className="mb-4">
@@ -1946,7 +2141,7 @@ const MultiLevelDropdown = () => {
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tên phụ huynh</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên phụ huynh</label>
                 <input
                   type="text"
                   value={phuHuynhForm.ten_phu_huynh}
@@ -1955,7 +2150,7 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Email</label>
                 <input
                   type="email"
                   value={phuHuynhForm.email_phu_huynh}
@@ -1964,7 +2159,7 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Số điện thoại</label>
                 <input
                   type="tel"
                   value={phuHuynhForm.sdt}
@@ -1988,16 +2183,59 @@ const MultiLevelDropdown = () => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>
                   Mật khẩu {editingItem ? '(để trống nếu không muốn đổi)' : '*'}
                 </label>
-                <input
-                  type="password"
-                  value={phuHuynhForm.mat_khau}
-                  onChange={(e) => setPhuHuynhForm({...phuHuynhForm, mat_khau: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder={editingItem ? "Nhập mật khẩu mới (tùy chọn)" : "Nhập mật khẩu"}
-                />
+                <div className="relative">
+                  <input
+                    type={showPasswordInForm ? "text" : "password"}
+                    value={phuHuynhForm.mat_khau}
+                    onChange={(e) => {
+                      setPhuHuynhForm({...phuHuynhForm, mat_khau: e.target.value});
+                      validatePasswordRequirements(e.target.value);
+                    }}
+                    className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder={editingItem ? "Nhập mật khẩu mới (tùy chọn)" : "Nhập mật khẩu"}
+                  />
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    onClick={() => setShowPasswordInForm(!showPasswordInForm)}
+                  >
+                    {showPasswordInForm ? (
+                      <EyeOff className="h-4 w-4" style={{color: '#9ca3af'}} />
+                    ) : (
+                      <Eye className="h-4 w-4" style={{color: '#9ca3af'}} />
+                    )}
+                  </button>
+                </div>
+                
+                {/* Password Requirements - only show if password is being entered */}
+                {phuHuynhForm.mat_khau && (
+                  <div className="mt-3 p-3 rounded-md space-y-2" style={{backgroundColor: '#f9fafb'}}>
+                    <p className="text-sm font-medium" style={{color: '#374151'}}>Yêu cầu mật khẩu:</p>
+                    <RequirementItem 
+                      met={passwordRequirements.length} 
+                      text="Ít nhất 6 ký tự" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.uppercase} 
+                      text="Có ít nhất 1 chữ in hoa (A-Z)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.lowercase} 
+                      text="Có ít nhất 1 chữ in thường (a-z)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.number} 
+                      text="Có ít nhất 1 chữ số (0-9)" 
+                    />
+                    <RequirementItem 
+                      met={passwordRequirements.specialChar} 
+                      text="Có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)" 
+                    />
+                  </div>
+                )}
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
@@ -2121,6 +2359,31 @@ const MultiLevelDropdown = () => {
             <h3 className="text-lg font-semibold mb-4">
               {editingItem ? 'Sửa thiết bị' : 'Thêm thiết bị mới'}
             </h3>
+            
+            {/* Error Message */}
+            {thietBiError && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  {thietBiError}
+                </div>
+              </div>
+            )}
+            
+            {/* Success Message */}
+            {thietBiSuccess && (
+              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  {thietBiSuccess}
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tên thiết bị</label>

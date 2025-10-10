@@ -20,7 +20,7 @@ const DownloadSection = () => {
     };
 
     return (
-        <div className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'white' }}>
+        <div className="py-24 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#ffffff' }}>
             <div className="max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
