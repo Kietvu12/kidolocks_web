@@ -3,6 +3,16 @@
   height: 100vh;
   overflow-x: auto;
 }
+@font-face {
+  font-family: 'BoldFont';
+  src: url('./assets/Baloo_Bhaijaan_2/static/BalooBhaijaan2-Bold.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'BoldFont', sans-serif;
+}
 
 * {
   box-sizing: border-box;
