@@ -1,17 +1,20 @@
 import React from 'react'
+import { useLanguage } from '../contexts/LanguageContext'
 import group2 from '../assets/group_2.png'
 
 const ProtectionSection = () => {
+    const { t } = useLanguage();
+    
     return (
-        <div className="py-8 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Main Content */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                     {/* Left Side - Text Content */}
                     <div className="order-2 lg:order-1">
                         <div className="space-y-8">
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 uppercase tracking-wide border-b border-gray-600 pb-2">
-                                BẢO VỆ CON BẠN KHỎI NHỮNG TRẢI NGHIỆM TIÊU CỰC
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 uppercase tracking-wide border-b border-gray-600 pb-2" style={{ fontFamily: 'Myriad Pro' }}>
+                                {t('protectionTitle')}
                             </h2>
                             
                             <div className="space-y-6">
@@ -21,8 +24,8 @@ const ProtectionSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl text-gray-700 leading-relaxed">
-                                        Ngăn chặn các truy cập độc hại với tính năng <span className="font-semibold">Hạn chế tìm kiếm</span>
+                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ fontFamily: 'Myriad Pro' }}>
+                                        {t('protectionFeature1')}
                                     </p>
                                 </div>
 
@@ -32,8 +35,8 @@ const ProtectionSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl text-gray-700 leading-relaxed">
-                                        Ẩn các kết quả tìm kiếm, nội dung tiêu cực, gây ảnh hưởng xấu đến tâm lý trẻ
+                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ fontFamily: 'Myriad Pro' }}>
+                                        {t('protectionFeature2')}
                                     </p>
                                 </div>
                             </div>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -21,10 +22,11 @@ import './App.css'
 
 function App() {
   return (
-    <AuthProvider>
-      <Router basename="/">
-        <div className="App">
-          <Routes>
+    <LanguageProvider>
+      <AuthProvider>
+        <Router basename="/">
+          <div className="App">
+            <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -144,6 +146,7 @@ function App() {
         </div>
       </Router>
     </AuthProvider>
+  </LanguageProvider>
   )
 }
 

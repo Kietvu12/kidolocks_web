@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const { sendResetPasswordOTP, resetPassword } = useAuth();
+  const { t } = useLanguage();
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Reset Password
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
@@ -77,17 +79,17 @@ const ResetPasswordPage = () => {
 
   const validatePassword = () => {
     if (!formData.newPassword || !formData.confirmPassword) {
-      setError('Vui lòng điền đầy đủ thông tin');
+      setError(t('fillAllFields'));
       return false;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setError(t('confirmPwdNotMatch'));
       return false;
     }
 
     if (!isPasswordValid()) {
-      setError('Mật khẩu chưa đáp ứng yêu cầu bảo mật');
+      setError(t('pwdNotMeet'));
       return false;
     }
 
@@ -96,7 +98,7 @@ const ResetPasswordPage = () => {
 
   const handleSendOTP = async () => {
     if (!formData.phone) {
-      setError('Vui lòng nhập số điện thoại');
+      setError(t('enterRegisteredPhone'));
       return;
     }
 
@@ -108,7 +110,7 @@ const ResetPasswordPage = () => {
       const result = await sendResetPasswordOTP(formData.phone);
       
       if (result.success) {
-        setMessage('Mã OTP đã được gửi đến số điện thoại của bạn');
+        setMessage(t('otpSent'));
         // Trong development, hiển thị OTP để test
         if (result.data && result.data.otp) {
         }
@@ -131,7 +133,7 @@ const ResetPasswordPage = () => {
     }
 
     if (!formData.otp) {
-      setError('Vui lòng nhập mã OTP');
+      setError(t('enterOTP'));
       return;
     }
 
@@ -143,7 +145,7 @@ const ResetPasswordPage = () => {
       const result = await resetPassword(formData.phone, formData.otp, formData.newPassword);
       
       if (result.success) {
-        setMessage('Đặt lại mật khẩu thành công!');
+        setMessage(t('resetPasswordTitle'));
         setLoading(false);
         setRedirecting(true);
         setTimeout(() => {
@@ -168,18 +170,8 @@ const ResetPasswordPage = () => {
             alt="KidsLock" 
             className="mx-auto h-16 w-auto"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Đặt lại mật khẩu
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Hoặc{' '}
-            <button
-              onClick={() => navigate('/login')}
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              quay lại đăng nhập
-            </button>
-          </p>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{t('resetPwdHeader')}</h2>
+          <p className="mt-2 text-center text-sm text-gray-600">{t('orText')}{' '}<button onClick={() => navigate('/login')} className="font-medium text-blue-600 hover:text-blue-500">{t('backToLogin')}</button></p>
         </div>
       </div>
 
@@ -193,7 +185,7 @@ const ResetPasswordPage = () => {
               }`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Xác thực</span>
+              <span className="ml-2 text-sm font-medium">{t('verifyStep')}</span>
             </div>
             <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
             <div className={`flex items-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
@@ -202,7 +194,7 @@ const ResetPasswordPage = () => {
               }`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Đặt mật khẩu</span>
+              <span className="ml-2 text-sm font-medium">{t('resetPasswordTitle')}</span>
             </div>
           </div>
 
@@ -223,9 +215,7 @@ const ResetPasswordPage = () => {
           {step === 1 && (
             <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSendOTP(); }}>
               <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                  Số điện thoại đã đăng ký
-                </label>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700">{t('phoneRegistered')}</label>
                 <div className="mt-1">
                   <input
                     id="phone"
@@ -235,12 +225,10 @@ const ResetPasswordPage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập số điện thoại đã đăng ký"
+                    placeholder={t('enterRegisteredPhone')}
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Chúng tôi sẽ gửi mã OTP đến số điện thoại này để xác thực
-                </p>
+                <p className="mt-1 text-xs text-gray-500">{t('weWillSendOTP')}</p>
               </div>
 
               <div>
@@ -249,7 +237,7 @@ const ResetPasswordPage = () => {
                   disabled={loading}
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang gửi OTP...' : 'Gửi mã OTP'}
+                  {loading ? t('sendingOTP') : t('sendOTP')}
                 </button>
               </div>
             </form>
@@ -259,16 +247,12 @@ const ResetPasswordPage = () => {
           {step === 2 && (
             <form className="space-y-6" onSubmit={handleResetPassword}>
               <div className="text-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">Xác thực số điện thoại</h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  Mã OTP đã được gửi đến số điện thoại: <strong>{formData.phone}</strong>
-                </p>
+                <h3 className="text-lg font-medium text-gray-900">{t('verifyingPhone')}</h3>
+                <p className="mt-2 text-sm text-gray-600">{t('otpSentTo')} <strong>{formData.phone}</strong></p>
               </div>
 
               <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                  Mã OTP
-                </label>
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">{t('otpCode')}</label>
                 <div className="mt-1">
                   <input
                     id="otp"
@@ -278,19 +262,15 @@ const ResetPasswordPage = () => {
                     value={formData.otp}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center text-lg tracking-widest"
-                    placeholder="Nhập mã OTP"
+                    placeholder={t('otpPlaceholder')}
                     maxLength="6"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Mã OTP có hiệu lực trong 5 phút
-                </p>
+                <p className="mt-1 text-xs text-gray-500">{t('otpValidFor')}</p>
               </div>
 
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  Mật khẩu mới
-                </label>
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">{t('newPassword')}</label>
                 <div className="mt-1 relative">
                   <input
                     id="newPassword"
@@ -301,7 +281,7 @@ const ResetPasswordPage = () => {
                     value={formData.newPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập mật khẩu mới"
+                    placeholder={t('newPassword')}
                   />
                   <button
                     type="button"
@@ -319,35 +299,33 @@ const ResetPasswordPage = () => {
                 {/* Password Requirements */}
                 {formData.newPassword && (
                   <div className="mt-3 p-3 rounded-md space-y-2" style={{backgroundColor: '#f9fafb'}}>
-                    <p className="text-sm font-medium" style={{color: '#374151'}}>Yêu cầu mật khẩu:</p>
+                    <p className="text-sm font-medium" style={{color: '#374151'}}>{t('passwordRequirementsTitle')}</p>
                     <RequirementItem 
                       met={passwordRequirements.length} 
-                      text="Ít nhất 6 ký tự" 
+                      text={t('reqAtLeast6')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.uppercase} 
-                      text="Có ít nhất 1 chữ in hoa (A-Z)" 
+                      text={t('reqUpper')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.lowercase} 
-                      text="Có ít nhất 1 chữ in thường (a-z)" 
+                      text={t('reqLower')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.number} 
-                      text="Có ít nhất 1 chữ số (0-9)" 
+                      text={t('reqNumber')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.specialChar} 
-                      text="Có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)" 
+                      text={t('reqSpecial')} 
                     />
                   </div>
                 )}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Xác nhận mật khẩu mới
-                </label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">{t('confirmNewPassword')}</label>
                 <div className="mt-1 relative">
                   <input
                     id="confirmPassword"
@@ -358,7 +336,7 @@ const ResetPasswordPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập lại mật khẩu mới"
+                    placeholder={t('confirmNewPassword')}
                   />
                   <button
                     type="button"
@@ -380,14 +358,14 @@ const ResetPasswordPage = () => {
                   onClick={() => setStep(1)}
                   className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Quay lại
+                  {t('back')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
                   className="flex-1 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang đặt lại...' : 'Đặt lại mật khẩu'}
+                  {loading ? t('resetting') : t('resetPasswordButton')}
                 </button>
               </div>
             </form>
@@ -399,7 +377,7 @@ const ResetPasswordPage = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Hoặc</span>
+                <span className="px-2 bg-white text-gray-500">{t('orText')}</span>
               </div>
             </div>
 
@@ -408,7 +386,7 @@ const ResetPasswordPage = () => {
                 onClick={() => navigate('/login')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
-                Quay lại đăng nhập
+                {t('backToLogin')}
               </button>
             </div>
           </div>
@@ -416,10 +394,7 @@ const ResetPasswordPage = () => {
       </div>
       
       {/* Loading Overlay */}
-      <LoadingOverlay 
-        isVisible={redirecting} 
-        message="Đặt lại mật khẩu thành công!" 
-      />
+      <LoadingOverlay isVisible={redirecting} message={t('resetPwdHeader')} />
     </div>
   );
 };

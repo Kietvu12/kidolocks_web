@@ -1,15 +1,18 @@
 import React from 'react'
+import { useLanguage } from '../contexts/LanguageContext'
 import group1 from '../assets/group_1.png'
 
 const FeaturesSection = () => {
+    const { t } = useLanguage();
+    
     return (
-        <div className="py-8 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'white' }}>
+        <div className="mt-32 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Main Title */}
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-tight">
-                        <div className="font-thin" style={{ color: '#111827' }}>Tất cả tính năng kiểm soát mà</div>
-                        <div className="font-bold" style={{ color: '#2563EB' }}>phụ huynh cần</div>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-tight" style={{ fontFamily: 'Myriad Pro' }}>
+                        <div className="font-thin" style={{ color: '#111827', fontFamily: 'Myriad Pro' }}>{t('featuresTitle1')}</div>
+                        <div className="font-bold" style={{ color: '#2563EB', fontFamily: 'Myriad Pro' }}>{t('featuresTitle2')}</div>
                     </h2>
                 </div>
 
@@ -23,7 +26,7 @@ const FeaturesSection = () => {
                                 <img
                                     src={group1}
                                     alt="Child using smartphone"
-                                    className="w-full max-w-lg lg:max-w-xl h-auto"
+                                    className="w-full max-w-lg lg:max-w-xl h-full"
                                 />
                             </div>
                         </div>
@@ -32,8 +35,8 @@ const FeaturesSection = () => {
                     {/* Right Side - Features List */}
                     <div className="order-1 lg:order-2">
                         <div className="space-y-8">
-                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide pb-2" style={{ color: '#111827', borderBottom: '1px solid #4B5563' }}>
-                                Theo dõi con bạn với đa dạng thiết bị
+                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide pb-2" style={{ color: '#111827', borderBottom: '1px solid #4B5563', fontFamily: 'Myriad Pro' }}>
+                                {t('featuresSubtitle')}
                             </h3>
                             
                             <div className="space-y-6">
@@ -43,8 +46,8 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151' }}>
-                                        Tích hợp đồng bộ từ đa dạng <span className="font-semibold">nền tảng</span>, hệ điều hành
+                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                        {t('feature1')}
                                     </p>
                                 </div>
 
@@ -54,8 +57,8 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151' }}>
-                                        Dữ liệu trực quan hóa, dễ hiểu, dễ theo dõi
+                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                        {t('feature2')}
                                     </p>
                                 </div>
 
@@ -65,8 +68,8 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151' }}>
-                                        Dễ dàng quản lý kiểm soát với <span className="font-semibold">cảnh báo hệ thống</span> đến mọi thiết bị
+                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                        {t('feature3')}
                                     </p>
                                 </div>
                             </div>

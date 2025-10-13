@@ -22,7 +22,8 @@ const GoiManagementPage = () => {
     mo_ta: '',
     gia: '',
     loai_goi: 'MIEN_PHI',
-    thoi_han_thang: 1
+    thoi_han_thang: 1,
+    so_thiet_bi: ''
   });
 
   const [noiDungForm, setNoiDungForm] = useState({
@@ -195,7 +196,8 @@ const GoiManagementPage = () => {
       mo_ta: '',
       gia: '',
       loai_goi: 'MIEN_PHI',
-      thoi_han_thang: 1
+      thoi_han_thang: 1,
+      so_thiet_bi: ''
     });
   };
 
@@ -212,7 +214,8 @@ const GoiManagementPage = () => {
       mo_ta: goi.mo_ta || '',
       gia: goi.gia || '',
       loai_goi: goi.loai_goi || 'MIEN_PHI',
-      thoi_han_thang: goi.thoi_han_thang || 1
+      thoi_han_thang: goi.thoi_han_thang || 1,
+      so_thiet_bi: goi.so_thiet_bi || ''
     });
     setShowGoiForm(true);
   };
@@ -331,6 +334,10 @@ const GoiManagementPage = () => {
                     <span className="font-medium text-green-600">{formatPrice(goi.gia)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Số thiết bị:</span>
+                    <span className="font-medium text-blue-600">{goi.so_thiet_bi || '-'}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Loại:</span>
                     <span className={`font-medium ${
                       goi.loai_goi === 'TRA_PHI' ? 'text-orange-600' : 'text-green-600'
@@ -422,6 +429,17 @@ const GoiManagementPage = () => {
                   onChange={(e) => setGoiForm({...goiForm, gia: e.target.value})}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Số thiết bị</label>
+                <input
+                  type="number"
+                  value={goiForm.so_thiet_bi}
+                  onChange={(e) => setGoiForm({...goiForm, so_thiet_bi: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  min="1"
+                  placeholder="Ví dụ: 1, 3, 5"
                 />
               </div>
               <div>

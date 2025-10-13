@@ -66,7 +66,7 @@ class GoiController {
   // Tạo gói dịch vụ mới
   static async createGoi(req, res) {
     try {
-      const { ten, mo_ta, gia, loai_goi, thoi_han_thang, noi_dung_list } = req.body;
+      const { ten, mo_ta, gia, loai_goi, thoi_han_thang, so_thiet_bi, noi_dung_list } = req.body;
 
       // Tạo gói dịch vụ
       const newGoi = await ThongTinGoi.create({
@@ -74,7 +74,8 @@ class GoiController {
         mo_ta,
         gia,
         loai_goi,
-        thoi_han_thang
+        thoi_han_thang,
+        so_thiet_bi
       });
 
       // Tạo các nội dung gói nếu có
@@ -115,7 +116,7 @@ class GoiController {
   static async updateGoi(req, res) {
     try {
       const { id } = req.params;
-      const { ten, mo_ta, gia, loai_goi, thoi_han_thang } = req.body;
+      const { ten, mo_ta, gia, loai_goi, thoi_han_thang, so_thiet_bi } = req.body;
 
       const goi = await ThongTinGoi.findByPk(id);
       if (!goi) {
@@ -132,6 +133,7 @@ class GoiController {
       if (gia) updateData.gia = gia;
       if (loai_goi) updateData.loai_goi = loai_goi;
       if (thoi_han_thang) updateData.thoi_han_thang = thoi_han_thang;
+      if (so_thiet_bi) updateData.so_thiet_bi = so_thiet_bi;
 
       await goi.update(updateData);
 

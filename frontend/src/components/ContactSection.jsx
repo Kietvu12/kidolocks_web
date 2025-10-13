@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import kilovia from '../assets/kilovia.png';
 import kidolocks from '../assets/kidolocks.png';
 import huce from '../assets/huce.png';
 import rdsic from '../assets/rdsic.png';
+import footerBg from '../assets/footer.png';
 
 const ContactSection = () => {
     const [email, setEmail] = useState('');
+    const { t } = useLanguage();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -15,23 +18,26 @@ const ContactSection = () => {
     };
 
     return (
-        <div className="relative overflow-hidden" style={{background: 'linear-gradient(to bottom, #60a5fa, #2dd4bf, #3b82f6)'}}>
-            {/* Background Pattern */}
-            <div className="absolute inset-0" style={{backgroundColor: 'rgba(0, 0, 0, 0.1)'}}></div>
-            
-            <div className="relative z-10 py-16 px-4 sm:px-6 lg:px-8">
+        <div className="relative flex items-center justify-center" style={{
+            backgroundImage: `url(${footerBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center -20%',
+            backgroundRepeat: 'no-repeat',
+            minHeight: '100vh'
+        }}>
+            <div className="relative z-10 pt-72 sm:pt-56 md:pt-60 lg:pt-56 xl:pt-60 pb-16 px-4 sm:px-6 lg:px-8 w-full">
                 <div className="mx-auto">
                     {/* Header Section */}
                     <div className="flex flex-col lg:flex-row items-center justify-between mb-16">
-                        <div className="text-center lg:text-left mb-8 lg:mb-0">
+                        <div className="text-center lg:text-left mb-8 lg:mb-0 hidden lg:block">
                             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase mb-4" style={{color: 'white'}}>
-                                HÃY ĐỂ CHÚNG TÔI LIÊN LẠC VỚI BẠN
+                                {t('contactTitle')}
                             </h1>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-4">
                             <input
                                 type="email"
-                                placeholder="nhập email của bạn"
+                                placeholder={t('emailPlaceholder')}
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="px-6 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 min-w-[300px] sm:min-w-[400px]"
@@ -44,7 +50,7 @@ const ContactSection = () => {
                                 onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                                 onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
                             >
-                                GỬI
+                                {t('send')}
                             </button>
                         </div>
                     </div>
@@ -54,40 +60,40 @@ const ContactSection = () => {
                         {/* Left Section - RDSIC Training System */}
                         <div>
                             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase mb-4" style={{color: 'white'}}>
-                                HỆ THỐNG ĐÀO TẠO RDSIC
+                                {t('rdsicTitle')}
                             </h2>
                             <p className="text-lg mb-8" style={{color: 'white'}}>
-                                Thương hiệu thuộc Viện Tin Học Xây Dựng, Trường Đại Học Xây Dựng Hà Nội
+                                {t('rdsicSubtitle')}
                             </p>
                             
                             <div className="space-y-2">
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Trụ sở chính</span>
-                                        <span className="hidden sm:inline">Trụ sở chính :</span>
+                                        <span className="sm:hidden">{t('mainOffice')}</span>
+                                        <span className="hidden sm:inline">{t('mainOffice')}</span>
                                     </span>
-                                    <span>Phòng 901B nhà Thí Nghiệm, Trường Đại học Xây Dựng Hà Nội, số 55 Giải Phóng, Hà Nội</span>
+                                    <span>{t('addressMainValue')}</span>
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Địa chỉ đào tạo 2</span>
-                                        <span className="hidden sm:inline">Địa chỉ đào tạo 2 :</span>
+                                        <span className="sm:hidden">{t('trainingAddress2')}</span>
+                                        <span className="hidden sm:inline">{t('trainingAddress2')}</span>
                                     </span>
-                                    <span>Khu vực trường Kiến Trúc - Văn Quán, Hà Đông, Hà Nội</span>
+                                    <span>{t('address2Value')}</span>
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Địa chỉ đào tạo 3</span>
-                                        <span className="hidden sm:inline">Địa chỉ đào tạo 3 :</span>
+                                        <span className="sm:hidden">{t('trainingAddress3')}</span>
+                                        <span className="hidden sm:inline">{t('trainingAddress3')}</span>
                                     </span>
-                                    <span>Trung Tâm Bồi Dưỡng Chính Trị Quận Phú Nhuận - Số 178 Đường Lê Văn Sỹ, P.10, Q. Phú Nhuận, TPHCM</span>
+                                    <span>{t('address3Value')}</span>
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Địa chỉ đào tạo 4</span>
-                                        <span className="hidden sm:inline">Địa chỉ đào tạo 4 :</span>
+                                        <span className="sm:hidden">{t('trainingAddress4')}</span>
+                                        <span className="hidden sm:inline">{t('trainingAddress4')}</span>
                                     </span>
-                                    <span>Trường Cao Đẳng Xây Dựng TPHCM, SỐ 190, Võ Văn Ngân, P.Linh Chiểu, Q. Thủ Đức, TPHCM</span>
+                                    <span>{t('address4Value')}</span>
                                 </div>
                             </div>
                         </div>
@@ -95,14 +101,14 @@ const ContactSection = () => {
                         {/* Right Section - Contact Information */}
                         <div>
                             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase mb-8" style={{color: 'white'}}>
-                                THÔNG TIN LIÊN HỆ
+                                {t('contactInfo')}
                             </h2>
                             
                             <div className="space-y-2">
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-20 sm:w-24 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Hotline</span>
-                                        <span className="hidden sm:inline">Hotline :</span>
+                                        <span className="sm:hidden">{t('hotline')}</span>
+                                        <span className="hidden sm:inline">{t('hotline')}</span>
                                     </span>
                                     <span>0989 427 809</span>
                                 </div>
@@ -112,15 +118,15 @@ const ContactSection = () => {
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-20 sm:w-24 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Email</span>
-                                        <span className="hidden sm:inline">Email :</span>
+                                        <span className="sm:hidden">{t('email')}</span>
+                                        <span className="hidden sm:inline">{t('email')}</span>
                                     </span>
                                     <span>admin@rdsic.edu.vn</span>
                                 </div>
                                 <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
                                     <span className="font-medium w-20 sm:w-24 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">Website</span>
-                                        <span className="hidden sm:inline">Website :</span>
+                                        <span className="sm:hidden">{t('website')}</span>
+                                        <span className="hidden sm:inline">{t('website')}</span>
                                     </span>
                                     <span>rdsic.edu.vn</span>
                                 </div>
@@ -133,7 +139,7 @@ const ContactSection = () => {
                         {/* Left - Products */}
                         <div className="mb-8 lg:mb-0">
                             <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold uppercase mb-6" style={{color: 'white'}}>
-                                SẢN PHẨM
+                                {t('products')}
                             </h3>
                             <div className="flex flex-col sm:flex-row gap-6">
                                 <div className="flex items-center space-x-3">
@@ -170,7 +176,7 @@ const ContactSection = () => {
                                 />
                             </div>
                             <p className="text-sm" style={{color: 'white'}}>
-                                @2025 RDSIC ALL RIGHTS RESERVED
+                                {t('copyright')}
                             </p>
                         </div>
                     </div>

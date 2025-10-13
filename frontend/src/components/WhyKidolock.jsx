@@ -1,54 +1,64 @@
 import React from 'react'
+import { useLanguage } from '../contexts/LanguageContext'
 import componentSlide1 from '../assets/component_slide_1.png'
 import componentSlide2 from '../assets/component_slide_2.png'
 import componentSlide3 from '../assets/component_slide_3.png'
 
 const WhyKidolock = () => {
+    const { t } = useLanguage();
     const features = [
         {
-            title: "THEO DÕI",
-            content: "Phần mềm quản lý trẻ em trên điện thoại và máy tính giúp bạn biết con bạn đang ở đâu 24/7, theo dõi hoạt động kỹ thuật số và thời gian sử dụng thiết bị của các con, đồng thời nhận cảnh báo về những hành vi đáng lo ngại.",
+            title: t('trackTitle'),
+            content: t('trackContent'),
             image: componentSlide1
         },
         {
-            title: "GIÁO DỤC", 
-            content: "Nuôi dưỡng những thói quen tích cực bằng cách dạy về an toàn kỹ thuật số và khuyến khích việc cân bằng hoạt động giữa trực tuyến và ngoại tuyến",
+            title: t('educateTitle'), 
+            content: t('educateContent'),
             image: componentSlide2
         },
         {
-            title: "BẢO VỆ",
-            content: "Bảo vệ con bạn khỏi những trải nghiệm tiêu cực trên các thiết bị bằng cách chặn nội dung độc hại.",
+            title: t('protectTitle'),
+            content: t('protectContent'),
             image: componentSlide3
         }
     ]
 
     return (
-        <div className="py-24 sm:px-6 lg:px-8" style={{ backgroundColor: 'white' }}>
+        <div className="py-32 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
+                {/* Title Section - Mobile/Tablet */}
+                <div className="block lg:hidden text-center mb-16">
+                    <h2 className="leading-tight" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
+                        <div className="text-lg sm:text-xl md:text-2xl font-light" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>{t('whyTitle1')}</div>
+                        <div className="text-4xl sm:text-5xl md:text-6xl font-bold" style={{ background: 'linear-gradient(to right, #10B981, #3B82F6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
+                    </h2>
+                </div>
+
                 {/* Main Content Container */}
                 <div className="relative min-h-[40rem]">
                     {/* Images Section - Shifted to left */}
-                    <div className="flex items-center justify-start lg:justify-start">
+                    <div className="flex items-center justify-center lg:justify-start">
                     {/* Mobile/Tablet Layout - Text outside image */}
                     <div className="block lg:hidden">
-                        <div className="space-y-8">
+                        <div className="space-y-8 px-4">
                             {features.map((feature, index) => (
                                 <div key={index} className="flex flex-col items-center">
                                     {/* Image Section */}
-                                    <div className="relative h-[20rem] sm:h-[24rem] md:h-[28rem] w-full mb-6">
+                                    <div className="relative h-[20rem] sm:h-[22rem] md:h-[24rem] w-full mb-6">
                                         <img
                                             src={feature.image}
                                             alt={feature.title}
-                                            className="w-full h-full object-cover rounded-2xl"
+                                            className="w-full h-full object-cover rounded-2xl shadow-lg"
                                         />
                                     </div>
                                     
                                     {/* Content Section - Outside image */}
                                     <div className="text-center px-4">
-                                        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1F2937' }}>
+                                        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1F2937', fontFamily: 'Myriad Pro' }}>
                                             {feature.title}
                                         </h3>
-                                        <p className="leading-relaxed text-base sm:text-lg" style={{ color: '#4B5563' }}>
+                                        <p className="leading-relaxed text-base sm:text-lg" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>
                                             {feature.content}
                                         </p>
                                     </div>
@@ -59,45 +69,70 @@ const WhyKidolock = () => {
 
                     {/* Desktop/Laptop Layout - Text inside image */}
                     <div className="hidden lg:block">
-                        <div className="grid grid-cols-3 gap-4 lg:gap-6 ml-0 lg:ml-[-2rem] xl:ml-[-4rem]">
+                        <div className="grid grid-cols-3 gap-8 lg:gap-12 ml-0 lg:ml-[-2rem] xl:ml-[-4rem]">
                             {features.map((feature, index) => (
                                 <div 
                                     key={index} 
                                     className={`relative ${
                                         index === 0 ? 'mt-0' : 
-                                        index === 1 ? 'mt-8 sm:mt-16' : 
-                                        'mt-4 sm:mt-8'
+                                        index === 1 ? 'mt-12 sm:mt-20' : 
+                                        'mt-0'
                                     }`}
                                 >
-                                    {/* Vertical Rectangle Image - Extended */}
-                                    <div className="relative h-[24rem] md:h-[28rem] lg:h-[32rem] xl:h-[36rem]">
+                                    {/* Title for second image - positioned above */}
+                                    {index === 1 && (
+                                        <div className="mb-4 text-left">
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                                {feature.title}
+                                            </h3>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Vertical Rectangle Image - Larger size */}
+                                    <div className="relative h-[26rem] md:h-[28rem] lg:h-[32rem] xl:h-[36rem]">
                                         <img
                                             src={feature.image}
                                             alt={feature.title}
-                                            className="w-full h-full object-cover rounded-2xl"
+                                            className="w-full h-full object-cover rounded-2xl shadow-lg"
                                         />
                                         
-                                        {/* Overlay with content */}
-                                        <div className="absolute inset-0 rounded-2xl flex flex-col justify-end p-6 md:p-8 lg:p-10">
-                                            <h3 className="text-xl md:text-2xl lg:text-3xl font-bold mb-4 md:mb-6" style={{ color: 'white' }}>
-                                                {feature.title}
-                                            </h3>
-                                            <p className="leading-relaxed text-sm md:text-base lg:text-base" style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
+                                        {/* Gradient overlay - covers only bottom half */}
+                                        <div className="absolute bottom-0 left-0 right-0 h-1/2 rounded-b-2xl bg-gradient-to-t from-white via-white/60 to-transparent"></div>
+                                        
+                                        {/* Overlay with content - only show content, no titles */}
+                                        <div className="absolute inset-0 rounded-2xl flex flex-col justify-end p-4 md:p-6 lg:p-8">
+                                            <p className="leading-relaxed text-xs md:text-sm lg:text-sm" style={{ color: '#1D4ED8', fontFamily: 'Myriad Pro' }}>
                                                 {feature.content}
                                             </p>
                                         </div>
                                     </div>
+                                    
+                                    {/* Title positioned outside based on image index */}
+                                    {index === 0 && (
+                                        <div className="mt-4 text-left">
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                                {feature.title}
+                                            </h3>
+                                        </div>
+                                    )}
+                                    {index === 2 && (
+                                        <div className="mt-4 text-left">
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                                {feature.title}
+                                            </h3>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
                     </div>
                     </div>
 
-                    {/* Title Section - Bottom right corner */}
-                    <div className="absolute bottom-4 -right-8 lg:bottom-8 lg:-right-12 xl:bottom-12 xl:-right-16 text-right z-10">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl leading-tight" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
-                            <div className="font-light" style={{ color: '#4B5563' }}>TẠI SAO LẠI LÀ</div>
-                            <div className="font-bold" style={{ background: 'linear-gradient(to right, #2563EB, #FB923C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>KIDOLOCK ?</div>
+                    {/* Title Section - Desktop/Laptop only */}
+                    <div className="hidden lg:block absolute bottom-[-1rem] right-0 lg:bottom-[-3rem] lg:right-[-2rem] xl:bottom-[-4rem] xl:right-[-3rem] text-right z-10">
+                        <h2 className="leading-tight" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
+                            <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-light" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>{t('whyTitle1')}</div>
+                            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold" style={{ background: 'linear-gradient(to right, #10B981, #3B82F6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
                         </h2>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import bgSession4 from '../assets/bg_session_4.png';
 import heroImg from '../assets/hero_img.png';
 import heroWinImg from '../assets/hero_win.png';
@@ -7,6 +8,7 @@ import apiService from '../services/api';
 
 const PricingSection = () => {
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedPackages, setExpandedPackages] = useState({});
@@ -108,9 +110,9 @@ const PricingSection = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <p className="text-2xl mb-4" style={{color: '#6b7280'}}>CÁC GÓI DỊCH VỤ</p>
+                    <p className="text-2xl mb-4" style={{color: '#6b7280'}}>{t('pricingSubtitle')}</p>
                     <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-                        <span style={{color: '#1f2937'}}>CHỌN GÓI PHÙ HỢP</span> <span style={{color: '#f97316'}}>VỚI BẠN</span>
+                        <span style={{color: '#1f2937'}}>{t('pricingTitle1')}</span> <span style={{color: '#f97316'}}>{t('pricingTitle2')}</span>
                     </h2>
                 </div>
 
@@ -119,7 +121,7 @@ const PricingSection = () => {
                     {loading ? (
                         <div className="text-center py-12">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <p className="mt-4 text-gray-600">Đang tải gói dịch vụ...</p>
+                            <p className="mt-4 text-gray-600">{t('loadingPackages')}</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -144,7 +146,7 @@ const PricingSection = () => {
                                             <div className="text-center">
                                                 <div className="line-through text-lg" style={{color: '#9ca3af'}}>{formatPrice(pkg.gia * 2)}</div>
                                                 <div className="text-4xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-lg">vnd</span></div>
-                                                <div className="text-sm mt-2" style={{color: '#6b7280'}}>1 thiết bị | 1 người dùng</div>
+                                                <div className="text-sm mt-2" style={{color: '#6b7280'}}>{t('deviceUser')}</div>
                                             </div>
                                         </div>
 
@@ -179,7 +181,7 @@ const PricingSection = () => {
                                             style={{background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white'}}
                                             onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #2563eb, #1d4ed8)'}
                                             onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #3b82f6, #2563eb)'}>
-                                            XEM CHI TIẾT
+                                            {t('viewDetails')}
                                         </button>
                                     </div>
                                 );
@@ -190,12 +192,12 @@ const PricingSection = () => {
 
                 {/* Other Packages Section */}
                 <div>
-                    <h3 className="text-3xl font-bold text-center mb-12" style={{color: 'white'}}>CÁC GÓI KHÁC</h3>
+                    <h3 className="text-3xl font-bold text-center mb-12" style={{color: 'white'}}>{t('otherPackages')}</h3>
                     
                     {loading ? (
                         <div className="text-center py-12">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <p className="mt-4 text-gray-600">Đang tải gói dịch vụ...</p>
+                            <p className="mt-4 text-gray-600">{t('loadingPackages')}</p>
                         </div>
                     ) : (
                         <div className="space-y-8">
@@ -240,7 +242,7 @@ const PricingSection = () => {
                                                 style={{background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white'}}
                                                 onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #2563eb, #1d4ed8)'}
                                                 onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #3b82f6, #2563eb)'}>
-                                                XEM CHI TIẾT
+                                                {t('viewDetails')}
                                             </button>
                                         </div>
 
@@ -248,18 +250,23 @@ const PricingSection = () => {
                                         <div className={`${expandedPackages[packageKey] ? 'lg:hidden' : ''}`}>
                                             <div className="flex items-center justify-between">
                                                 {/* Left Section - Package Title */}
-                                                <div className="rounded-full px-6 py-3" style={{background: 'linear-gradient(to right, #22c55e, #facc15)'}}>
+                                                <div className="rounded-full px-6 py-3 hidden sm:block" style={{background: 'linear-gradient(to right, #22c55e, #facc15)'}}>
                                                     <span className="font-bold text-lg" style={{color: 'white'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
+                                                </div>
+                                                
+                                                {/* Mobile Title - No background, larger text */}
+                                                <div className="sm:hidden">
+                                                    <span className="font-bold text-2xl" style={{color: '#22c55e'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
                                                 </div>
 
                                                 {/* Middle Section - Price and Info */}
-                                                <div className="flex-1 text-center mx-8">
-                                                    <div className="text-3xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-lg">vnd</span></div>
-                                                    <div className="text-sm mt-1" style={{color: '#6b7280'}}>1 thiết bị | 1 người dùng</div>
+                                                <div className="flex-1 text-center mx-4 sm:mx-8">
+                                                    <div className="text-2xl sm:text-3xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-base sm:text-lg">vnd</span></div>
+                                                    <div className="text-xs sm:text-sm mt-1" style={{color: '#6b7280'}}>1 thiết bị | 1 người dùng</div>
                                                 </div>
 
                                                 {/* Right Section - Empty space for balance */}
-                                                <div className="w-24"></div>
+                                                <div className="w-16 sm:w-24"></div>
                                             </div>
                                         </div>
 

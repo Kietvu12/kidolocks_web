@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLanguage } from '../contexts/LanguageContext'
 import logoImage from '/logo.png'
 
 const Navbar = () => {
@@ -9,6 +10,7 @@ const Navbar = () => {
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
     const navigate = useNavigate()
     const { user, isAuthenticated, isAdmin, logout } = useAuth()
+    const { t, toggleLanguage, language } = useLanguage()
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -61,45 +63,45 @@ const Navbar = () => {
                         <nav className="hidden lg:flex space-x-8 flex-1 justify-center">
                             <div className="relative group">
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    Dành cho gia đình
+                                    {t('navForFamily')}
                                 </button>
                                 <div className="absolute left-0 mt-2 w-[900px] sm:w-[700px] md:w-[800px] lg:w-[900px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: '#ffffff', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Giải pháp bảo mật */}
                                             <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>Giải pháp bảo mật</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('securitySolutions')}</h3>
                                                 
                                                 <div className="space-y-8">
                                                     <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ CAO CẤP</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyPremiumTier')}</div>
                                                         <a href="/premium" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Premium</div>
-                                                            <div className="inline-block text-xs font-bold px-4 py-2 rounded-full mb-3" style={{backgroundColor: '#f3e8ff', color: '#6b21a8'}}>SẢN PHẨM BÁN CHẠY NHẤT</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Bảo vệ toàn diện cho các thiết bị, quyền riêng tư & danh tính trực tuyến của bạn</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('premiumName')}</div>
+                                                            <div className="inline-block text-xs font-bold px-4 py-2 rounded-full mb-3" style={{backgroundColor: '#f3e8ff', color: '#6b21a8'}}>{t('bestSeller')}</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('premiumDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ NÂNG CAO</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyAdvancedTier')}</div>
                                                         <a href="/plus" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Plus</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Kết hợp các tính năng bảo mật, hiệu năng & quyền riêng tư trong một ứng dụng</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('plusName')}</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('plusDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>BẢO VỆ TIÊU CHUẨN</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyStandardTier')}</div>
                                                         <a href="/standard" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>Kidolock Standard</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>Bảo vệ nâng cao kèm công cụ tăng cường hiệu năng thiết bị</div>
+                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('standardName')}</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('standardDesc')}</div>
                                                         </a>
                                                     </div>
                                                 </div>
                                                 
                                                 <div className="mt-8 pt-6" style={{borderTopColor: '#e5e7eb', borderTopWidth: '1px'}}>
                                                     <a href="/home-security" className="font-semibold text-sm flex items-center group" style={{color: '#16a34a'}} onMouseEnter={(e) => e.target.style.color = '#15803d'} onMouseLeave={(e) => e.target.style.color = '#16a34a'}>
-                                                        Xem tất cả các giải pháp 
+                                                        {t('viewAllSolutions')}
                                                         <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                         </svg>
@@ -109,30 +111,30 @@ const Navbar = () => {
                                             
                                             {/* Cột 2: Quyền riêng tư & Trẻ nhỏ */}
                                             <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>Quyền riêng tư & Trẻ nhỏ</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('privacyAndKids')}</h3>
                                                 
                                                 <div className="space-y-8">
                                                     <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>CHỨC NĂNG QUẢN LÝ NGƯỜI DÙNG</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('userMgmtLabel')}</div>
                                                         <a href="/safe-kids" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Safe Kids</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Giải pháp kiểm soát linh hoạt dành cho cha mẹ & thiết bị theo dõi qua GPS dành cho con bạn.</div>
+                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('safeKidsName')}</div>
+                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('safeKidsDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">VPN</div>
+                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('vpnLabel')}</div>
                                                         <a href="/vpn" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock VPN Secure Connection</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">VPN riêng tư và bảo mật để tận hưởng internet mà không phải đánh đổi bằng tốc độ.</div>
+                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('vpnName')}</div>
+                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('vpnDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">BẢO VỆ MẬT KHẨU</div>
+                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('pwdProtectLabel')}</div>
                                                         <a href="/password-manager" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Password Manager</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Kho bảo mật cấp ngân hàng cho mật khẩu & tài liệu của bạn.</div>
+                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('pwdMgrName')}</div>
+                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('pwdMgrDesc')}</div>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -140,27 +142,27 @@ const Navbar = () => {
                                             
                                             {/* Cột 3: Hỗ trợ & Tải xuống */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Hỗ trợ & Tải xuống</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('support')} & {t('trialsAndDownloads')}</h3>
                                                 <div className="space-y-6">
                                                     <a href="/renewal" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Gia hạn giấy phép</span>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('licenseRenewal')}</span>
                                                     </a>
                                                     
                                                     <a href="/support" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Hỗ trợ</span>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('support')}</span>
                                                     </a>
                                                     
                                                     <a href="/downloads" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Bản dùng thử & Bản tải xuống</span>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('trialsAndDownloads')}</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -171,44 +173,44 @@ const Navbar = () => {
                             
                             <div className="relative group">
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    Dành cho doanh nghiệp
+                                    {t('navForBusiness')}
                                 </button>
                                 <div className="absolute left-0 mt-2 w-[800px] sm:w-[600px] md:w-[700px] lg:w-[800px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Giải pháp doanh nghiệp */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Giải pháp doanh nghiệp</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('businessSolutions')}</h3>
                                                 
                                                 <div className="space-y-8">
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">BẢO MẬT DOANH NGHIỆP</div>
+                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('enterpriseSecurityLabel')}</div>
                                                         <a href="/business" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Business Security</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Bảo vệ toàn diện cho mạng doanh nghiệp, endpoint và dữ liệu quan trọng</div>
+                                                            <div className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('businessSecurityName')}</div>
+                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('businessSecurityDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">QUẢN LÝ TẬP TRUNG</div>
+                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('centralizedMgmtLabel')}</div>
                                                         <a href="/enterprise" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Enterprise Security</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Giải pháp quản lý bảo mật tập trung cho doanh nghiệp lớn</div>
+                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('enterpriseSecurityName')}</div>
+                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('enterpriseSecurityDesc')}</div>
                                                         </a>
                                                     </div>
                                                     
                                                     <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">BẢO MẬT CLOUD</div>
+                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('cloudSecurityLabel')}</div>
                                                         <a href="/cloud-security" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">Kidolock Cloud Security</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">Bảo vệ dữ liệu và ứng dụng trên cloud một cách an toàn</div>
+                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('cloudSecurityName')}</div>
+                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('cloudSecurityDesc')}</div>
                                                         </a>
                                                     </div>
                                                 </div>
                                                 
-                                                <div className="mt-8 pt-6 border-t border-gray-200">
-                                                    <a href="/business" className="text-green-600 hover:text-green-700 font-semibold text-sm flex items-center group">
-                                                        Xem tất cả giải pháp doanh nghiệp 
+                                                <div className="mt-8 pt-6" style={{borderTopColor: '#e5e7eb', borderTopWidth: '1px'}}>
+                                                    <a href="/business" className="font-semibold text-sm flex items-center group" style={{color: '#16a34a'}} onMouseEnter={(e) => e.target.style.color = '#15803d'} onMouseLeave={(e) => e.target.style.color = '#16a34a'}>
+                                                        {t('viewAllBusinessSolutions')}
                                                         <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                                         </svg>
@@ -218,35 +220,35 @@ const Navbar = () => {
                                             
                                             {/* Cột 2: Hỗ trợ & Tài nguyên */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Hỗ trợ & Tài nguyên</h3>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('support')} & {t('downloads')}</h3>
                                                 
                                                 <div className="space-y-6">
                                                     <a href="/business/downloads" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Các bản tải về</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('downloads')}</span>
                                                     </a>
                                                     
                                                     <a href="/business/support" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Hỗ trợ doanh nghiệp</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('businessSupport')}</span>
                                                     </a>
                                                     
                                                     <a href="/business/training" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Đào tạo & Chứng chỉ</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('trainingAndCerts')}</span>
                                                     </a>
                                                     
                                                     <a href="/business/partners" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Chương trình đối tác</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('partnerProgram')}</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -257,63 +259,63 @@ const Navbar = () => {
                             
                             <div className="relative group">
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    Đối tác
+                                    {t('navPartners')}
                                 </button>
                                 <div className="absolute left-0 mt-2 w-[700px] sm:w-[500px] md:w-[600px] lg:w-[700px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Tìm đối tác */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Tìm đối tác</h3>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('findPartners')}</h3>
                                                 <div className="space-y-6">
                                                     <a href="/partners/b2b" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Các đơn vị cung cấp cho doanh nghiệp</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('providersForBusiness')}</span>
                                                     </a>
                                                     <a href="/partners/b2c" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Các đơn vị cung cấp giải pháp tiêu dùng</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('providersForConsumers')}</span>
                                                     </a>
                                                     <a href="/partners/distributors" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Hợp tác với các đơn vị phân phối</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('distributorsPartners')}</span>
                                                     </a>
                                                     <a href="/partners/learning" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Tìm một trung tâm học tập</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('findLearningCenter')}</span>
                                                     </a>
                                                 </div>
                                             </div>
                                             
                                             {/* Cột 2: Trở thành đối tác */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Trở thành đối tác</h3>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('becomePartner')}</h3>
                                                 <div className="space-y-6">
                                                     <a href="/partners/united" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Cổng đối tác Kidolock United</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('unitedPortal')}</span>
                                                     </a>
                                                     <a href="/partners/b2b-join" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Trở thành đối tác B2B</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('becomeB2B')}</span>
                                                     </a>
                                                     <a href="/partners/b2c-join" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Trở thành đối tác B2C</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('becomeB2C')}</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -324,57 +326,57 @@ const Navbar = () => {
                             
                             <div className="relative group">
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    Giới thiệu về Chúng tôi
+                                    {t('navAboutUs')}
                                 </button>
                                 <div className="absolute left-0 mt-2 w-[600px] sm:w-[400px] md:w-[500px] lg:w-[600px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Về chúng tôi */}
                                             <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Về chúng tôi</h3>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('aboutUs')}</h3>
                                                 <div className="space-y-6">
                                                     <a href="/about" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Tìm hiểu về chúng tôi</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('learnAboutUs')}</span>
                                                     </a>
                                                     <a href="/contact" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Liên hệ với chúng tôi</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('contactUs')}</span>
                                                     </a>
                                                     <a href="/careers" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Nghề nghiệp</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('careers')}</span>
                                                     </a>
                                                 </div>
                                             </div>
                                             
                                             {/* Cột 2: Truyền thông */}
                     <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">Truyền thông</h3>
+                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('media')}</h3>
                                                 <div className="space-y-6">
                                                     <a href="/press" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Trung tâm báo chí</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('pressCenter')}</span>
                                                     </a>
                                                     <a href="/press-releases" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Thông cáo báo chí</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('pressReleases')}</span>
                                                     </a>
                                                     <a href="/sponsorships" className="flex items-center space-x-4 p-4 rounded-lg  group">
                                                         <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                                         </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">Tài trợ</span>
+                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('sponsorships')}</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -385,6 +387,20 @@ const Navbar = () => {
                         </nav>
                         {/* Header Actions */}
                         <div className="flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
+                            {/* Language Selector */}
+                            <div className="relative">
+                                <button 
+                                    onClick={toggleLanguage}
+                                    className="p-2 sm:p-3 transition-colors rounded-lg"
+                                    style={{color: '#4b5563'}}
+                                    onMouseEnter={(e) => e.target.style.color = '#2563eb'}
+                                    onMouseLeave={(e) => e.target.style.color = '#4b5563'}
+                                    aria-label={t('language')}
+                                >
+                                    <span className="text-sm font-bold">{language === 'vi' ? 'VI' : 'EN'}</span>
+                                </button>
+                            </div>
+
                             {/* Country Selector - Hidden on mobile */}
                             <div className="relative hidden sm:block country-dropdown">
                                 <button 
@@ -393,7 +409,7 @@ const Navbar = () => {
                                     style={{color: '#4b5563'}}
                                     onMouseEnter={(e) => e.target.style.color = '#2563eb'}
                                     onMouseLeave={(e) => e.target.style.color = '#4b5563'}
-                                    aria-label="Chọn quốc gia/khu vực"
+                                    aria-label={t('country')}
                                 >
                                     <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path fillRule="evenodd" clipRule="evenodd"
@@ -547,7 +563,7 @@ const Navbar = () => {
                                                     d="M.75 12v-.02a2.6 2.6 0 0 1 2.67-2.65h2.45L8 14.43l2.13-5.1h2.45a2.6 2.6 0 0 1 2.67 2.65v.04l.75 5.3H0L.75 12ZM8 8a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z"
                                                     fill="currentColor"></path>
                                         </svg>
-                                        <span className="text-xs sm:text-sm font-medium">Tài khoản của tôi</span>
+                                        <span className="text-xs sm:text-sm font-medium">{t('login')}</span>
                                         <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                             <path fillRule="evenodd" clipRule="evenodd"
                                                     d="M9.7.3a1 1 0 0 1 0 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4A1 1 0 0 1 1.7.3L5 3.58 8.3.29a1 1 0 0 1 1.4 0Z">
@@ -670,7 +686,7 @@ const Navbar = () => {
                     <div className="absolute top-full right-0 mt-2 w-96 rounded-xl shadow-xl border z-50" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                         <div className="p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-xl font-bold" style={{color: '#111827'}}>Chọn quốc gia/khu vực</h3>
+                                <h3 className="text-xl font-bold" style={{color: '#111827'}}>{t('country')}</h3>
                                 <button 
                                     onClick={() => setIsCountryOpen(false)}
                                     className="p-2  rounded-lg transition-colors"
@@ -683,32 +699,13 @@ const Navbar = () => {
                             
                             <div className="grid grid-cols-2 gap-6 max-h-96 overflow-y-auto">
                                 <div>
-                                    <h4 className="font-semibold mb-3" style={{color: '#2563eb'}}>Asia & Pacific</h4>
                                     <div className="space-y-2">
-                                        <a href="https://www.kaspersky.com.au/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>Australia</a>
-                                        <a href="https://www.kaspersky.co.in/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>India</a>
                                         <a href="https://www.kaspersky.com.vn/" className="block text-sm font-semibold px-2 py-1 rounded" style={{color: '#2563eb', backgroundColor: '#eff6ff'}}>Việt Nam</a>
-                                        <a href="https://www.kaspersky.co.th/" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>ไทย (Thailand)</a>
-                                        <a href="https://www.kaspersky.co.kr/" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>한국 (Korea)</a>
-                                        <a href="https://www.kaspersky.com.cn/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>中国 (China)</a>
-                                        <a href="https://www.kaspersky.co.jp/" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>日本語 (Japan)</a>
                                         </div>
                                     </div>
-                                
                                 <div>
-                                    <h4 className="font-semibold mb-3" style={{color: '#2563eb'}}>Americas</h4>
                                     <div className="space-y-2">
-                                        <a href="https://usa.kaspersky.com/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>United States</a>
-                                        <a href="https://www.kaspersky.ca/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>Canada - English</a>
-                                        <a href="https://latam.kaspersky.com/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>América Latina</a>
-                                        </div>
-                                    
-                                    <h4 className="font-semibold mb-3 mt-6" style={{color: '#2563eb'}}>Europe</h4>
-                                    <div className="space-y-2">
-                                        <a href="https://www.kaspersky.co.uk/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>United Kingdom</a>
-                                        <a href="https://www.kaspersky.de/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>Deutschland</a>
-                                        <a href="https://www.kaspersky.fr/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>France</a>
-                                        <a href="https://www.kaspersky.es/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>España</a>
+                                        <a href="https://usa.kaspersky.com/?ignoreredirects=true" className="block text-sm px-2 py-1 rounded transition-colors" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>English</a>
                                         </div>
                                     </div>
                     </div>

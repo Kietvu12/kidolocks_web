@@ -4,10 +4,12 @@ import apiService from '../services/api';
 import Navbar from '../components/Navbar';
 import heroImg from '../assets/hero_img.png';
 import heroWinImg from '../assets/hero_win.png';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const PaymentPage = () => {
     const { packageId } = useParams();
     const navigate = useNavigate();
+    const { t } = useLanguage();
     const [packageInfo, setPackageInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
@@ -30,7 +32,7 @@ const PaymentPage = () => {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
-                setError('Không thể tải thông tin gói dịch vụ');
+                setError(t('cannotLoadPackage'));
             } finally {
                 setLoading(false);
             }
@@ -86,7 +88,7 @@ const PaymentPage = () => {
                 <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(to bottom right, #dbeafe, #e0e7ff)'}}>
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 mx-auto mb-4" style={{borderBottomColor: '#2563eb', borderBottomWidth: '2px'}}></div>
-                        <p style={{color: '#4b5563'}}>Đang tải thông tin...</p>
+                        <p style={{color: '#4b5563'}}>{t('loadingInfo')}</p>
                     </div>
                 </div>
             </>
@@ -100,7 +102,7 @@ const PaymentPage = () => {
                 <div className="min-h-screen flex items-center justify-center" style={{background: 'linear-gradient(to bottom right, #dbeafe, #e0e7ff)'}}>
                     <div className="text-center">
                         <div style={{color: '#ef4444', fontSize: '3.75rem'}} className="mb-4">⚠️</div>
-                        <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Có lỗi xảy ra</h2>
+                        <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{t('errorOccurred')}</h2>
                         <p className="mb-4" style={{color: '#4b5563'}}>{error}</p>
                         <button
                             onClick={() => navigate('/')}
@@ -109,7 +111,7 @@ const PaymentPage = () => {
                             onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
                             onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                         >
-                            Về trang chủ
+                            {t('backHome')}
                         </button>
                     </div>
                 </div>
@@ -124,8 +126,8 @@ const PaymentPage = () => {
             <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold mb-2" style={{color: '#1f2937'}}>Thanh Toán Gói Dịch Vụ</h1>
-                    <p style={{color: '#4b5563'}}>Hoàn tất đơn hàng của bạn</p>
+                    <h1 className="text-4xl font-bold mb-2" style={{color: '#1f2937'}}>{t('paymentPageHeader')}</h1>
+                    <p style={{color: '#4b5563'}}>{t('completeYourOrder')}</p>
                 </div>
 
                 <div className="max-w-4xl mx-auto">
@@ -142,7 +144,7 @@ const PaymentPage = () => {
 
                             {/* Features */}
                             <div className="space-y-3 mb-6">
-                                <h3 className="text-lg font-semibold mb-3" style={{color: '#1f2937'}}>Tính năng bao gồm:</h3>
+                                <h3 className="text-lg font-semibold mb-3" style={{color: '#1f2937'}}>{t('featuresIncluded')}</h3>
                                 {packageInfo?.noiDungList?.slice(0, 7).map((feature, idx) => (
                                     <div key={idx} className="flex items-center">
                                         <div className="w-5 h-5 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}>
@@ -174,13 +176,13 @@ const PaymentPage = () => {
                         {/* Payment Information */}
                         <div className="rounded-2xl p-8 shadow-lg" style={{backgroundColor: '#ffffff'}}>
                             <div className="text-center mb-6">
-                                <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Thông Tin Thanh Toán</h3>
-                                <p style={{color: '#4b5563'}}>Xác nhận đơn hàng của bạn</p>
+                                <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{t('paymentInfoHeader')}</h3>
+                                <p style={{color: '#4b5563'}}>{t('confirmYourOrder')}</p>
                             </div>
 
                             {/* User Info */}
                             <div className="rounded-lg p-4 mb-6" style={{backgroundColor: '#f9fafb'}}>
-                                <h4 className="font-semibold mb-2" style={{color: '#1f2937'}}>Thông tin người mua:</h4>
+                                <h4 className="font-semibold mb-2" style={{color: '#1f2937'}}>{t('buyerInfo')}</h4>
                                 <p style={{color: '#4b5563'}}>👤 {userInfo?.ten_phu_huynh}</p>
                                 <p style={{color: '#4b5563'}}>📧 {userInfo?.email_phu_huynh}</p>
                                 <p style={{color: '#4b5563'}}>📱 {userInfo?.sdt}</p>
@@ -188,18 +190,18 @@ const PaymentPage = () => {
 
                             {/* Package Summary */}
                             <div className="rounded-lg p-4 mb-6" style={{backgroundColor: '#f9fafb'}}>
-                                <h4 className="font-semibold mb-3" style={{color: '#1f2937'}}>Tóm tắt đơn hàng:</h4>
+                                <h4 className="font-semibold mb-3" style={{color: '#1f2937'}}>{t('orderSummary')}</h4>
                                 <div className="flex justify-between items-center mb-2">
                                     <span style={{color: '#4b5563'}}>{packageInfo?.ten}</span>
                                     <span className="font-semibold">{getPackageDuration(packageInfo?.thoi_han_thang)}</span>
                                 </div>
                                 <div className="flex justify-between items-center mb-2">
-                                    <span style={{color: '#4b5563'}}>Số thiết bị</span>
+                                    <span style={{color: '#4b5563'}}>{t('numDevices')}</span>
                                     <span className="font-semibold">{packageInfo?.so_thiet_bi || 1} thiết bị</span>
                                 </div>
                                 <hr className="my-3" />
                                 <div className="flex justify-between items-center">
-                                    <span className="text-lg font-bold" style={{color: '#1f2937'}}>Tổng cộng:</span>
+                                    <span className="text-lg font-bold" style={{color: '#1f2937'}}>{t('total')}</span>
                                     <span className="text-2xl font-bold" style={{color: '#2563eb'}}>{formatPrice(packageInfo?.gia)} VND</span>
                                 </div>
                             </div>
@@ -237,14 +239,14 @@ const PaymentPage = () => {
                                     {processing ? (
                                         <div className="flex items-center justify-center">
                                             <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                            Đang xử lý...
+                                            {t('processing')}
                                         </div>
                                     ) : (
                                         <div className="flex items-center justify-center">
                                             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                                 <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                                             </svg>
-                                            Thanh Toán VNPay
+                                            {t('payVNPay')}
                                         </div>
                                     )}
                                 </button>
@@ -256,7 +258,7 @@ const PaymentPage = () => {
                                     onMouseEnter={(e) => e.target.style.backgroundColor = '#e5e7eb'}
                                     onMouseLeave={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                                 >
-                                    Quay lại trang chủ
+                                    {t('backToHome')}
                                 </button>
                             </div>
 
@@ -266,7 +268,7 @@ const PaymentPage = () => {
                                     <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                                     </svg>
-                                    Thanh toán được bảo mật bởi VNPay
+                                    {t('securedByVNPay')}
                                 </div>
                             </div>
                         </div>

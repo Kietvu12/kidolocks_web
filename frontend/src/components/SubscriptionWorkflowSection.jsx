@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const SubscriptionWorkflowSection = () => {
+    const { t } = useLanguage();
     const [expandedSections, setExpandedSections] = useState({
         pricingLevels: true,
         autoRenewal: true,
@@ -19,100 +21,106 @@ const SubscriptionWorkflowSection = () => {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold">
-                        <span style={{color: '#1f2937'}}>CÁCH THỨC HOẠT ĐỘNG CỦA</span> <span style={{color: '#f97316'}}>GÓI ĐĂNG KÝ</span>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold" style={{ fontFamily: 'Myriad Pro' }}>
+                        <span style={{color: '#1f2937', fontFamily: 'Myriad Pro'}}>{t('subscriptionHeader1')}</span>
+                    </h2>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2" style={{ fontFamily: 'Myriad Pro' }}>
+                    <span style={{color: '#f97316', fontFamily: 'Myriad Pro'}}>{t('subscriptionHeader2')}</span>
                     </h2>
                 </div>
 
                 {/* Content Sections */}
-                <div className="space-y-6">
+                <div className="space-y-4">
                     {/* Section 1: CÁC MỨC GIÁ */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
-                        <div className="flex items-center mb-4">
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                        <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('pricingLevels')}
-                                className="font-bold text-2xl mr-3 transition-colors"
-                                style={{color: '#2563eb'}}
-                                onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
-                                onMouseLeave={(e) => e.target.style.color = '#2563eb'}
+                                className="w-8 h-8 rounded-full flex items-center justify-center mr-4 transition-all duration-200 hover:scale-110"
+                                style={{ backgroundColor: '#2563EB' }}
                             >
-                                {expandedSections.pricingLevels ? '−' : '+'}
+                                <svg 
+                                    className={`w-4 h-4 text-white transition-transform duration-200 ${expandedSections.pricingLevels ? 'rotate-180' : ''}`} 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827'}}>CÁC MỨC GIÁ</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('pricingLevels')}</h3>
                         </div>
-                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.pricingLevels ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
                             <p className="leading-relaxed" style={{color: '#374151'}}>
-                                Gói đăng ký của bạn sẽ tự động gia hạn mỗi kỳ cho đến khi bạn hủy bỏ gói đăng ký. Để đảm bảo chức năng bảo vệ không bị gián đoạn, chúng tôi sẽ cố gắng tính phí qua phương thức thanh toán của bạn 20 ngày trước khi gói đăng ký của bạn kết thúc. Chúng tôi sẽ thông báo cho bạn về lần tự động gia hạn sắp tới qua email.
+                                {t('subscriptionCommonDesc')}
                             </p>
                         </div>
                     </div>
 
                     {/* Section 2: TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
-                        <div className="flex items-center mb-4">
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                        <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('autoRenewal')}
-                                className="font-bold text-2xl mr-3 transition-colors"
-                                style={{color: '#2563eb'}}
-                                onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
-                                onMouseLeave={(e) => e.target.style.color = '#2563eb'}
+                                className="w-8 h-8 rounded-full flex items-center justify-center mr-4 transition-all duration-200 hover:scale-110"
+                                style={{ backgroundColor: '#2563EB' }}
                             >
-                                {expandedSections.autoRenewal ? '−' : '+'}
+                                <svg 
+                                    className={`w-4 h-4 text-white transition-transform duration-200 ${expandedSections.autoRenewal ? 'rotate-180' : ''}`} 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827'}}>TỰ ĐỘNG GIA HẠN</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('autoRenewal')}</h3>
                         </div>
-                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.autoRenewal ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
                             <p className="leading-relaxed" style={{color: '#374151'}}>
-                                Gói đăng ký của bạn sẽ tự động gia hạn mỗi kỳ cho đến khi bạn hủy bỏ gói đăng ký. Để đảm bảo chức năng bảo vệ không bị gián đoạn, chúng tôi sẽ cố gắng tính phí qua phương thức thanh toán của bạn 20 ngày trước khi gói đăng ký của bạn kết thúc. Chúng tôi sẽ thông báo cho bạn về lần tự động gia hạn sắp tới qua email.
+                                {t('subscriptionCommonDesc')}
                             </p>
                         </div>
                     </div>
 
                     {/* Section 3: HỦY BỎ TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-lg p-6" style={{backgroundColor: 'white'}}>
-                        <div className="flex items-center mb-4">
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                        <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('cancelAutoRenewal')}
-                                className="font-bold text-2xl mr-3 transition-colors"
-                                style={{color: '#2563eb'}}
-                                onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
-                                onMouseLeave={(e) => e.target.style.color = '#2563eb'}
+                                className="w-8 h-8 rounded-full flex items-center justify-center mr-4 transition-all duration-200 hover:scale-110"
+                                style={{ backgroundColor: '#2563EB' }}
                             >
-                                {expandedSections.cancelAutoRenewal ? '−' : '+'}
+                                <svg 
+                                    className={`w-4 h-4 text-white transition-transform duration-200 ${expandedSections.cancelAutoRenewal ? 'rotate-180' : ''}`} 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                                </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827'}}>HỦY BỎ TỰ ĐỘNG GIA HẠN</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('cancelAutoRenewal')}</h3>
                         </div>
-                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.cancelAutoRenewal ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <div className="space-y-4 leading-relaxed" style={{color: '#374151'}}>
-                                <p>
-                                    Bạn có thể hủy bỏ tự động gia hạn gói đăng ký của mình bất cứ lúc nào.
-                                </p>
-                                <p>
-                                    Nếu bạn hủy bỏ, bạn sẽ được bảo vệ đầy đủ đến khi kết thúc kỳ mà đã thanh toán. Sau ngày này, gói đăng ký của bạn sẽ kết thúc và bạn sẽ không bị tính phí cho bất kỳ khoảng thời gian nào sau này.
-                                </p>
-                                <p>
-                                    <strong>Để hủy bỏ:</strong>
-                                </p>
+                            <div className="space-y-4 leading-relaxed mt-2" style={{color: '#374151'}}>
+                                <p>{t('cancelIntro1')}</p>
+                                <p>{t('cancelIntro2')}</p>
+                                <p><strong>{t('cancelHowTo')}</strong></p>
                                 <ul className="list-disc list-inside space-y-2 ml-4">
-                                    <li>Mở biên nhận qua email mà bạn nhận được sau lần mua hàng đầu tiên hoặc email có nhắc nhở tự động gia hạn.</li>
-                                    <li>Truy cập vào liên kết đến trang chứa các điều kiện tự động gia hạn gói đăng ký của bạn.</li>
-                                    <li>Chọn Hủy bỏ tự động gia hạn. Bạn sẽ sớm nhận được email xác nhận việc hủy bỏ tự động gia hạn.</li>
+                                    <li>{t('cancelList1')}</li>
+                                    <li>{t('cancelList2')}</li>
+                                    <li>{t('cancelList3')}</li>
                                 </ul>
-                                <p>
-                                    Bạn cũng có thể hủy bỏ tự động gia hạn bằng cách liên hệ với bộ phận Hỗ trợ khách hàng của Kidolock.
-                                </p>
-                                <p>
-                                    Nếu bạn đã bị trừ tiền cho kỳ gói đăng ký tiếp theo, bạn có 30 ngày kể từ ngày thanh toán để yêu cầu hoàn lại toàn bộ khoản thanh toán gia hạn.
-                                </p>
-                                <p>
-                                    Để yêu cầu hoàn tiền, vui lòng liên hệ với bộ phận Hỗ trợ khách hàng của Kidolock.
-                                </p>
+                                <p>{t('cancelSupport')}</p>
+                                <p>{t('refundIntro')}</p>
+                                <p>{t('refundContact')}</p>
                             </div>
                         </div>
                     </div>

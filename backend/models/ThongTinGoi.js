@@ -56,6 +56,18 @@ module.exports = (sequelize) => {
       },
       comment: 'Thời hạn gói (tháng)'
     }
+    ,
+    so_thiet_bi: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      validate: {
+        min: {
+          args: [1],
+          msg: 'Số thiết bị phải >= 1'
+        }
+      },
+      comment: 'Số thiết bị được phép trong gói'
+    }
   }, {
     tableName: 'thong_tin_goi',
     timestamps: false,

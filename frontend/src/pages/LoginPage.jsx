@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const { loginWithPassword } = useAuth();
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [message, setMessage] = useState('');
@@ -39,7 +41,7 @@ const LoginPage = () => {
       const result = await loginWithPassword(formData.phone, formData.password);
       
       if (result.success) {
-        setMessage('Đăng nhập thành công!');
+        setMessage(t('success'));
         setLoading(false);
         setRedirecting(true);
         setTimeout(() => {
@@ -65,10 +67,10 @@ const LoginPage = () => {
             className="mx-auto h-16 w-auto"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold" style={{color: '#111827'}}>
-            Đăng nhập vào tài khoản của bạn
+            {t('loginTitle')}
           </h2>
           <p className="mt-2 text-center text-sm" style={{color: '#4b5563'}}>
-            Hoặc{' '}
+            {t('dontHaveAccount')}{' '}
             <button
               onClick={() => navigate('/register')}
               className="font-medium"
@@ -76,7 +78,7 @@ const LoginPage = () => {
               onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
               onMouseLeave={(e) => e.target.style.color = '#2563eb'}
             >
-              đăng ký tài khoản mới
+              {t('createAccount')}
             </button>
           </p>
         </div>
@@ -100,7 +102,7 @@ const LoginPage = () => {
           <form className="space-y-6" onSubmit={handleLogin}>
             <div>
               <label htmlFor="phone" className="block text-sm font-medium" style={{color: '#374151'}}>
-                Số điện thoại
+                {t('phoneLabel')}
               </label>
               <div className="mt-1">
                 <input
@@ -112,14 +114,14 @@ const LoginPage = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Nhập số điện thoại của bạn"
+                  placeholder={t('phoneLabel')}
                 />
               </div>
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium" style={{color: '#374151'}}>
-                Mật khẩu
+                {t('passwordLabel')}
               </label>
               <div className="mt-1 relative">
                 <input
@@ -131,7 +133,7 @@ const LoginPage = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Nhập mật khẩu"
+                  placeholder={t('passwordLabel')}
                 />
                 <button
                   type="button"
@@ -156,7 +158,7 @@ const LoginPage = () => {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm" style={{color: '#111827'}}>
-                  Ghi nhớ đăng nhập
+                  {t('rememberMe')}
                 </label>
               </div>
 
@@ -169,7 +171,7 @@ const LoginPage = () => {
                   onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
                   onMouseLeave={(e) => e.target.style.color = '#2563eb'}
                 >
-                  Quên mật khẩu?
+                  {t('forgotPassword')}
                 </button>
               </div>
             </div>
@@ -183,7 +185,7 @@ const LoginPage = () => {
                 onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#1d4ed8')}
                 onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#2563eb')}
               >
-                {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+                {loading ? t('loading') : t('loginButton')}
               </button>
             </div>
           </form>
@@ -194,7 +196,7 @@ const LoginPage = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2" style={{backgroundColor: '#ffffff', color: '#6b7280'}}>Hoặc</span>
+                <span className="px-2" style={{backgroundColor: '#ffffff', color: '#6b7280'}}>{t('orText')}</span>
               </div>
             </div>
 
@@ -206,7 +208,7 @@ const LoginPage = () => {
                 onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
               >
-                Tạo tài khoản mới
+                {t('createAccount')}
               </button>
             </div>
           </div>
@@ -216,7 +218,7 @@ const LoginPage = () => {
       {/* Loading Overlay */}
       <LoadingOverlay 
         isVisible={redirecting} 
-        message="Đăng nhập thành công!" 
+        message={t('success')} 
       />
     </div>
   );

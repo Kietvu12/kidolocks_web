@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
   const { sendRegistrationOTP, register } = useAuth();
+  const { t } = useLanguage();
   const [step, setStep] = useState(1); // 1: Form info, 2: OTP verification
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
@@ -65,29 +67,29 @@ const RegisterPage = () => {
 
   const validateForm = () => {
     if (!formData.email || !formData.phone || !formData.name || !formData.password) {
-      setError('Vui lòng điền đầy đủ thông tin');
+      setError(t('fillAllFields'));
       return false;
     }
 
     if (!isPasswordValid()) {
-      setError('Mật khẩu chưa đáp ứng yêu cầu bảo mật');
+      setError(t('pwdNotMeet'));
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
+      setError(t('confirmPwdNotMatch'));
       return false;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError('Email không hợp lệ');
+      setError(t('invalidEmail'));
       return false;
     }
 
     const phoneRegex = /^[0-9]{10,11}$/;
     if (!phoneRegex.test(formData.phone)) {
-      setError('Số điện thoại không hợp lệ');
+      setError(t('invalidPhone'));
       return false;
     }
 
@@ -107,7 +109,7 @@ const RegisterPage = () => {
       const result = await sendRegistrationOTP(formData.phone);
       
       if (result.success) {
-        setMessage('Mã OTP đã được gửi đến số điện thoại của bạn');
+        setMessage(t('otpSent'));
         setStep(2);
       } else {
         setError(result.message);
@@ -123,7 +125,7 @@ const RegisterPage = () => {
     e.preventDefault();
     
     if (!formData.otp) {
-      setError('Vui lòng nhập mã OTP');
+      setError(t('enterOTP'));
       return;
     }
 
@@ -141,7 +143,7 @@ const RegisterPage = () => {
       });
       
       if (result.success) {
-        setMessage('Đăng ký thành công!');
+        setMessage(t('registerSuccess'));
         setLoading(false);
         setRedirecting(true);
         setTimeout(() => {
@@ -178,10 +180,10 @@ const RegisterPage = () => {
             className="mx-auto h-16 w-auto"
           />
           <h2 className="mt-6 text-center text-3xl font-extrabold" style={{color: '#111827'}}>
-            Đăng ký tài khoản mới
+            {t('registerTitle')}
           </h2>
           <p className="mt-2 text-center text-sm" style={{color: '#4b5563'}}>
-            Hoặc{' '}
+            {t('alreadyHaveAccount')}{' '}
             <button
               onClick={() => navigate('/login')}
               className="font-medium"
@@ -189,7 +191,7 @@ const RegisterPage = () => {
               onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
               onMouseLeave={(e) => e.target.style.color = '#2563eb'}
             >
-              đăng nhập với tài khoản có sẵn
+              {t('loginHere')}
             </button>
           </p>
         </div>
@@ -208,7 +210,7 @@ const RegisterPage = () => {
               }}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Thông tin</span>
+              <span className="ml-2 text-sm font-medium">{t('infoStep')}</span>
             </div>
             <div className={`w-8 h-0.5 ${step >= 2 ? '' : ''}`} style={{backgroundColor: step >= 2 ? '#2563eb' : '#e5e7eb'}}></div>
             <div className={`flex items-center ${step >= 2 ? '' : ''}`} style={{color: step >= 2 ? '#2563eb' : '#9ca3af'}}>
@@ -220,7 +222,7 @@ const RegisterPage = () => {
               }}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Xác thực</span>
+              <span className="ml-2 text-sm font-medium">{t('verifyStep')}</span>
             </div>
           </div>
 
@@ -254,14 +256,14 @@ const RegisterPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập email của bạn"
+                    placeholder={t('emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="phone" className="block text-sm font-medium" style={{color: '#374151'}}>
-                  Số điện thoại
+                  {t('phoneLabel')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -272,17 +274,17 @@ const RegisterPage = () => {
                     value={formData.phone}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập số điện thoại"
+                    placeholder={t('phonePlaceholder')}
                   />
                 </div>
                 <p className="mt-1 text-xs" style={{color: '#6b7280'}}>
-                  Chúng tôi sẽ gửi mã OTP đến số điện thoại này để xác thực
+                  {t('weWillSendOTP')}
                 </p>
               </div>
 
               <div>
                 <label htmlFor="name" className="block text-sm font-medium" style={{color: '#374151'}}>
-                  Họ và tên
+                  {t('fullNameLabel')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -293,14 +295,14 @@ const RegisterPage = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập họ và tên"
+                    placeholder={t('fullNamePlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium" style={{color: '#374151'}}>
-                  Mật khẩu
+                  {t('passwordLabel')}
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -312,7 +314,7 @@ const RegisterPage = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
+                    placeholder={t('passwordPlaceholder')}
                   />
                   <button
                     type="button"
@@ -329,33 +331,33 @@ const RegisterPage = () => {
                 
                 {/* Password Requirements */}
                 <div className="mt-3 p-3 rounded-md space-y-2" style={{backgroundColor: '#f9fafb'}}>
-                  <p className="text-sm font-medium" style={{color: '#374151'}}>Yêu cầu mật khẩu:</p>
+                  <p className="text-sm font-medium" style={{color: '#374151'}}>{t('passwordRequirementsTitle')}</p>
                     <RequirementItem 
                       met={passwordRequirements.length} 
-                      text="Ít nhất 6 ký tự" 
+                      text={t('reqAtLeast6')} 
                     />
                   <RequirementItem 
                     met={passwordRequirements.uppercase} 
-                    text="Có ít nhất 1 chữ in hoa (A-Z)" 
+                    text={t('reqUpper')} 
                   />
                   <RequirementItem 
                     met={passwordRequirements.lowercase} 
-                    text="Có ít nhất 1 chữ in thường (a-z)" 
+                    text={t('reqLower')} 
                   />
                   <RequirementItem 
                     met={passwordRequirements.number} 
-                    text="Có ít nhất 1 chữ số (0-9)" 
+                    text={t('reqNumber')} 
                   />
                   <RequirementItem 
                     met={passwordRequirements.specialChar} 
-                    text="Có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)" 
+                    text={t('reqSpecial')} 
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium" style={{color: '#374151'}}>
-                  Xác nhận mật khẩu
+                  {t('confirmPasswordLabel')}
                 </label>
                 <div className="mt-1 relative">
                   <input
@@ -373,7 +375,7 @@ const RegisterPage = () => {
                         ? 'border-green-300'
                         : 'border-gray-300'
                     }`}
-                    placeholder="Nhập lại mật khẩu"
+                    placeholder={t('confirmPasswordPlaceholder')}
                   />
                   <button
                     type="button"
@@ -388,10 +390,10 @@ const RegisterPage = () => {
                   </button>
                 </div>
                 {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">Mật khẩu xác nhận không khớp</p>
+                  <p className="mt-1 text-sm text-red-600">{t('confirmPwdMismatch')}</p>
                 )}
                 {formData.confirmPassword && formData.password === formData.confirmPassword && isPasswordValid() && (
-                  <p className="mt-1 text-sm text-green-600">Mật khẩu khớp và đạt yêu cầu</p>
+                  <p className="mt-1 text-sm text-green-600">{t('confirmPwdOk')}</p>
                 )}
               </div>
 
@@ -404,7 +406,7 @@ const RegisterPage = () => {
                   onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#1d4ed8')}
                   onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#2563eb')}
                 >
-                  {loading ? 'Đang gửi OTP...' : 'Gửi mã OTP'}
+                  {loading ? t('sendingOTP') : t('sendOTP')}
                 </button>
               </div>
             </form>
@@ -414,15 +416,15 @@ const RegisterPage = () => {
           {step === 2 && (
             <form className="space-y-6" onSubmit={handleRegister}>
               <div className="text-center mb-6">
-                <h3 className="text-lg font-medium" style={{color: '#111827'}}>Xác thực số điện thoại</h3>
+                <h3 className="text-lg font-medium" style={{color: '#111827'}}>{t('verifyingPhone')}</h3>
                 <p className="mt-2 text-sm" style={{color: '#4b5563'}}>
-                  Mã OTP đã được gửi đến số điện thoại: <strong>{formData.phone}</strong>
+                  {t('otpSentTo')} <strong>{formData.phone}</strong>
                 </p>
               </div>
 
               <div>
                 <label htmlFor="otp" className="block text-sm font-medium" style={{color: '#374151'}}>
-                  Mã OTP
+                  {t('otp')}
                 </label>
                 <div className="mt-1">
                   <input
@@ -433,12 +435,12 @@ const RegisterPage = () => {
                     value={formData.otp}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center text-lg tracking-widest"
-                    placeholder="Nhập mã OTP"
+                    placeholder={t('otpPlaceholder')}
                     maxLength="6"
                   />
                 </div>
                 <p className="mt-1 text-xs" style={{color: '#6b7280'}}>
-                  Mã OTP có hiệu lực trong 5 phút
+                  {t('otpValid5Min')}
                 </p>
               </div>
 
@@ -451,7 +453,7 @@ const RegisterPage = () => {
                   onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
                   onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
                 >
-                  Quay lại
+                  {t('back')}
                 </button>
                 <button
                   type="submit"
@@ -461,7 +463,7 @@ const RegisterPage = () => {
                   onMouseEnter={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#1d4ed8')}
                   onMouseLeave={(e) => !e.target.disabled && (e.target.style.backgroundColor = '#2563eb')}
                 >
-                  {loading ? 'Đang đăng ký...' : 'Hoàn thành đăng ký'}
+                  {loading ? t('completingRegister') : t('completeRegister')}
                 </button>
               </div>
             </form>
@@ -473,7 +475,7 @@ const RegisterPage = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2" style={{backgroundColor: '#ffffff', color: '#6b7280'}}>Hoặc</span>
+                <span className="px-2" style={{backgroundColor: '#ffffff', color: '#6b7280'}}>{t('orText')}</span>
               </div>
             </div>
 
@@ -484,8 +486,8 @@ const RegisterPage = () => {
                 style={{borderColor: '#d1d5db', color: '#6b7280', backgroundColor: '#ffffff'}}
                 onMouseEnter={(e) => e.target.style.backgroundColor = '#f9fafb'}
                 onMouseLeave={(e) => e.target.style.backgroundColor = '#ffffff'}
-              >
-                Đăng nhập với tài khoản có sẵn
+                >
+                {t('loginWithExisting')}
               </button>
             </div>
           </div>
@@ -495,7 +497,7 @@ const RegisterPage = () => {
       {/* Loading Overlay */}
       <LoadingOverlay 
         isVisible={redirecting} 
-        message="Đăng ký thành công!" 
+        message={t('registerSuccess')} 
       />
     </div>
   );

@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
   const { sendChangePasswordOTP, changePasswordWithOTP } = useAuth();
+  const { t } = useLanguage();
   const [step, setStep] = useState(1); // 1: Send OTP, 2: Change Password
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
@@ -173,26 +175,22 @@ const ChangePasswordPage = () => {
             alt="KidsLock" 
             className="mx-auto h-16 w-auto"
           />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Đổi mật khẩu
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Thay đổi mật khẩu của bạn một cách an toàn
-          </p>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{t('changePwdHeader')}</h2>
+          <p className="mt-2 text-center text-sm text-gray-600">{t('changePwdSub')}</p>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* Progress Steps */}
-          <div className="flex items-center justify-center space-x-4 mb-6">
+              <div className="flex items-center justify-center space-x-4 mb-6">
             <div className={`flex items-center ${step >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                 step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600'
               }`}>
                 1
               </div>
-              <span className="ml-2 text-sm font-medium">Nhập mật khẩu</span>
+              <span className="ml-2 text-sm font-medium">{t('step1EnterPassword')}</span>
             </div>
             <div className={`w-8 h-0.5 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
             <div className={`flex items-center ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
@@ -201,7 +199,7 @@ const ChangePasswordPage = () => {
               }`}>
                 2
               </div>
-              <span className="ml-2 text-sm font-medium">Xác thực OTP</span>
+              <span className="ml-2 text-sm font-medium">{t('step2VerifyOTP')}</span>
             </div>
           </div>
 
@@ -222,9 +220,7 @@ const ChangePasswordPage = () => {
           {step === 1 && (
             <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSendOTP(); }}>
               <div>
-                <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">
-                  Mật khẩu hiện tại
-                </label>
+                <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">{t('currentPassword')}</label>
                 <div className="mt-1 relative">
                   <input
                     id="oldPassword"
@@ -234,7 +230,7 @@ const ChangePasswordPage = () => {
                     value={formData.oldPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập mật khẩu hiện tại"
+                    placeholder={t('currentPassword')}
                   />
                   <button
                     type="button"
@@ -251,9 +247,7 @@ const ChangePasswordPage = () => {
               </div>
 
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  Mật khẩu mới
-                </label>
+                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">{t('newPassword')}</label>
                 <div className="mt-1 relative">
                   <input
                     id="newPassword"
@@ -263,7 +257,7 @@ const ChangePasswordPage = () => {
                     value={formData.newPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập mật khẩu mới"
+                    placeholder={t('newPassword')}
                   />
                   <button
                     type="button"
@@ -281,35 +275,33 @@ const ChangePasswordPage = () => {
                 {/* Password Requirements */}
                 {formData.newPassword && (
                   <div className="mt-3 p-3 rounded-md space-y-2" style={{backgroundColor: '#f9fafb'}}>
-                    <p className="text-sm font-medium" style={{color: '#374151'}}>Yêu cầu mật khẩu:</p>
+                    <p className="text-sm font-medium" style={{color: '#374151'}}>{t('pwdReqTitle')}</p>
                     <RequirementItem 
                       met={passwordRequirements.length} 
-                      text="Ít nhất 6 ký tự" 
+                      text={t('reqAtLeast6')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.uppercase} 
-                      text="Có ít nhất 1 chữ in hoa (A-Z)" 
+                      text={t('reqUpper')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.lowercase} 
-                      text="Có ít nhất 1 chữ in thường (a-z)" 
+                      text={t('reqLower')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.number} 
-                      text="Có ít nhất 1 chữ số (0-9)" 
+                      text={t('reqNumber')} 
                     />
                     <RequirementItem 
                       met={passwordRequirements.specialChar} 
-                      text="Có ít nhất 1 ký tự đặc biệt (!@#$%^&*...)" 
+                      text={t('reqSpecial')} 
                     />
                   </div>
                 )}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Xác nhận mật khẩu mới
-                </label>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">{t('confirmNewPassword')}</label>
                 <div className="mt-1 relative">
                   <input
                     id="confirmPassword"
@@ -319,7 +311,7 @@ const ChangePasswordPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 pr-10 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="Nhập lại mật khẩu mới"
+                    placeholder={t('confirmNewPassword')}
                   />
                   <button
                     type="button"
@@ -341,7 +333,7 @@ const ChangePasswordPage = () => {
                   disabled={loading}
                   className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang gửi OTP...' : 'Gửi mã OTP'}
+                  {loading ? t('sendingOTP') : t('sendOTP')}
                 </button>
               </div>
             </form>
@@ -351,16 +343,12 @@ const ChangePasswordPage = () => {
           {step === 2 && (
             <form className="space-y-6" onSubmit={handleChangePassword}>
               <div className="text-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">Xác thực OTP</h3>
-                <p className="mt-2 text-sm text-gray-600">
-                  Mã OTP đã được gửi đến số điện thoại của bạn
-                </p>
+                <h3 className="text-lg font-medium text-gray-900">{t('verifyOTP')}</h3>
+                <p className="mt-2 text-sm text-gray-600">{t('otpSentToPhone')}</p>
               </div>
 
               <div>
-                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
-                  Mã OTP
-                </label>
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700">{t('otpCode')}</label>
                 <div className="mt-1">
                   <input
                     id="otp"
@@ -370,13 +358,11 @@ const ChangePasswordPage = () => {
                     value={formData.otp}
                     onChange={handleInputChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-center text-lg tracking-widest"
-                    placeholder="Nhập mã OTP"
+                    placeholder={t('otpPlaceholder')}
                     maxLength="6"
                   />
                 </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Mã OTP có hiệu lực trong 5 phút
-                </p>
+                <p className="mt-1 text-xs text-gray-500">{t('otpValidFor')}</p>
               </div>
 
               <div className="flex space-x-3">
@@ -385,14 +371,14 @@ const ChangePasswordPage = () => {
                   onClick={() => setStep(1)}
                   className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Quay lại
+                  {t('back')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
                   className="flex-1 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Đang đổi mật khẩu...' : 'Đổi mật khẩu'}
+                  {loading ? t('changingPassword') : t('changePassword')}
                 </button>
               </div>
             </form>
@@ -404,7 +390,7 @@ const ChangePasswordPage = () => {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Hoặc</span>
+                <span className="px-2 bg-white text-gray-500">{t('orText')}</span>
               </div>
             </div>
 
@@ -413,7 +399,7 @@ const ChangePasswordPage = () => {
                 onClick={() => navigate('/admin')}
                 className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
               >
-                Quay lại trang chủ
+                {t('goHome')}
               </button>
             </div>
           </div>
@@ -421,10 +407,7 @@ const ChangePasswordPage = () => {
       </div>
       
       {/* Loading Overlay */}
-      <LoadingOverlay 
-        isVisible={redirecting} 
-        message="Đổi mật khẩu thành công!" 
-      />
+      <LoadingOverlay isVisible={redirecting} message={t('changePasswordButton')} />
     </div>
   );
 };
