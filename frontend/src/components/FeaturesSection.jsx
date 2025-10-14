@@ -12,7 +12,7 @@ const FeaturesSection = () => {
                 <div className="text-center mb-8">
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl leading-tight" style={{ fontFamily: 'Myriad Pro' }}>
                         <div className="font-thin" style={{ color: '#111827', fontFamily: 'Myriad Pro' }}>{t('featuresTitle1')}</div>
-                        <div className="font-bold" style={{ color: '#2563EB', fontFamily: 'Myriad Pro' }}>{t('featuresTitle2')}</div>
+                        <div className="font-bold" style={{ color: '#01B8FD', fontFamily: 'Myriad Pro' }}>{t('featuresTitle2')}</div>
                     </h2>
                 </div>
 
@@ -35,7 +35,7 @@ const FeaturesSection = () => {
                     {/* Right Side - Features List */}
                     <div className="order-1 lg:order-2">
                         <div className="space-y-8">
-                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide pb-2" style={{ color: '#111827', borderBottom: '1px solid #4B5563', fontFamily: 'Myriad Pro' }}>
+                            <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide pb-2" style={{ color: '#104B98', borderBottom: '1px solid #135CBC', fontFamily: 'Myriad Pro' }}>
                                 {t('featuresSubtitle')}
                             </h3>
                             
@@ -46,7 +46,7 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                    <p className="text-xl leading-relaxed" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                         {t('feature1')}
                                     </p>
                                 </div>
@@ -57,7 +57,7 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                    <p className="text-xl leading-relaxed" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                         {t('feature2')}
                                     </p>
                                 </div>
@@ -68,7 +68,7 @@ const FeaturesSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl leading-relaxed" style={{ color: '#374151', fontFamily: 'Myriad Pro' }}>
+                                    <p className="text-xl leading-relaxed" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                         {t('feature3')}
                                     </p>
                                 </div>

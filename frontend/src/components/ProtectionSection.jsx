@@ -13,7 +13,7 @@ const ProtectionSection = () => {
                     {/* Left Side - Text Content */}
                     <div className="order-2 lg:order-1">
                         <div className="space-y-8">
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 uppercase tracking-wide border-b border-gray-600 pb-2" style={{ fontFamily: 'Myriad Pro' }}>
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-wide pb-2" style={{ color: '#104B98', borderBottom: '1px solid #135CBC', fontFamily: 'Myriad Pro' }}>
                                 {t('protectionTitle')}
                             </h2>
                             
@@ -24,7 +24,7 @@ const ProtectionSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ fontFamily: 'Myriad Pro' }}>
+                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                         {t('protectionFeature1')}
                                     </p>
                                 </div>
@@ -35,7 +35,7 @@ const ProtectionSection = () => {
                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                         </svg>
                                     </div>
-                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ fontFamily: 'Myriad Pro' }}>
+                                    <p className="text-xl text-gray-700 leading-relaxed" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                         {t('protectionFeature2')}
                                     </p>
                                 </div>

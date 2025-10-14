@@ -69,46 +69,6 @@ const Navbar = () => {
                                     <div className="p-4 sm:p-6 lg:p-8">
                                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
                                             {/* Cột 1: Giải pháp bảo mật */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('securitySolutions')}</h3>
-                                                
-                                                <div className="space-y-8">
-                                                    <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyPremiumTier')}</div>
-                                                        <a href="/premium" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('premiumName')}</div>
-                                                            <div className="inline-block text-xs font-bold px-4 py-2 rounded-full mb-3" style={{backgroundColor: '#f3e8ff', color: '#6b21a8'}}>{t('bestSeller')}</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('premiumDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                    
-                                                    <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyAdvancedTier')}</div>
-                                                        <a href="/plus" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('plusName')}</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('plusDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                    
-                                                    <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('familyStandardTier')}</div>
-                                                        <a href="/standard" className="block group">
-                                                            <div className="text-xl font-bold mb-2 transition-colors" style={{color: '#111827'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#111827'}>{t('standardName')}</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('standardDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className="mt-8 pt-6" style={{borderTopColor: '#e5e7eb', borderTopWidth: '1px'}}>
-                                                    <a href="/home-security" className="font-semibold text-sm flex items-center group" style={{color: '#16a34a'}} onMouseEnter={(e) => e.target.style.color = '#15803d'} onMouseLeave={(e) => e.target.style.color = '#16a34a'}>
-                                                        {t('viewAllSolutions')}
-                                                        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            
                                             {/* Cột 2: Quyền riêng tư & Trẻ nhỏ */}
                                             <div>
                                                 <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('privacyAndKids')}</h3>
@@ -169,161 +129,7 @@ const Navbar = () => {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            
-                            <div className="relative group">
-                                <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    {t('navForBusiness')}
-                                </button>
-                                <div className="absolute left-0 mt-2 w-[800px] sm:w-[600px] md:w-[700px] lg:w-[800px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
-                                    <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                                            {/* Cột 1: Giải pháp doanh nghiệp */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('businessSolutions')}</h3>
-                                                
-                                                <div className="space-y-8">
-                                                    <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('enterpriseSecurityLabel')}</div>
-                                                        <a href="/business" className="block group">
-                                                            <div className="text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('businessSecurityName')}</div>
-                                                            <div className="text-sm leading-relaxed" style={{color: '#4b5563'}}>{t('businessSecurityDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                    
-                                                    <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('centralizedMgmtLabel')}</div>
-                                                        <a href="/enterprise" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('enterpriseSecurityName')}</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('enterpriseSecurityDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                    
-                                                    <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('cloudSecurityLabel')}</div>
-                                                        <a href="/cloud-security" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('cloudSecurityName')}</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('cloudSecurityDesc')}</div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                
-                                                <div className="mt-8 pt-6" style={{borderTopColor: '#e5e7eb', borderTopWidth: '1px'}}>
-                                                    <a href="/business" className="font-semibold text-sm flex items-center group" style={{color: '#16a34a'}} onMouseEnter={(e) => e.target.style.color = '#15803d'} onMouseLeave={(e) => e.target.style.color = '#16a34a'}>
-                                                        {t('viewAllBusinessSolutions')}
-                                                        <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                        </svg>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Cột 2: Hỗ trợ & Tài nguyên */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('support')} & {t('downloads')}</h3>
-                                                
-                                                <div className="space-y-6">
-                                                    <a href="/business/downloads" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('downloads')}</span>
-                                                    </a>
-                                                    
-                                                    <a href="/business/support" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('businessSupport')}</span>
-                                                    </a>
-                                                    
-                                                    <a href="/business/training" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('trainingAndCerts')}</span>
-                                                    </a>
-                                                    
-                                                    <a href="/business/partners" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('partnerProgram')}</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="relative group">
-                                <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    {t('navPartners')}
-                                </button>
-                                <div className="absolute left-0 mt-2 w-[700px] sm:w-[500px] md:w-[600px] lg:w-[700px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
-                                    <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                                            {/* Cột 1: Tìm đối tác */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('findPartners')}</h3>
-                                                <div className="space-y-6">
-                                                    <a href="/partners/b2b" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('providersForBusiness')}</span>
-                                                    </a>
-                                                    <a href="/partners/b2c" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('providersForConsumers')}</span>
-                                                    </a>
-                                                    <a href="/partners/distributors" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('distributorsPartners')}</span>
-                                                    </a>
-                                                    <a href="/partners/learning" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('findLearningCenter')}</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Cột 2: Trở thành đối tác */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('becomePartner')}</h3>
-                                                <div className="space-y-6">
-                                                    <a href="/partners/united" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('unitedPortal')}</span>
-                                                    </a>
-                                                    <a href="/partners/b2b-join" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('becomeB2B')}</span>
-                                                    </a>
-                                                    <a href="/partners/b2c-join" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('becomeB2C')}</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
+                            </div>                                
                             <div className="relative group">
                                 <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
                                     {t('navAboutUs')}
@@ -453,10 +259,10 @@ const Navbar = () => {
                                             </div>
                                             <div className="text-left">
                                                 <div className="text-xs font-medium" style={{color: '#111827'}}>
-                                                    {isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}
+                                                    {isAdmin() ? t('adminLabel') : t('parentLabel')}
                                                 </div>
                                                 <div className="text-xs font-semibold" style={{color: '#2563eb'}}>
-                                                    {isAdmin() ? 'ADMIN' : 'PREMIUM'}
+                                                    {isAdmin() ? t('adminRole') : t('premiumRole')}
                                                 </div>
                                             </div>
                                             <svg 
@@ -500,7 +306,7 @@ const Navbar = () => {
                                                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                                                             </svg>
-                                                            Ví gói
+                                                            {t('wallet')}
                                                         </button>
                                                         
                                                         <button 
@@ -514,8 +320,8 @@ const Navbar = () => {
                                                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                                                             </svg>
-                                                            Lịch sử mua hàng
-                                                            <span className="ml-auto text-xs text-gray-400">Sắp có</span>
+                                                            {t('purchaseHistory')}
+                                                            <span className="ml-auto text-xs text-gray-400">{t('comingSoon')}</span>
                                                         </button>
 
                                                         <button 
@@ -528,7 +334,7 @@ const Navbar = () => {
                                                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                                                             </svg>
-                                                            Đổi mật khẩu
+                                                            {t('changePassword')}
                                                         </button>
 
                                                         <div className="border-t my-2" style={{borderColor: '#e5e7eb'}}></div>
@@ -543,7 +349,7 @@ const Navbar = () => {
                                                             <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                                             </svg>
-                                                            Đăng xuất
+                                                            {t('logoutLabel')}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -594,13 +400,6 @@ const Navbar = () => {
                     <div className="lg:hidden border-t shadow-lg" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                         <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                             <div className="space-y-1 sm:space-y-2">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Dành cho gia đình</div>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock Premium</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock Plus</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock Standard</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock Safe Kids</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock VPN Secure Connection</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Kidolock Password Manager</button>
                 </div>
                             
                             <div className="space-y-1 sm:space-y-2">
@@ -610,11 +409,11 @@ const Navbar = () => {
                                 <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Doanh nghiệp</button>
                 </div>
                             
-                            <div className="space-y-1 sm:space-y-2">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Đối tác</div>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp cho doanh nghiệp</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp giải pháp tiêu dùng</button>
-                                        </div>
+                                <div className="space-y-1 sm:space-y-2">
+                                    <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Đối tác</div>
+                                    <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp cho doanh nghiệp</button>
+                                    <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp giải pháp tiêu dùng</button>
+                                            </div>
                             
                             <div className="space-y-1 sm:space-y-2">
                                 <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Giới thiệu về Chúng tôi</div>
@@ -625,12 +424,12 @@ const Navbar = () => {
                             
                             {/* Mobile Authentication Section */}
                             <div className="space-y-1 sm:space-y-2 border-t border-gray-200 pt-4">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Tài khoản</div>
+                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('mobileAccount')}</div>
                                 {isAuthenticated ? (
                                     <>
                                         <div className="px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700">
-                                            <div className="font-medium">{isAdmin() ? 'Quản trị viên' : 'Phụ huynh'}</div>
-                                            <div className="text-blue-600 font-semibold">{isAdmin() ? 'ADMIN' : 'PREMIUM'}</div>
+                                            <div className="font-medium">{isAdmin() ? t('adminLabel') : t('parentLabel')}</div>
+                                            <div className="text-blue-600 font-semibold">{isAdmin() ? t('adminRole') : t('premiumRole')}</div>
                                         </div>
                                         
                                         <button 
@@ -640,7 +439,7 @@ const Navbar = () => {
                                             }}
                                             className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
                                         >
-                                            Ví gói
+                                            {t('wallet')}
                                         </button>
                                         
                                         <button 
@@ -650,14 +449,14 @@ const Navbar = () => {
                                             }}
                                             className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
                                         >
-                                            Đổi mật khẩu
+                                            {t('changePassword')}
                                         </button>
                                         
                                         <button 
                                             onClick={() => logout()}
                                             className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-red-600 hover:text-red-700 transition-colors rounded-lg"
                                         >
-                                            Đăng xuất
+                                            {t('logoutLabel')}
                                         </button>
                                     </>
                                 ) : (

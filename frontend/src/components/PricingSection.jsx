@@ -11,9 +11,12 @@ const PricingSection = () => {
     const { t } = useLanguage();
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [expandedPackages, setExpandedPackages] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState(null);
+    const [selectedDeviceCount, setSelectedDeviceCount] = useState(1);
+    const [standardPackage, setStandardPackage] = useState(null);
+    const [paidPackages, setPaidPackages] = useState([]);
+    const [showDropdown, setShowDropdown] = useState(false);
 
     // Fetch packages from API
     useEffect(() => {
@@ -21,16 +24,15 @@ const PricingSection = () => {
             try {
                 const response = await apiService.getAllGoi();
                 if (response.success) {
-                    // Filter out free trial packages and sort by price
-                    const paidPackages = response.data.filter(pkg => pkg.loai_goi === 'TRA_PHI');
-                    setPackages(paidPackages);
+                    const allPackages = response.data;
                     
-                    // Initialize expanded state for each package
-                    const initialExpandedState = {};
-                    paidPackages.forEach((pkg, index) => {
-                        initialExpandedState[`package${index}`] = false;
-                    });
-                    setExpandedPackages(initialExpandedState);
+                    // Lấy gói tiêu chuẩn (id = 8)
+                    const standard = allPackages.find(pkg => pkg.id === 8);
+                    setStandardPackage(standard);
+                    
+                    // Lấy các gói trả phí (id = 3, 2, 4)
+                    const paid = allPackages.filter(pkg => [3, 2, 4].includes(pkg.id));
+                    setPaidPackages(paid);
                 }
             } catch (error) {
                 console.error('Error fetching packages:', error);
@@ -42,16 +44,23 @@ const PricingSection = () => {
         fetchPackages();
     }, []);
 
-    const togglePackage = (packageId) => {
-        setExpandedPackages(prev => ({
-            ...prev,
-            [packageId]: !prev[packageId]
-        }));
-    };
-
     const handleViewDetails = (packageData) => {
         setSelectedPackage(packageData);
         setShowModal(true);
+    };
+
+    const handleBuyNow = (pkg) => {
+        if (!pkg) return;
+        
+        // Navigate to payment page with package info
+        navigate('/payment', { 
+            state: { 
+                packageId: pkg.id,
+                packageName: pkg.ten_goi,
+                price: pkg.gia,
+                deviceCount: pkg.so_thiet_bi
+            } 
+        });
     };
 
     const closeModal = () => {
@@ -71,17 +80,9 @@ const PricingSection = () => {
         return `${thoiHanThang} THÁNG`;
     };
 
-    const getDisplayFeatures = (features, isExpanded = false) => {
-        if (!features || features.length === 0) return [];
-        
-        if (isExpanded) {
-            return features;
-        }
-        
-        const displayFeatures = features.slice(0, 7);
-        const hasMore = features.length > 7;
-        
-        return { features: displayFeatures, hasMore };
+    // Lấy gói trả phí theo số thiết bị được chọn
+    const getSelectedPaidPackage = () => {
+        return paidPackages.find(pkg => pkg.so_thiet_bi === selectedDeviceCount);
     };
 
     // Default features for fallback
@@ -110,240 +111,319 @@ const PricingSection = () => {
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <p className="text-2xl mb-4" style={{color: '#6b7280'}}>{t('pricingSubtitle')}</p>
-                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
+                    <p className="text-2xl mb-4" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>{t('pricingSubtitle')}</p>
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold" style={{fontFamily: 'Myriad Pro, sans-serif'}}>
                         <span style={{color: '#1f2937'}}>{t('pricingTitle1')}</span> <span style={{color: '#f97316'}}>{t('pricingTitle2')}</span>
                     </h2>
                 </div>
 
-                {/* Featured Packages (First 3 packages) */}
+                {/* Gradient text animation keyframes for Premium title */}
+                <style>{`
+                    @keyframes gradientShift { 
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                `}</style>
+
+                {/* Three Package Cards */}
                 <div className="mb-20">
                     {loading ? (
                         <div className="text-center py-12">
                             <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <p className="mt-4 text-gray-600">{t('loadingPackages')}</p>
+                            <p className="mt-4 text-gray-600" style={{fontFamily: 'Myriad Pro, sans-serif'}}>{t('loadingPackages')}</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {packages.slice(0, 3).map((pkg, index) => {
-                                const features = pkg.noiDungList?.map(item => item.noi_dung) || defaultFeatures;
-                                const displayFeatures = getDisplayFeatures(features);
-                                
-                                return (
-                                    <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-lg relative flex flex-col h-full">
-                                        {/* Discount Badge */}
-                                        <div className="absolute -top-2 -right-2 px-3 py-1 rounded-full text-sm font-bold" style={{backgroundColor: '#f97316', color: 'white'}}>
-                                            70% OFF
-                                        </div>
-
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            {/* Card 1: Gói tiêu chuẩn (id=8) */}
+                            {standardPackage && (
+                                <div className="bg-white rounded-2xl p-6 shadow-lg relative flex flex-col h-full">
                                         {/* Package Title */}
                                         <div className="mb-6">
-                                            <div className="rounded-full px-6 py-3 text-center mb-4" style={{background: 'linear-gradient(to right, #3b82f6, #4ade80)'}}>
-                                                <span className="font-bold text-lg" style={{color: 'white'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
-                                            </div>
+                                        <div className="rounded-full px-6 py-3 text-center mb-2" style={{background: 'linear-gradient(to bottom, #56CCFF, #004895)'}}>
+                                            <span className="font-bold text-lg" style={{color: 'white', fontFamily: 'Myriad Pro, sans-serif'}}>GÓI TIÊU CHUẨN</span>
+                                        </div>
+                                        <h3 className="text-2xl sm:text-3xl font-bold uppercase text-center" style={{color: '#111827', fontFamily: 'Myriad Pro, sans-serif'}}>Kidolock Basic</h3>
                                             
                                             {/* Pricing */}
                                             <div className="text-center">
-                                                <div className="line-through text-lg" style={{color: '#9ca3af'}}>{formatPrice(pkg.gia * 2)}</div>
-                                                <div className="text-4xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-lg">vnd</span></div>
-                                                <div className="text-sm mt-2" style={{color: '#6b7280'}}>{t('deviceUser')}</div>
+
+                                            <div className="text-sm mt-2" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                {standardPackage.so_thiet_bi || 1} thiết bị | 1 người dùng
+                                            </div>
+                                            
+                                            {/* Operating Systems */}
+                                            <div className="mt-4">
+                                                <div className="flex items-center justify-center space-x-4 text-xs" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                    <span>Windows®</span>
+                                                    <div className="w-px h-3 bg-gray-300"></div>
+                                                    <span>macOS®</span>
+                                                    <div className="w-px h-3 bg-gray-300"></div>
+                                                    <span>Android™</span>
+                                                    <div className="w-px h-3 bg-gray-300"></div>
+                                                    <span>iOS®</span>
+                                                </div>
+                                                <div className="text-sm font-semibold mt-2" style={{color: '#3b82f6', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                    {(standardPackage.noiDungList?.length || defaultFeatures.length)} tính năng bảo vệ
+                                                </div>
+                                            </div>
                                             </div>
                                         </div>
 
-                                        {/* Features List - Flexible content */}
+                                    {/* Features List */}
                                         <div className="space-y-3 mb-6 flex-grow">
-                                            {(displayFeatures.features || displayFeatures).map((feature, idx) => (
+                                        {(standardPackage.noiDungList?.map(item => item.noi_dung) || defaultFeatures).map((feature, idx) => (
                                                 <div key={idx} className="flex items-center">
                                                     <div className="w-5 h-5 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}>
                                                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{color: 'white'}}>
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <span className="text-sm" style={{color: '#374151'}}>{feature}</span>
+                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
                                                 </div>
                                             ))}
-                                            {displayFeatures.hasMore && (
-                                                <div className="flex items-center">
-                                                    <div className="w-5 h-5 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style={{backgroundColor: '#6b7280'}}>
-                                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{color: 'white'}}>
-                                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                        </svg>
                                                     </div>
-                                                    <span className="text-sm italic" style={{color: '#6b7280'}}>và còn rất nhiều những điều khác</span>
+
+                                    {/* Bottom Section with Price and Button */}
+                                    <div className="flex gap-3 mt-auto">
+                                        {/* Price Section */}
+                                        <div className="flex-1 text-center py-2 px-4 rounded-lg" style={{backgroundColor: '#f8fafc', border: '1px solid #e2e8f0', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                            <div className="text-lg font-bold" style={{color: '#1f2937'}}>MIỄN PHÍ</div>
+                                            <div className="text-xs" style={{color: '#6b7280'}}>Không giới hạn thời gian</div>
+                                        </div>
+
+                                        {/* View Details Button */}
+                                        <button 
+                                            onClick={() => handleViewDetails(standardPackage)}
+                                            className="flex-1 py-3 rounded-xl font-bold transition-all duration-300" 
+                                            style={{background: '#00B2FF', color: 'white', fontFamily: 'Myriad Pro, sans-serif'}}
+                                            onMouseEnter={(e) => e.target.style.background = '#0099e6'}
+                                            onMouseLeave={(e) => e.target.style.background = '#00B2FF'}>
+                                            {t('viewDetails')}
+                                        </button>
+                                    </div>
+                        </div>
+                    )}
+
+                            {/* Card 2: Gói trả phí */}
+                            {paidPackages.length > 0 && (
+                                <div className="bg-white rounded-2xl p-6 shadow-lg relative flex flex-col h-full">
+                                    {/* Package Title */}
+                                    <div className="mb-6">
+                                        <div className="rounded-full px-6 py-3 text-center mb-2" style={{background: 'linear-gradient(to right, #873BFF, #004895)'}}>
+                                            <span className="font-bold text-lg" style={{color: 'white', fontFamily: 'Myriad Pro, sans-serif'}}>GÓI TRẢ PHÍ</span>
+                                        </div>
+                                        <h3 
+                                            className="text-2xl sm:text-3xl font-bold uppercase text-center"
+                                            style={{
+                                                fontFamily: 'Myriad Pro, sans-serif',
+                                                background: 'linear-gradient(90deg, #05CAF6, #00B2FF, #0F85CE)',
+                                                backgroundSize: '200% 200%',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                                backgroundClip: 'text',
+                                                animation: 'gradientShift 6s ease infinite'
+                                            }}
+                                        >
+                                            Kidolock Premium
+                                        </h3>
+
+                                        {/* Device Count and User Info */}
+                                        <div className="text-center mb-4">
+                                            <div className="text-sm" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                {selectedDeviceCount} thiết bị | 1 người dùng
+                                        </div>
+                                        </div>
+
+                                        {/* Operating Systems */}
+                                        <div className="text-center mb-4">
+                                            <div className="flex items-center justify-center space-x-4 text-xs" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                <span>Windows®</span>
+                                                <div className="w-px h-3 bg-gray-300"></div>
+                                                <span>macOS®</span>
+                                                <div className="w-px h-3 bg-gray-300"></div>
+                                                <span>Android™</span>
+                                                <div className="w-px h-3 bg-gray-300"></div>
+                                                <span>iOS®</span>
+                                                </div>
+                                            <div className="text-sm font-semibold mt-2" style={{color: '#3b82f6', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                {(paidPackages[0]?.noiDungList?.length || defaultFeatures.length)} tính năng bảo vệ
+                                            </div>
+                                        </div>
+                                                    </div>
+
+                                    {/* Features List */}
+                                    <div className="space-y-3 mb-6 flex-grow">
+                                        {(paidPackages[0]?.noiDungList?.map(item => item.noi_dung) || defaultFeatures).map((feature, idx) => (
+                                                                            <div key={idx} className="flex items-center">
+                                                <div className="w-5 h-5 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}>
+                                                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{color: 'white'}}>
+                                                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                                    </svg>
+                                                                                </div>
+                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
+                                                                            </div>
+                                                                        ))}
+                                    </div>
+
+                                    {/* Bottom Section */}
+                                    <div className="space-y-3 mt-auto">
+                                        {/* Custom Device Count Dropdown */}
+                                        <div className="relative">
+                                            <div className="w-full py-4 px-6 rounded-xl border-2 cursor-pointer transition-colors duration-200 hover:bg-purple-50" 
+                                                 style={{
+                                                     fontFamily: 'Myriad Pro, sans-serif',
+                                                     borderColor: '#873BFF',
+                                                     backgroundColor: '#f8fafc',
+                                                     color: '#1f2937',
+                                                     fontSize: '16px',
+                                                     fontWeight: '600'
+                                                 }}
+                                                 onClick={() => setShowDropdown(!showDropdown)}>
+                                                <div className="flex justify-between items-center">
+                                                    <div className="text-left">
+                                                        <div className="font-bold">{getSelectedPaidPackage()?.so_thiet_bi || 1} Thiết bị</div>
+                                                        <div className="text-sm" style={{color: '#6b7280'}}>1 Năm</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Custom dropdown arrow */}
+                                            <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#873BFF'}}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </div>
+
+                                            {/* Dropdown Options */}
+                                            {showDropdown && (
+                                                <div className="absolute top-full left-0 right-0 mt-1 bg-white border-2 rounded-xl shadow-lg z-10" style={{borderColor: '#873BFF'}}>
+                                                    {paidPackages.map(pkg => (
+                                                        <div 
+                                                            key={pkg.id}
+                                                            className="px-6 py-4 cursor-pointer transition-colors duration-200 hover:bg-purple-50"
+                                                            onClick={() => {
+                                                                setSelectedDeviceCount(pkg.so_thiet_bi);
+                                                                setShowDropdown(false);
+                                                            }}
+                                                            style={{
+                                                                fontFamily: 'Myriad Pro, sans-serif',
+                                                                fontSize: '16px',
+                                                                fontWeight: '600',
+                                                                color: '#1f2937'
+                                                            }}
+                                                        >
+                                                            <div className="flex justify-between items-center">
+                                                                <div className="text-left">
+                                                                    <div className="font-bold">{pkg.so_thiet_bi} Thiết bị</div>
+                                                                    <div className="text-sm" style={{color: '#6b7280'}}>1 Năm</div>
+                                                                </div>
+                                                                <div className="text-right">
+                                                                    <div className="font-bold">{formatPrice(pkg.gia)} đ*</div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             )}
                                         </div>
 
-                                        {/* View Details Button - Always at bottom */}
-                                        <button 
-                                            onClick={() => handleViewDetails(pkg)}
-                                            className="w-full py-3 rounded-lg font-bold transition-all duration-300 mt-auto" 
-                                            style={{background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white'}}
-                                            onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #2563eb, #1d4ed8)'}
-                                            onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #3b82f6, #2563eb)'}>
-                                            {t('viewDetails')}
-                                        </button>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
-                </div>
+                                        {/* Discount Card */}
+                                        {selectedDeviceCount > 1 && (
+                                            <div className="flex justify-center mb-3">
+                                                <div className="text-center py-3 px-6 rounded-2xl" style={{backgroundColor: '#f59e0b', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                    <div className="text-sm font-bold uppercase" style={{color: '#000000'}}>
+                                                        {selectedDeviceCount === 2 ? 'Tiết kiệm 5%' : selectedDeviceCount === 3 ? 'Tiết kiệm 10%' : ''}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
 
-                {/* Other Packages Section */}
-                <div>
-                    <h3 className="text-3xl font-bold text-center mb-12" style={{color: 'white'}}>{t('otherPackages')}</h3>
-                    
-                    {loading ? (
-                        <div className="text-center py-12">
-                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                            <p className="mt-4 text-gray-600">{t('loadingPackages')}</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-8">
-                            {packages.slice(3).map((pkg, index) => {
-                                const features = pkg.noiDungList?.map(item => item.noi_dung) || defaultFeatures;
-                                const displayFeatures = getDisplayFeatures(features);
-                                const packageKey = `package${index + 3}`;
-                                
-                                return (
-                                    <div key={pkg.id} className="bg-white rounded-2xl p-6 shadow-lg relative">
-                                        {/* Discount Badge - Top Right Corner */}
-                                        <div className="absolute -top-2 -right-2 px-3 py-1 rounded-full text-sm font-bold" style={{backgroundColor: '#f97316', color: 'white'}}>
-                                            70% OFF
+                                        {/* Pricing */}
+                                        <div className="text-center py-3 px-4 rounded-lg" style={{backgroundColor: '#f8fafc', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                            <div className="text-4xl font-bold" style={{color: '#1f2937', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                {getSelectedPaidPackage() ? formatPrice(getSelectedPaidPackage().gia) : '0'} vnd
+                                            </div>
+                                            <div className="text-sm mt-1" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                1 năm
+                                            </div>
                                         </div>
 
-                                        {/* Expand Button - Bottom Center */}
-                                        <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                                        {/* Action Buttons */}
+                                        <div className="flex gap-3">
+                                            {/* Buy Now Button */}
                                             <button 
-                                                onClick={() => togglePackage(packageKey)}
-                                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg"
-                                                style={{backgroundColor: '#3b82f6', color: 'white'}}
-                                                onMouseEnter={(e) => e.target.style.backgroundColor = '#2563eb'}
-                                                onMouseLeave={(e) => e.target.style.backgroundColor = '#3b82f6'}
-                                            >
-                                                <svg 
-                                                    className={`w-4 h-4 transition-transform duration-300 ${
-                                                        expandedPackages[packageKey] ? 'rotate-180' : ''
-                                                    }`} 
-                                                    fill="currentColor" 
-                                                    viewBox="0 0 20 20"
-                                                >
-                                                    <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                </svg>
+                                                onClick={() => handleBuyNow(getSelectedPaidPackage())}
+                                                className="flex-1 py-3 rounded-xl font-bold transition-all duration-300 border-2" 
+                                                style={{
+                                                    borderColor: '#873BFF', 
+                                                    color: '#873BFF', 
+                                                    backgroundColor: 'transparent', 
+                                                    fontFamily: 'Myriad Pro, sans-serif',
+                                                    fontWeight: '700'
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.backgroundColor = '#873BFF'; 
+                                                    e.target.style.color = 'white';
+                                                    e.target.style.transform = 'translateY(-2px)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.backgroundColor = 'transparent'; 
+                                                    e.target.style.color = '#873BFF';
+                                                    e.target.style.transform = 'translateY(0)';
+                                                }}>
+                                                MUA NGAY
                                             </button>
-                                        </div>
 
-                                        {/* View Details Button - Bottom Right */}
-                                        <div className="absolute -bottom-2 -right-2">
+                                            {/* View Details Button */}
                                             <button 
-                                                onClick={() => handleViewDetails(pkg)}
-                                                className="px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 shadow-lg"
-                                                style={{background: 'linear-gradient(to right, #3b82f6, #2563eb)', color: 'white'}}
-                                                onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #2563eb, #1d4ed8)'}
-                                                onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #3b82f6, #2563eb)'}>
+                                                onClick={() => handleViewDetails(getSelectedPaidPackage())}
+                                                className="flex-1 py-3 rounded-xl font-bold transition-all duration-300" 
+                                                style={{background: '#00B2FF', color: 'white', fontFamily: 'Myriad Pro, sans-serif'}}
+                                                onMouseEnter={(e) => e.target.style.background = '#0099e6'}
+                                                onMouseLeave={(e) => e.target.style.background = '#00B2FF'}>
                                                 {t('viewDetails')}
                                             </button>
                                         </div>
-
-                                        {/* Header - Hide when expanded on desktop, show on mobile */}
-                                        <div className={`${expandedPackages[packageKey] ? 'lg:hidden' : ''}`}>
-                                            <div className="flex items-center justify-between">
-                                                {/* Left Section - Package Title */}
-                                                <div className="rounded-full px-6 py-3 hidden sm:block" style={{background: 'linear-gradient(to right, #22c55e, #facc15)'}}>
-                                                    <span className="font-bold text-lg" style={{color: 'white'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
-                                                </div>
-                                                
-                                                {/* Mobile Title - No background, larger text */}
-                                                <div className="sm:hidden">
-                                                    <span className="font-bold text-2xl" style={{color: '#22c55e'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
-                                                </div>
-
-                                                {/* Middle Section - Price and Info */}
-                                                <div className="flex-1 text-center mx-4 sm:mx-8">
-                                                    <div className="text-2xl sm:text-3xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-base sm:text-lg">vnd</span></div>
-                                                    <div className="text-xs sm:text-sm mt-1" style={{color: '#6b7280'}}>1 thiết bị | 1 người dùng</div>
-                                                </div>
-
-                                                {/* Right Section - Empty space for balance */}
-                                                <div className="w-16 sm:w-24"></div>
-                                            </div>
-                                        </div>
-
-                                        {/* Expandable Content */}
-                                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                            expandedPackages[packageKey] ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
-                                        }`}>
-                                            <div className="mt-4 pt-4 border-t" style={{borderColor: '#e5e7eb'}}>
-                                                {/* Content Layout - Responsive Grid */}
-                                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-                                                    {/* Part 1 - Hero Image */}
-                                                    <div className="order-1 lg:order-1 flex justify-center lg:justify-start">
-                                                        <img
-                                                            src={heroImg}
-                                                            alt="Hero fighting virus"
-                                                            className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 object-contain"
-                                                        />
-                                                    </div>
-
-                                                    {/* Part 2 - Features Content (Center) */}
-                                                    <div className="order-2 lg:order-2">
-                                                        <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm text-gray-600">
-                                                            {(() => {
-                                                                const isExpanded = expandedPackages[packageKey];
-                                                                const featuresToShow = isExpanded ? features : (displayFeatures.features || displayFeatures);
-                                                                const showMoreText = isExpanded ? false : displayFeatures.hasMore;
-                                                                
-                                                                return (
-                                                                    <>
-                                                                        {featuresToShow.map((feature, idx) => (
-                                                                            <div key={idx} className="flex items-center">
-                                                                                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}>
-                                                                                    <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2" fill="currentColor" viewBox="0 0 20 20" style={{color: 'white'}}>
-                                                                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                                                    </svg>
                                                                                 </div>
-                                                                                <span className="text-xs sm:text-sm">{feature}</span>
-                                                                            </div>
-                                                                        ))}
-                                                                        {showMoreText && (
-                                                                            <div className="flex items-center">
-                                                                                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0" style={{backgroundColor: '#6b7280'}}>
-                                                                                    <svg className="w-1.5 h-1.5 sm:w-2 sm:h-2" fill="currentColor" viewBox="0 0 20 20" style={{color: 'white'}}>
-                                                                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                                                                    </svg>
-                                                                                </div>
-                                                                                <span className="text-xs sm:text-sm italic">và còn rất nhiều những điều khác</span>
                                                                             </div>
                                                                         )}
-                                                                    </>
-                                                                );
-                                                            })()}
-                                                        </div>
-                                                    </div>
 
-                                                    {/* Part 3 - Pricing */}
-                                                    <div className="order-3 lg:order-3 flex justify-center lg:justify-end">
-                                                        <div className="flex flex-col lg:flex-row items-center gap-4">
-                                                            <div className="rounded-full px-6 py-3" style={{background: 'linear-gradient(to right, #22c55e, #facc15)'}}>
-                                                                <span className="font-bold text-lg" style={{color: 'white'}}>{getPackageDuration(pkg.thoi_han_thang)}</span>
-                                                            </div>
-                                                            <div className="text-center">
-                                                                <div className="line-through text-base mb-1" style={{color: '#9ca3af'}}>{formatPrice(pkg.gia * 2)}</div>
-                                                                <div className="text-3xl sm:text-4xl font-bold" style={{color: '#1f2937'}}>{formatPrice(pkg.gia)} <span className="text-lg sm:text-xl">vnd</span></div>
-                                                                <div className="text-sm sm:text-base mt-1" style={{color: '#6b7280'}}>1 thiết bị | 1 người dùng</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                            {/* Card 3: Liên hệ tư vấn */}
+                            <div className="bg-white rounded-2xl p-6 shadow-lg relative flex flex-col h-full items-center justify-center" style={{border: '2px solid #10b981'}}>
+                                {/* Phone Sticker with Animation */}
+                                <div className="relative mb-6">
+                                    <div className="w-24 h-24 rounded-full flex items-center justify-center animate-bounce" style={{background: 'linear-gradient(to bottom right, #10b981, #059669)'}}>
+                                        <svg className="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                        </svg>
                                     </div>
-                                );
-                            })}
+                                    {/* Ripple Effect */}
+                                    <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{borderColor: '#10b981'}}></div>
+                                    <div className="absolute inset-0 rounded-full border-2 animate-ping" style={{borderColor: '#059669', animationDelay: '0.5s'}}></div>
+                                </div>
+
+                                {/* Contact Text */}
+                                <div className="text-center">
+                                    <h3 className="text-xl font-bold mb-2" style={{color: '#10b981', fontFamily: 'Myriad Pro, sans-serif'}}>LIÊN HỆ TƯ VẤN</h3>
+                                    <p className="text-sm" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                        Liên hệ với chúng tôi để được tư vấn về gói dịch vụ phù hợp nhất
+                                    </p>
+                                </div>
+
+                                {/* Contact Button */}
+                                <button 
+                                    className="w-full py-3 rounded-lg font-bold transition-all duration-300 mt-6" 
+                                    style={{background: 'linear-gradient(to right, #10b981, #059669)', color: 'white', fontFamily: 'Myriad Pro, sans-serif'}}
+                                    onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #059669, #047857)'}
+                                    onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #10b981, #059669)'}>
+                                    LIÊN HỆ NGAY
+                                </button>
+                                    </div>
                         </div>
                     )}
                 </div>
+
             </div>
 
             {/* Modal */}
@@ -386,10 +466,12 @@ const PricingSection = () => {
                                 <div className="rounded-2xl p-6 relative" style={{background: 'linear-gradient(to bottom right, #dbeafe, #eff6ff)'}}>
                                     {/* Phần 1: Tiêu đề */}
                                     <div className="text-center mb-6">
-                                        <h3 className="text-2xl font-bold mb-2" style={{background: 'linear-gradient(to right, #2563eb, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>
-                                            {getPackageDuration(selectedPackage.thoi_han_thang)}
+                                        <h3 className="text-2xl font-bold mb-2" style={{background: 'linear-gradient(to right, #2563eb, #f97316)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                            {selectedPackage.id === 8 ? 'GÓI TIÊU CHUẨN' : 'GÓI TRẢ PHÍ'}
                                         </h3>
-                                        <p className="font-semibold" style={{color: '#4b5563'}}>1 thiết bị | 1 người dùng</p>
+                                        <p className="font-semibold" style={{color: '#4b5563', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                            {selectedPackage.so_thiet_bi || 1} thiết bị | 1 người dùng
+                                        </p>
                                     </div>
 
                                     {/* Phần 2: Nội dung so sánh */}
@@ -403,7 +485,7 @@ const PricingSection = () => {
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <span className="text-sm" style={{color: '#374151'}}>{feature}</span>
+                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -423,12 +505,21 @@ const PricingSection = () => {
                                         <button 
                                             onClick={() => navigate(`/payment/${selectedPackage.id}`)}
                                             className="w-full py-4 rounded-xl font-bold transition-all duration-300 shadow-lg" 
-                                            style={{background: 'linear-gradient(to right, #f97316, #ea580c)', color: 'white'}} 
+                                            style={{background: 'linear-gradient(to right, #f97316, #ea580c)', color: 'white', fontFamily: 'Myriad Pro, sans-serif'}} 
                                             onMouseEnter={(e) => e.target.style.background = 'linear-gradient(to right, #ea580c, #dc2626)'} 
                                             onMouseLeave={(e) => e.target.style.background = 'linear-gradient(to right, #f97316, #ea580c)'}>
-                                            <div className="line-through text-sm mb-1" style={{color: '#e5e7eb'}}>{formatPrice(selectedPackage.gia * 2)}</div>
-                                            <div className="text-2xl font-bold mb-1">{formatPrice(selectedPackage.gia)} <span className="text-base">vnd</span></div>
-                                            <div className="text-xs" style={{color: '#e5e7eb'}}>1 thiết bị | 1 người dùng</div>
+                                            {selectedPackage.id === 8 ? (
+                                                <>
+                                                    <div className="text-2xl font-bold mb-1" style={{fontFamily: 'Myriad Pro, sans-serif'}}>MIỄN PHÍ</div>
+                                                    <div className="text-xs" style={{color: '#e5e7eb', fontFamily: 'Myriad Pro, sans-serif'}}>{selectedPackage.so_thiet_bi || 1} thiết bị | 1 người dùng</div>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <div className="line-through text-sm mb-1" style={{color: '#e5e7eb', fontFamily: 'Myriad Pro, sans-serif'}}>{formatPrice(selectedPackage.gia * 2)}</div>
+                                                    <div className="text-2xl font-bold mb-1" style={{fontFamily: 'Myriad Pro, sans-serif'}}>{formatPrice(selectedPackage.gia)} <span className="text-base">vnd</span></div>
+                                                    <div className="text-xs" style={{color: '#e5e7eb', fontFamily: 'Myriad Pro, sans-serif'}}>{selectedPackage.so_thiet_bi || 1} thiết bị | 1 người dùng</div>
+                                                </>
+                                            )}
                                         </button>
                                     </div>
                                 </div>
@@ -437,9 +528,9 @@ const PricingSection = () => {
                                 <div className="rounded-2xl p-6 relative border-2" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                                     {/* Phần 1: Tiêu đề */}
                                     <div className="text-center mb-6">
-                                        <p className="text-sm mb-2" style={{color: '#6b7280'}}>GÓI DÙNG THỬ</p>
-                                        <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>MIỄN PHÍ</h3>
-                                        <p className="font-semibold" style={{color: '#4b5563'}}>1 thiết bị | 1 người dùng</p>
+                                        <p className="text-sm mb-2" style={{color: '#6b7280', fontFamily: 'Myriad Pro, sans-serif'}}>GÓI DÙNG THỬ</p>
+                                        <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937', fontFamily: 'Myriad Pro, sans-serif'}}>MIỄN PHÍ</h3>
+                                        <p className="font-semibold" style={{color: '#4b5563', fontFamily: 'Myriad Pro, sans-serif'}}>1 thiết bị | 1 người dùng</p>
                                     </div>
 
                                     {/* Phần 2: Nội dung so sánh */}
@@ -459,7 +550,7 @@ const PricingSection = () => {
                                                             </svg>
                                                         )}
                                                     </div>
-                                                    <span className="text-sm" style={{color: idx < 2 ? '#374151' : '#9ca3af'}}>
+                                                    <span className="text-sm" style={{color: idx < 2 ? '#374151' : '#9ca3af', fontFamily: 'Myriad Pro, sans-serif'}}>
                                                         {feature}
                                                     </span>
                                                 </div>
@@ -478,7 +569,7 @@ const PricingSection = () => {
                                             />
                                         </div>
                                         
-                                        <button className="w-full py-4 rounded-xl" style={{color: 'black'}}>
+                                        <button className="w-full py-4 rounded-xl" style={{color: 'black', fontFamily: 'Myriad Pro, sans-serif'}}>
                                             <div className="text-2xl font-bold mb-1">MIỄN PHÍ</div>
                                             <div className="text-xs" style={{color: '#1f2937'}}>1 thiết bị | 1 người dùng</div>
                                         </button>

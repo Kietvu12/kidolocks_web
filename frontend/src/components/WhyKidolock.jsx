@@ -31,7 +31,7 @@ const WhyKidolock = () => {
                 <div className="block lg:hidden text-center mb-16">
                     <h2 className="leading-tight" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
                         <div className="text-lg sm:text-xl md:text-2xl font-light" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>{t('whyTitle1')}</div>
-                        <div className="text-4xl sm:text-5xl md:text-6xl font-bold" style={{ background: 'linear-gradient(to right, #10B981, #3B82F6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
+                        <div className="text-4xl sm:text-5xl md:text-6xl font-bold" style={{ background: 'linear-gradient(to right, #05CAF6, #00B2FF, #0F85CE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
                     </h2>
                 </div>
 
@@ -97,10 +97,10 @@ const WhyKidolock = () => {
                                         />
                                         
                                         {/* Gradient overlay - covers only bottom half */}
-                                        <div className="absolute bottom-0 left-0 right-0 h-1/2 rounded-b-2xl bg-gradient-to-t from-white via-white/60 to-transparent"></div>
+                                        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent" style={{borderRadius: '0 0 1rem 1rem'}}></div>
                                         
-                                        {/* Overlay with content - only show content, no titles */}
-                                        <div className="absolute inset-0 rounded-2xl flex flex-col justify-end p-4 md:p-6 lg:p-8">
+                                        {/* Overlay with content - positioned over gradient */}
+                                        <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8" style={{borderRadius: '0 0 1rem 1rem'}}>
                                             <p className="leading-relaxed text-xs md:text-sm lg:text-sm" style={{ color: '#1D4ED8', fontFamily: 'Myriad Pro' }}>
                                                 {feature.content}
                                             </p>
@@ -132,7 +132,7 @@ const WhyKidolock = () => {
                     <div className="hidden lg:block absolute bottom-[-1rem] right-0 lg:bottom-[-3rem] lg:right-[-2rem] xl:bottom-[-4rem] xl:right-[-3rem] text-right z-10">
                         <h2 className="leading-tight" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
                             <div className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-light" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>{t('whyTitle1')}</div>
-                            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold" style={{ background: 'linear-gradient(to right, #10B981, #3B82F6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
+                            <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold" style={{ background: 'linear-gradient(to right, #05CAF6, #00B2FF, #0F85CE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', fontFamily: 'Myriad Pro' }}>{t('whyTitle2')}</div>
                         </h2>
                     </div>
                 </div>

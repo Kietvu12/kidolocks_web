@@ -50,11 +50,11 @@ const TestimonialsSection = () => {
                                                     className="w-full h-full rounded-full object-cover"
                                                 />
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#111827' }}>{t('testimonial1Title')}</h3>
+                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#022168' }}>{t('testimonial1Title')}</h3>
                                         </div>
                                         
                                         {/* Content */}
-                                        <p className="leading-relaxed text-sm" style={{ color: '#374151' }}>
+                                        <p className="leading-relaxed text-sm" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                             {t('testimonial1Content')}
                                         </p>
                                     </div>
@@ -70,11 +70,11 @@ const TestimonialsSection = () => {
                                                     className="w-full h-full rounded-full object-cover"
                                                 />
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#111827' }}>{t('testimonial2Title')}</h3>
+                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#022168' }}>{t('testimonial2Title')}</h3>
                                         </div>
                                         
                                         {/* Content */}
-                                        <p className="leading-relaxed text-sm" style={{ color: '#374151' }}>
+                                        <p className="leading-relaxed text-sm" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                             {t('testimonial2Content')}
                                         </p>
                                     </div>
@@ -90,11 +90,11 @@ const TestimonialsSection = () => {
                                                     className="w-full h-full rounded-full object-cover"
                                                 />
                                             </div>
-                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#111827' }}>{t('testimonial3Title')}</h3>
+                                            <h3 className="text-xl font-bold tracking-widest" style={{ color: '#022168' }}>{t('testimonial3Title')}</h3>
                                         </div>
                                         
                                         {/* Content */}
-                                        <p className="leading-relaxed text-sm" style={{ color: '#374151' }}>
+                                        <p className="leading-relaxed text-sm" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                             {t('testimonial3Content')}
                                         </p>
                                     </div>
@@ -136,13 +136,13 @@ const TestimonialsSection = () => {
                                         
                                         {/* Title - Top Right */}
                                         <div className="absolute top-4 right-8">
-                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#111827' }}>{t('testimonial1Title')}</h3>
-                                            <div className="w-full h-0.5" style={{ backgroundColor: '#D1D5DB' }}></div>
+                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#022168' }}>{t('testimonial1Title')}</h3>
+                                            <div className="w-full h-0.5" style={{ backgroundColor: '#022168' }}></div>
                                         </div>
                                         
                                         <div className="pt-12">
                                             {/* Content */}
-                                            <p className="leading-relaxed text-lg" style={{ color: '#374151' }}>
+                                            <p className="leading-relaxed text-lg" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                                 {t('testimonial1Content')}
                                             </p>
                                         </div>
@@ -161,13 +161,13 @@ const TestimonialsSection = () => {
                                         
                                         {/* Title - Top Center */}
                                         <div className="absolute top-4 left-1/2 transform -translate-x-1/2">
-                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#111827' }}>{t('testimonial2Title')}</h3>
-                                            <div className="w-full h-0.5" style={{ backgroundColor: '#D1D5DB' }}></div>
+                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#022168' }}>{t('testimonial2Title')}</h3>
+                                            <div className="w-full h-0.5" style={{ backgroundColor: '#022168' }}></div>
                                         </div>
                                         
                                         <div className="pt-16 pb-12">
                                             {/* Content */}
-                                            <p className="leading-relaxed text-lg" style={{ color: '#374151' }}>
+                                            <p className="leading-relaxed text-lg" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                                 {t('testimonial2Content')}
                                             </p>
                                         </div>
@@ -186,13 +186,13 @@ const TestimonialsSection = () => {
                                         
                                         {/* Title - Top Left */}
                                         <div className="absolute top-4 left-4">
-                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#111827' }}>{t('testimonial3Title')}</h3>
-                                            <div className="w-full h-0.5" style={{ backgroundColor: '#D1D5DB' }}></div>
+                                            <h3 className="text-2xl font-bold mb-2 tracking-widest" style={{ color: '#022168' }}>{t('testimonial3Title')}</h3>
+                                            <div className="w-full h-0.5" style={{ backgroundColor: '#022168' }}></div>
                                         </div>
                                         
                                         <div className="pt-12">
                                             {/* Content */}
-                                            <p className="leading-relaxed text-lg" style={{ color: '#374151' }}>
+                                            <p className="leading-relaxed text-lg" style={{ color: '#022168', fontFamily: "Myriad Pro" }}>
                                                 {t('testimonial3Content')}
                                             </p>
                                         </div>

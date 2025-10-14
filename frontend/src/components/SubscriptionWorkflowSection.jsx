@@ -32,7 +32,7 @@ const SubscriptionWorkflowSection = () => {
                 {/* Content Sections */}
                 <div className="space-y-4">
                     {/* Section 1: CÁC MỨC GIÁ */}
-                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
                         <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('pricingLevels')}
@@ -53,14 +53,14 @@ const SubscriptionWorkflowSection = () => {
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.pricingLevels ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <p className="leading-relaxed" style={{color: '#374151'}}>
+                            <p className="leading-relaxed" style={{color: '#071F55'}}>
                                 {t('subscriptionCommonDesc')}
                             </p>
                         </div>
                     </div>
 
                     {/* Section 2: TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
                         <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('autoRenewal')}
@@ -81,14 +81,14 @@ const SubscriptionWorkflowSection = () => {
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.autoRenewal ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <p className="leading-relaxed" style={{color: '#374151'}}>
+                            <p className="leading-relaxed" style={{color: '#071F55'}}>
                                 {t('subscriptionCommonDesc')}
                             </p>
                         </div>
                     </div>
 
                     {/* Section 3: HỦY BỎ TỰ ĐỘNG GIA HẠN */}
-                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
+                    <div className="rounded-3xl p-6 shadow-lg" style={{backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)'}}>
                         <div className="flex items-center">
                             <button 
                                 onClick={() => toggleSection('cancelAutoRenewal')}
@@ -109,7 +109,7 @@ const SubscriptionWorkflowSection = () => {
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.cancelAutoRenewal ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <div className="space-y-4 leading-relaxed mt-2" style={{color: '#374151'}}>
+                            <div className="space-y-4 leading-relaxed mt-2" style={{color: '#071F55'}}>
                                 <p>{t('cancelIntro1')}</p>
                                 <p>{t('cancelIntro2')}</p>
                                 <p><strong>{t('cancelHowTo')}</strong></p>

@@ -93,7 +93,7 @@ const DownloadSection = () => {
                 <div className="mt-20">
                     <div className="grid grid-cols-1 gap-4">
                         {/* For All Devices */}
-                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
+                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
                             <div className="flex items-center">
                                 <button 
                                     onClick={() => toggleSection('allDevices')}
@@ -121,7 +121,7 @@ const DownloadSection = () => {
                         </div>
 
                         {/* System Requirements */}
-                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
+                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
                             <div className="flex items-center">
                                 <button 
                                     onClick={() => toggleSection('systemRequirements')}
@@ -171,7 +171,7 @@ const DownloadSection = () => {
                         </div>
 
                         {/* Language Support */}
-                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: 'rgba(37, 99, 235, 0.15)', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
+                        <div className="p-6 rounded-3xl shadow-lg" style={{ backgroundColor: '#EAFFFF', boxShadow: '0 10px 25px -5px rgba(37, 99, 235, 0.1), 0 4px 6px -2px rgba(37, 99, 235, 0.05)' }}>
                             <div className="flex items-center">
                                 <button 
                                     onClick={() => toggleSection('languageSupport')}
