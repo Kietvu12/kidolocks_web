@@ -21,11 +21,17 @@ const SubscriptionWorkflowSection = () => {
             <div className="max-w-4xl mx-auto">
                 {/* Header */}
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold" style={{ fontFamily: 'Myriad Pro' }}>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-normal" style={{ fontFamily: 'Myriad Pro' }}>
                         <span style={{color: '#1f2937', fontFamily: 'Myriad Pro'}}>{t('subscriptionHeader1')}</span>
                     </h2>
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-2" style={{ fontFamily: 'Myriad Pro' }}>
-                    <span style={{color: '#f97316', fontFamily: 'Myriad Pro'}}>{t('subscriptionHeader2')}</span>
+                    <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mt-2" style={{ fontFamily: 'Myriad Pro' }}>
+                        <span style={{
+                            background: 'linear-gradient(90deg, #014F8D 0%, #00AACF 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                            fontFamily: 'Myriad Pro'
+                        }}>{t('subscriptionHeader2')}</span>
                     </h2>
                 </div>
 
@@ -48,12 +54,12 @@ const SubscriptionWorkflowSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('pricingLevels')}</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#1251A4', fontFamily: 'Myriad Pro'}}>{t('pricingLevels')}</h3>
                         </div>
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.pricingLevels ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <p className="leading-relaxed" style={{color: '#071F55'}}>
+                            <p className="leading-relaxed" style={{color: '#071F55', fontWeight: 400}}>
                                 {t('subscriptionCommonDesc')}
                             </p>
                         </div>
@@ -76,12 +82,12 @@ const SubscriptionWorkflowSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('autoRenewal')}</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#1251A4', fontFamily: 'Myriad Pro'}}>{t('autoRenewal')}</h3>
                         </div>
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.autoRenewal ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <p className="leading-relaxed" style={{color: '#071F55'}}>
+                            <p className="leading-relaxed" style={{color: '#071F55', fontWeight: 400}}>
                                 {t('subscriptionCommonDesc')}
                             </p>
                         </div>
@@ -104,12 +110,12 @@ const SubscriptionWorkflowSection = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
-                            <h3 className="text-xl font-bold" style={{color: '#111827', fontFamily: 'Myriad Pro'}}>{t('cancelAutoRenewal')}</h3>
+                            <h3 className="text-xl font-bold" style={{color: '#1251A4', fontFamily: 'Myriad Pro'}}>{t('cancelAutoRenewal')}</h3>
                         </div>
                         <div className={`overflow-hidden mt-2 transition-all duration-300 ease-in-out ${
                             expandedSections.cancelAutoRenewal ? 'max-h-none opacity-100' : 'max-h-0 opacity-0'
                         }`}>
-                            <div className="space-y-4 leading-relaxed mt-2" style={{color: '#071F55'}}>
+                            <div className="space-y-4 leading-relaxed mt-2" style={{color: '#071F55', fontWeight: 400}}>
                                 <p>{t('cancelIntro1')}</p>
                                 <p>{t('cancelIntro2')}</p>
                                 <p><strong>{t('cancelHowTo')}</strong></p>

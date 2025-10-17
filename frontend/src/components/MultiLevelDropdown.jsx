@@ -173,7 +173,7 @@ const MultiLevelDropdown = () => {
   const [selectedThietBiForGoi, setSelectedThietBiForGoi] = useState(null);
   
   // Separate filter states for each level
-  const [phuHuynhFilters, setPhuHuynhFilters] = useState({ ten: '', email: '', sdt: '', loaiTaiKhoan: '' });
+  const [phuHuynhFilters, setPhuHuynhFilters] = useState({ ten: '', email: '', sdt: '', loaiTaiKhoan: '', vaiTro: '' });
   const [treEmFilters, setTreEmFilters] = useState({ ten: '', lop: '', truong: '', gioiTinh: '' });
   const [thietBiFilters, setThietBiFilters] = useState({ maThietBi: '', tenThietBi: '', loaiThietBi: '', goiDichVu: '' });
   
@@ -192,6 +192,16 @@ const MultiLevelDropdown = () => {
   const [phoneError, setPhoneError] = useState('');
   const [thietBiError, setThietBiError] = useState('');
   const [thietBiSuccess, setThietBiSuccess] = useState('');
+
+  // Wallet states
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [selectedPhuHuynhForWallet, setSelectedPhuHuynhForWallet] = useState(null);
+  const [walletPackages, setWalletPackages] = useState([]);
+  const [isLoadingWallet, setIsLoadingWallet] = useState(false);
+  const [walletError, setWalletError] = useState('');
+  const [showAssignForm, setShowAssignForm] = useState(false);
+  const [selectedPackageForAssign, setSelectedPackageForAssign] = useState(null);
+  const [assignDeviceCode, setAssignDeviceCode] = useState('');
 
   // Form data
   const [phuHuynhForm, setPhuHuynhForm] = useState({
@@ -223,7 +233,40 @@ const MultiLevelDropdown = () => {
   useEffect(() => {
     loadPhuHuynhList();
     loadGoiList();
+    loadAvailableRoles();
   }, []);
+
+  // Role management states
+  const [availableRoles, setAvailableRoles] = useState(['admin', 'user']);
+  const [isUpdatingRoleByUserId, setIsUpdatingRoleByUserId] = useState({});
+
+  const loadAvailableRoles = async () => {
+    try {
+      const res = await apiService.getAvailableRoles();
+      if (res && res.success && Array.isArray(res.data)) {
+        setAvailableRoles(res.data);
+      }
+    } catch (error) {
+      // keep default roles on error
+    }
+  };
+
+  const handleChangeUserRole = async (phuHuynhId, role) => {
+    try {
+      setIsUpdatingRoleByUserId(prev => ({ ...prev, [phuHuynhId]: true }));
+      const res = await apiService.updateUserRole(phuHuynhId, role);
+      if (res && res.success) {
+        await loadPhuHuynhList();
+      } else if (res && res.message) {
+        alert(res.message);
+      }
+    } catch (error) {
+      const msg = error?.response?.data?.message || error.message || 'Lỗi khi cập nhật vai trò';
+      alert(msg);
+    } finally {
+      setIsUpdatingRoleByUserId(prev => ({ ...prev, [phuHuynhId]: false }));
+    }
+  };
 
   // Password validation functions
   const validatePasswordRequirements = (password) => {
@@ -299,6 +342,82 @@ const MultiLevelDropdown = () => {
     } catch (error) {
       console.error('Error loading goi list:', error);
       setError('Lỗi khi tải danh sách gói dịch vụ');
+    }
+  };
+
+  const openWalletModal = async (phuHuynh) => {
+    try {
+      setSelectedPhuHuynhForWallet(phuHuynh);
+      setShowWalletModal(true);
+      setIsLoadingWallet(true);
+      setWalletError('');
+      const res = await apiService.getUnassignedPackages(phuHuynh.ma_phu_huynh);
+      if (res && res.success) {
+        setWalletPackages(res.data || []);
+      } else {
+        setWalletError(res?.message || 'Không thể tải ví gói');
+      }
+    } catch (error) {
+      setWalletError(error?.response?.data?.message || error.message || 'Lỗi khi tải ví gói');
+    } finally {
+      setIsLoadingWallet(false);
+    }
+  };
+
+  const closeWalletModal = () => {
+    setShowWalletModal(false);
+    setSelectedPhuHuynhForWallet(null);
+    setWalletPackages([]);
+    setShowAssignForm(false);
+    setSelectedPackageForAssign(null);
+    setAssignDeviceCode('');
+  };
+
+  const getParentDeviceCodes = (phuHuynh) => {
+    if (!phuHuynh || !phuHuynh.treEmList) return [];
+    const codes = [];
+    phuHuynh.treEmList.forEach(te => {
+      if (te.thietBiList) te.thietBiList.forEach(tb => { if (tb.ma_thiet_bi) codes.push(tb.ma_thiet_bi); });
+    });
+    return Array.from(new Set(codes));
+  };
+
+  const openAssignForm = (pkg) => {
+    setSelectedPackageForAssign(pkg);
+    setAssignDeviceCode('');
+    setShowAssignForm(true);
+  };
+
+  const submitAssignPackage = async () => {
+    if (!selectedPackageForAssign) return;
+    const code = assignDeviceCode.trim();
+    if (!code) {
+      alert('Vui lòng nhập hoặc chọn mã thiết bị');
+      return;
+    }
+    try {
+      setIsLoadingWallet(true);
+      const res = await apiService.assignPackageToDevice({
+        goi_dich_vu_id: selectedPackageForAssign.id,
+        ma_thiet_bi: code
+      });
+      if (res && res.success) {
+        alert('Gán gói cho thiết bị thành công!');
+        // refresh wallet list
+        const refreshed = await apiService.getUnassignedPackages(selectedPhuHuynhForWallet.ma_phu_huynh);
+        setWalletPackages(refreshed?.success ? (refreshed.data || []) : []);
+        setShowAssignForm(false);
+        setSelectedPackageForAssign(null);
+        setAssignDeviceCode('');
+        // reload main data to reflect active package if needed
+        await loadPhuHuynhList();
+      } else {
+        alert(res?.message || 'Không thể gán gói');
+      }
+    } catch (error) {
+      alert(error?.response?.data?.message || error.message || 'Lỗi khi gán gói');
+    } finally {
+      setIsLoadingWallet(false);
     }
   };
 
@@ -1250,6 +1369,12 @@ const MultiLevelDropdown = () => {
         }
       }
       
+      // Filter by role (admin/user)
+      if (filters.vaiTro && filters.vaiTro !== '') {
+        const role = phuHuynh.la_admin ? 'admin' : 'user';
+        if (role !== filters.vaiTro) return false;
+      }
+      
       return true;
     });
   };
@@ -1499,6 +1624,19 @@ const MultiLevelDropdown = () => {
                   <option value="Free">Free</option>
                 </select>
               </div>
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Vai trò</label>
+                <select
+                  value={phuHuynhFilters.vaiTro}
+                  onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, vaiTro: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Tất cả</option>
+                  {availableRoles.map(r => (
+                    <option key={r} value={r}>{r === 'admin' ? 'Admin' : 'User'}</option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -1529,6 +1667,7 @@ const MultiLevelDropdown = () => {
                 <th className="px-4 py-4 text-left text-sm font-semibold uppercase tracking-wider min-w-[150px]" style={{ color: '#374151' }}>Mật khẩu</th>
                 <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[80px]" style={{ color: '#374151' }}>Số trẻ</th>
                 <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[100px]" style={{ color: '#374151' }}>Số thiết bị</th>
+                <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[140px]" style={{ color: '#374151' }}>Vai trò</th>
                 <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[120px]" style={{ color: '#374151' }}>Trạng thái</th>
                 <th className="px-4 py-4 text-center text-sm font-semibold uppercase tracking-wider min-w-[200px]" style={{ color: '#374151' }}>Thao tác</th>
               </tr>
@@ -1605,6 +1744,29 @@ const MultiLevelDropdown = () => {
                     </div>
                   </td>
                   <td className="px-4 py-4 text-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                        style={{
+                          background: phuHuynh.la_admin ? '#dbeafe' : '#f3f4f6',
+                          color: phuHuynh.la_admin ? '#1d4ed8' : '#374151'
+                        }}
+                      >
+                        {phuHuynh.la_admin ? 'Admin' : 'User'}
+                      </span>
+                      {/* Role editor for admin */}
+                      <select
+                        className="border text-xs rounded px-2 py-1"
+                        value={phuHuynh.la_admin ? 'admin' : 'user'}
+                        onChange={(e) => handleChangeUserRole(phuHuynh.ma_phu_huynh, e.target.value)}
+                        disabled={!!isUpdatingRoleByUserId[phuHuynh.ma_phu_huynh]}
+                      >
+                        {availableRoles.map(r => (
+                          <option key={r} value={r}>{r === 'admin' ? 'Admin' : 'User'}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </td>
+                  <td className="px-4 py-4 text-center">
                     {isPremiumUser(phuHuynh) ? (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #fbbf24, #f59e0b)', color: '#ffffff' }}>
                         Premium
@@ -1617,6 +1779,16 @@ const MultiLevelDropdown = () => {
                   </td>
                   <td className="px-4 py-4 text-center">
                     <div className="flex flex-wrap gap-1 sm:gap-2 justify-center">
+                      <button
+                        onClick={() => openWalletModal(phuHuynh)}
+                        className="text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border transition-all font-medium flex items-center min-w-fit shadow-sm"
+                        style={{ color: '#0ea5e9', borderColor: '#bae6fd', backgroundColor: '#ffffff' }}
+                        onMouseEnter={(e) => { e.target.style.color = '#0284c7'; e.target.style.backgroundColor = '#e0f2fe'; }}
+                        onMouseLeave={(e) => { e.target.style.color = '#0ea5e9'; e.target.style.backgroundColor = '#ffffff'; }}
+                      >
+                        <Package className="w-4 h-4 mr-1" />
+                        Ví gói
+                      </button>
                       <button
                         onClick={() => handleOpenTreEmPopup(phuHuynh)}
                         className="text-xs px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg border transition-all font-medium flex items-center min-w-fit shadow-sm"
@@ -2127,6 +2299,127 @@ const MultiLevelDropdown = () => {
                 Xác nhận
               </button>
       </div>
+          </div>
+        </div>
+      )}
+
+      {/* Wallet Modal */}
+      {showWalletModal && selectedPhuHuynhForWallet && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-sky-50 to-sky-100">
+              <div>
+                <h2 className="text-2xl font-bold" style={{color: '#0c4a6e'}}>
+                  Ví gói - {selectedPhuHuynhForWallet.ten_phu_huynh}
+                </h2>
+                <p className="text-sm" style={{color: '#0369a1'}}>
+                  Email: {selectedPhuHuynhForWallet.email_phu_huynh}
+                </p>
+              </div>
+              <button
+                onClick={closeWalletModal}
+                className="p-2 rounded-lg hover:bg-sky-200 transition-colors"
+              >
+                <X className="w-5 h-5" style={{color: '#0284c7'}} />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="p-6 overflow-y-auto max-h-[70vh]">
+              {isLoadingWallet ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2" style={{ borderBottomColor: '#0ea5e9' }}></div>
+                  <span className="ml-3" style={{ color: '#0c4a6e' }}>Đang tải ví gói...</span>
+                </div>
+              ) : walletError ? (
+                <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: '#fef2f2', borderColor: '#fecaca', border: '1px solid' }}>
+                  <div className="flex items-center">
+                    <span className="mr-2" style={{ color: '#ef4444' }}>⚠️</span>
+                    <span style={{ color: '#b91c1c' }}>{walletError}</span>
+                  </div>
+                </div>
+              ) : walletPackages.length === 0 ? (
+                <div className="text-center py-12" style={{color: '#6b7280'}}>
+                  <div className="text-6xl mb-4">🎁</div>
+                  <h3 className="text-xl font-semibold mb-2">Chưa có gói chưa gán thiết bị</h3>
+                  <p className="text-sm">Khi người dùng mua gói, gói sẽ xuất hiện ở đây để gán vào thiết bị.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {walletPackages.map((pkg) => (
+                    <div key={pkg.id} className="border rounded-lg p-4 shadow-sm bg-white">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-base font-semibold" style={{color: '#0f172a'}}>{pkg?.thongTinGoi?.ten || 'Gói dịch vụ'}</div>
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={{backgroundColor: '#fef3c7', color: '#92400e'}}>Chưa gán</span>
+                      </div>
+                      <div className="text-sm" style={{color: '#334155'}}>
+                        <div>Giá: {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(pkg.gia || 0)}</div>
+                        <div>Thời hạn: {pkg?.thongTinGoi?.thoi_han_thang || 0} tháng</div>
+                        {pkg.vnp_txn_ref && (<div>Mã đơn hàng: {pkg.vnp_txn_ref}</div>)}
+                        {pkg.ngay_mua && (<div>Ngày mua: {new Date(pkg.ngay_mua).toLocaleDateString('vi-VN')}</div>)}
+                      </div>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          onClick={() => openAssignForm(pkg)}
+                          className="text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center min-w-fit shadow-sm"
+                          style={{ color: '#0284c7', borderColor: '#7dd3fc', backgroundColor: '#ffffff' }}
+                        >
+                          <Smartphone className="w-4 h-4 mr-1" /> Gán vào thiết bị
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Assign Form */}
+            {showAssignForm && selectedPackageForAssign && (
+              <div className="p-6 border-t bg-gray-50">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Chọn mã thiết bị</label>
+                    <select
+                      value={assignDeviceCode}
+                      onChange={(e) => setAssignDeviceCode(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                    >
+                      <option value="">-- Chọn từ thiết bị của phụ huynh --</option>
+                      {getParentDeviceCodes(selectedPhuHuynhForWallet).map(code => (
+                        <option key={code} value={code}>{code}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Hoặc nhập mã thiết bị</label>
+                    <input
+                      type="text"
+                      value={assignDeviceCode}
+                      onChange={(e) => setAssignDeviceCode(e.target.value)}
+                      placeholder="Nhập mã thiết bị..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={submitAssignPackage}
+                      disabled={isLoadingWallet || !assignDeviceCode.trim()}
+                      className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 font-medium shadow-md hover:shadow-lg min-w-fit"
+                      style={{ backgroundColor: '#0ea5e9', color: '#ffffff' }}
+                    >
+                      {isLoadingWallet ? 'Đang gán...' : 'Gán gói'}
+                    </button>
+                    <button
+                      onClick={() => { setShowAssignForm(false); setSelectedPackageForAssign(null); setAssignDeviceCode(''); }}
+                      className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium shadow-md hover:shadow-lg min-w-fit"
+                    >
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

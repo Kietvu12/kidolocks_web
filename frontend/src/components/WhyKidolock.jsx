@@ -45,20 +45,20 @@ const WhyKidolock = () => {
                             {features.map((feature, index) => (
                                 <div key={index} className="flex flex-col items-center">
                                     {/* Image Section */}
-                                    <div className="relative h-[20rem] sm:h-[22rem] md:h-[24rem] w-full mb-6">
+                                    <div className="relative h-[20rem] sm:h-[22rem] md:h-[24rem] w-full mb-6 overflow-hidden rounded-2xl">
                                         <img
                                             src={feature.image}
                                             alt={feature.title}
-                                            className="w-full h-full object-cover rounded-2xl shadow-lg"
+                                            className="w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl"
                                         />
                                     </div>
                                     
                                     {/* Content Section - Outside image */}
                                     <div className="text-center px-4">
-                                        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1F2937', fontFamily: 'Myriad Pro' }}>
+                                        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
                                             {feature.title}
                                         </h3>
-                                        <p className="leading-relaxed text-base sm:text-lg" style={{ color: '#4B5563', fontFamily: 'Myriad Pro' }}>
+                                        <p className="leading-relaxed text-base sm:text-lg" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                             {feature.content}
                                         </p>
                                     </div>
@@ -82,18 +82,18 @@ const WhyKidolock = () => {
                                     {/* Title for second image - positioned above */}
                                     {index === 1 && (
                                         <div className="mb-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
                                                 {feature.title}
                                             </h3>
                                         </div>
                                     )}
                                     
                                     {/* Vertical Rectangle Image - Larger size */}
-                                    <div className="relative h-[26rem] md:h-[28rem] lg:h-[32rem] xl:h-[36rem]">
+                                    <div className="relative h-[26rem] md:h-[28rem] lg:h-[32rem] xl:h-[36rem] overflow-hidden rounded-2xl">
                                         <img
                                             src={feature.image}
                                             alt={feature.title}
-                                            className="w-full h-full object-cover rounded-2xl shadow-lg"
+                                            className="w-full h-full object-cover rounded-2xl shadow-lg transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl"
                                         />
                                         
                                         {/* Gradient overlay - covers only bottom half */}
@@ -101,7 +101,7 @@ const WhyKidolock = () => {
                                         
                                         {/* Overlay with content - positioned over gradient */}
                                         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8" style={{borderRadius: '0 0 1rem 1rem'}}>
-                                            <p className="leading-relaxed text-xs md:text-sm lg:text-sm" style={{ color: '#1D4ED8', fontFamily: 'Myriad Pro' }}>
+                                            <p className="leading-relaxed text-xs md:text-sm lg:text-sm" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
                                                 {feature.content}
                                             </p>
                                         </div>
@@ -110,14 +110,14 @@ const WhyKidolock = () => {
                                     {/* Title positioned outside based on image index */}
                                     {index === 0 && (
                                         <div className="mt-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
                                                 {feature.title}
                                             </h3>
                                         </div>
                                     )}
                                     {index === 2 && (
                                         <div className="mt-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#3B82F6', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
                                                 {feature.title}
                                             </h3>
                                         </div>

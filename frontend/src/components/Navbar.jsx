@@ -8,9 +8,23 @@ const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isCountryOpen, setIsCountryOpen] = useState(false)
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false)
+    const [isScrolled, setIsScrolled] = useState(false)
     const navigate = useNavigate()
     const { user, isAuthenticated, isAdmin, logout } = useAuth()
     const { t, toggleLanguage, language } = useLanguage()
+
+    // Handle scroll effect for navbar
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY
+            setIsScrolled(scrollTop > 10)
+        }
+
+        window.addEventListener('scroll', handleScroll)
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+        }
+    }, [])
 
     // Close dropdowns when clicking outside
     useEffect(() => {
@@ -34,8 +48,15 @@ const Navbar = () => {
             <header
                 aria-label="Menu điều hướng chính"
                 role="navigation"
-                className="shadow-lg sticky top-0 z-50 font-sans"
-                style={{backgroundColor: '#ffffff'}}
+                className={`shadow-lg sticky top-0 z-50 font-sans backdrop-blur-sm transition-all duration-300 ${
+                    isScrolled ? 'shadow-xl' : 'shadow-lg'
+                }`}
+                style={{
+                    backgroundColor: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    borderBottom: isScrolled ? '1px solid rgba(229, 231, 235, 0.8)' : '1px solid rgba(229, 231, 235, 0.5)'
+                }}
             >
                 <div className="w-full px-3 sm:px-4 lg:px-8">
                     <div className="flex justify-between items-center h-16 sm:h-18 lg:h-20">
@@ -60,131 +81,214 @@ const Navbar = () => {
                             </button>
                         </div>
                         {/* Desktop Navigation */}
-                        <nav className="hidden lg:flex space-x-8 flex-1 justify-center">
+                        <nav className="hidden lg:flex space-x-4 xl:space-x-6 2xl:space-x-8 flex-1 justify-center">
                             <div className="relative group">
-                                <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
-                                    {t('navForFamily')}
+                                <button className="px-2 py-3 text-sm xl:text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
+                                    {t('products')}
                                 </button>
-                                <div className="absolute left-0 mt-2 w-[900px] sm:w-[700px] md:w-[800px] lg:w-[900px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: '#ffffff', borderColor: '#e5e7eb'}}>
+                                <div className="absolute left-0 mt-2 w-[600px] sm:w-[500px] md:w-[550px] lg:w-[600px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: '#ffffff', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                                            {/* Cột 1: Giải pháp bảo mật */}
-                                            {/* Cột 2: Quyền riêng tư & Trẻ nhỏ */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+                                            {/* Cột 1: Tính năng chính */}
                                             <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('privacyAndKids')}</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('mainFeatures')}</h3>
                                                 
-                                                <div className="space-y-8">
-                                                    <div>
-                                                        <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{color: '#9ca3af'}}>{t('userMgmtLabel')}</div>
-                                                        <a href="/safe-kids" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('safeKidsName')}</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('safeKidsDesc')}</div>
-                                                        </a>
-                                                    </div>
+                                                <div className="space-y-6">
+                                                    <button 
+                                                        onClick={() => {
+                                                            const element = document.getElementById('features-section');
+                                                            if (element) {
+                                                                element.scrollIntoView({ behavior: 'smooth' });
+                                                            }
+                                                        }}
+                                                        className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                                    >
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                        </svg>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('protectionFeatures')}</span>
+                                                    </button>
                                                     
-                                                    <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('vpnLabel')}</div>
-                                                        <a href="/vpn" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('vpnName')}</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('vpnDesc')}</div>
-                                                        </a>
-                                                    </div>
+                                                    <button 
+                                                        onClick={() => {
+                                                            const element = document.getElementById('protection-section');
+                                                            if (element) {
+                                                                element.scrollIntoView({ behavior: 'smooth' });
+                                                            }
+                                                        }}
+                                                        className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                                    >
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                                        </svg>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('childProtection')}</span>
+                                                    </button>
                                                     
-                                                    <div>
-                                                        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">{t('pwdProtectLabel')}</div>
-                                                        <a href="/password-manager" className="block group">
-                                                            <div className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{t('pwdMgrName')}</div>
-                                                            <div className="text-sm text-gray-600 leading-relaxed">{t('pwdMgrDesc')}</div>
-                                                        </a>
-                                                    </div>
+                                                    <button 
+                                                        onClick={() => {
+                                                            const element = document.getElementById('education-section');
+                                                            if (element) {
+                                                                element.scrollIntoView({ behavior: 'smooth' });
+                                                            }
+                                                        }}
+                                                        className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                                    >
+                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                                                        </svg>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('safeEducation')}</span>
+                                                    </button>
                                                 </div>
                                             </div>
                                             
-                                            {/* Cột 3: Hỗ trợ & Tải xuống */}
+                                            {/* Cột 2: Giá cả & Đánh giá */}
                                             <div>
-                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('support')} & {t('trialsAndDownloads')}</h3>
+                                                <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('pricingAndReviews')}</h3>
                                                 <div className="space-y-6">
-                                                    <a href="/renewal" className="flex items-center space-x-4 p-4 rounded-lg  group">
+                                                    <button 
+                                                        onClick={() => {
+                                                            const element = document.getElementById('pricing-section');
+                                                            if (element) {
+                                                                element.scrollIntoView({ behavior: 'smooth' });
+                                                            }
+                                                        }}
+                                                        className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                                    >
                                                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                                                         </svg>
-                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('licenseRenewal')}</span>
-                                                    </a>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('pricingTable')}</span>
+                                                    </button>
                                                     
-                                                    <a href="/support" className="flex items-center space-x-4 p-4 rounded-lg  group">
+                                                    <button 
+                                                        onClick={() => {
+                                                            const element = document.getElementById('testimonials-section');
+                                                            if (element) {
+                                                                element.scrollIntoView({ behavior: 'smooth' });
+                                                            }
+                                                        }}
+                                                        className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                                    >
                                                         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M12 2.25a9.75 9.75 0 100 19.5 9.75 9.75 0 000-19.5z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                                         </svg>
-                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('support')}</span>
-                                                    </a>
-                                                    
-                                                    <a href="/downloads" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('trialsAndDownloads')}</span>
-                                                    </a>
+                                                        <span className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('reviews')}</span>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>                                
+
+                            {/* Tải xuống - Dropdown */}
                             <div className="relative group">
-                                <button className="px-4 py-3 text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
+                                <button 
+                                    onClick={() => {
+                                        const element = document.getElementById('download-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }}
+                                    className="px-2 py-3 text-sm xl:text-base font-medium transition-colors rounded-md" 
+                                    style={{color: '#374151'}} 
+                                    onMouseEnter={(e) => e.target.style.color = '#2563eb'} 
+                                    onMouseLeave={(e) => e.target.style.color = '#374151'}
+                                >
+                                    {t('download')}
+                                </button>
+                                <div className="absolute left-0 mt-2 w-[400px] sm:w-[350px] md:w-[375px] lg:w-[400px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: '#ffffff', borderColor: '#e5e7eb'}}>
+                                    <div className="p-4 sm:p-6 lg:p-8">
+                                        <div className="space-y-6">
+                                            <h3 className="text-2xl font-bold mb-8 tracking-tight" style={{color: '#111827'}}>{t('download')}</h3>
+                                            
+                                            <button 
+                                                onClick={() => {
+                                                    alert('Phiên bản Android đang được phát triển. Vui lòng quay lại sau!');
+                                                }}
+                                                className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                            >
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <div>
+                                                    <div className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('android')}</div>
+                                                    <div className="text-sm text-gray-600">{t('androidDeveloping')}</div>
+                                                </div>
+                                            </button>
+                                            
+                                            <button 
+                                                onClick={() => {
+                                                    alert('Phiên bản iOS đang được phát triển. Vui lòng quay lại sau!');
+                                                }}
+                                                className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                            >
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18l9-5-9-5-9 5 9 5z" />
+                                                </svg>
+                                                <div>
+                                                    <div className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('ios')}</div>
+                                                    <div className="text-sm text-gray-600">{t('iosDeveloping')}</div>
+                                                </div>
+                                            </button>
+                                            
+                                            <button 
+                                                onClick={() => {
+                                                    // Xử lý giống nút Download EXE - mở popup và tải zip
+                                                    const element = document.getElementById('download-section');
+                                                    if (element) {
+                                                        element.scrollIntoView({ behavior: 'smooth' });
+                                                    }
+                                                    // Trigger download popup và zip file
+                                                    setTimeout(() => {
+                                                        const downloadButton = element?.querySelector('button[onclick*="setShowTutorialPopup"]');
+                                                        if (downloadButton) {
+                                                            downloadButton.click();
+                                                        }
+                                                    }, 500);
+                                                }}
+                                                className="flex items-center space-x-4 p-4 rounded-lg group w-full text-left"
+                                            >
+                                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{color: '#0d9488'}}>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                </svg>
+                                                <div>
+                                                    <div className="font-semibold group-hover:text-blue-600 transition-colors" style={{color: '#111827'}}>{t('windows')}</div>
+                                                    <div className="text-sm text-gray-600">{t('windowsWorking')}</div>
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="relative group">
+                                <button className="px-2 py-3 text-sm xl:text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
                                     {t('navAboutUs')}
                                 </button>
-                                <div className="absolute left-0 mt-2 w-[600px] sm:w-[400px] md:w-[500px] lg:w-[600px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
+                                <div className="absolute left-0 mt-2 w-[400px] sm:w-[350px] md:w-[375px] lg:w-[400px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                                     <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
-                                            {/* Cột 1: Về chúng tôi */}
-                                            <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('aboutUs')}</h3>
-                                                <div className="space-y-6">
-                                                    <a href="/about" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('learnAboutUs')}</span>
-                                                    </a>
-                                                    <a href="/contact" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('contactUs')}</span>
-                                                    </a>
-                                                    <a href="/careers" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('careers')}</span>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            
-                                            {/* Cột 2: Truyền thông */}
-                    <div>
-                                                <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('media')}</h3>
-                                                <div className="space-y-6">
-                                                    <a href="/press" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('pressCenter')}</span>
-                                                    </a>
-                                                    <a href="/press-releases" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('pressReleases')}</span>
-                                                    </a>
-                                                    <a href="/sponsorships" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                        <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                                        </svg>
-                                                        <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('sponsorships')}</span>
-                                                    </a>
-                                                </div>
+                                        <div className="space-y-6">
+                                            <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('aboutUs')}</h3>
+                                            <div className="space-y-6">
+                                                <a href="/about" className="flex items-center space-x-4 p-4 rounded-lg  group">
+                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('learnAboutUs')}</span>
+                                                </a>
+                                                <a href="/contact" className="flex items-center space-x-4 p-4 rounded-lg  group">
+                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                    </svg>
+                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('contactUs')}</span>
+                                                </a>
+                                                <a href="/careers" className="flex items-center space-x-4 p-4 rounded-lg  group">
+                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+                                                    </svg>
+                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('careers')}</span>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -208,37 +312,7 @@ const Navbar = () => {
                             </div>
 
                             {/* Country Selector - Hidden on mobile */}
-                            <div className="relative hidden sm:block country-dropdown">
-                                <button 
-                                    onClick={() => setIsCountryOpen(!isCountryOpen)}
-                                    className="p-2 sm:p-3 transition-colors rounded-lg"
-                                    style={{color: '#4b5563'}}
-                                    onMouseEnter={(e) => e.target.style.color = '#2563eb'}
-                                    onMouseLeave={(e) => e.target.style.color = '#4b5563'}
-                                    aria-label={t('country')}
-                                >
-                                    <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path fillRule="evenodd" clipRule="evenodd"
-                                                d="M9.34.04a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm6.87 6h-1.9a10.85 10.85 0 0 0-1.35-3.56 7.55 7.55 0 0 1 3.25 3.56Zm.63 3c0 .5-.05 1-.14 1.5h-2.18c.04-.49.08-.99.08-1.5 0-.5 0-1.01-.08-1.5h2.18c.1.5.14 1 .14 1.5Zm-15 0c0-.5.06-1 .15-1.5h2.18a16.33 16.33 0 0 0 0 3H1.99c-.1-.5-.14-1-.15-1.5Zm3.75 0c0-.5.03-1 .09-1.5h2.91v3H5.68c-.06-.5-.08-1-.09-1.5Zm4.5-7.34c1.19.5 2.19 2.17 2.68 4.34H10.1V1.7Zm-1.5 0v4.34H5.92C6.42 3.87 7.41 2.2 8.6 1.7Zm0 10.34v4.34c-1.18-.5-2.18-2.16-2.67-4.34H8.6Zm1.5 4.34v-4.34h2.68c-.5 2.18-1.49 3.84-2.67 4.34Zm0-5.84v-3h2.92c.11 1 .11 2 0 3H10.1ZM5.74 2.48c-.65 1.1-1.1 2.3-1.34 3.56H2.47a7.55 7.55 0 0 1 3.26-3.56Zm-3.26 9.56H4.4c.23 1.26.69 2.46 1.34 3.56a7.55 7.55 0 0 1-3.26-3.56Zm10.5 3.56c.66-1.1 1.11-2.3 1.35-3.56h1.91a7.55 7.55 0 0 1-3.27 3.56h.01Z"
-                                                fill="currentColor"></path>
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {/* Search Button - Hidden on mobile */}
-                            <button 
-                                className="hidden sm:block p-2 sm:p-3 transition-colors rounded-lg"
-                                style={{color: '#4b5563'}}
-                                onMouseEnter={(e) => e.target.style.color = '#2563eb'}
-                                onMouseLeave={(e) => e.target.style.color = '#4b5563'}
-                                aria-label="Mở tìm kiếm"
-                            >
-                                <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M16.8 14.17c0 .2-.08.4-.22.54l-1.07 1.06a.71.71 0 0 1-.53.23c-.2 0-.39-.08-.53-.22l-4.08-4.11a6.34 6.34 0 0 1-3.28.96 6.12 6.12 0 0 1-4.44-1.86 5.7 5.7 0 0 1-1.35-2 6.11 6.11 0 0 1 0-4.92c.34-.76.79-1.43 1.35-2A6.9 6.9 0 0 1 4.63.52a6.12 6.12 0 0 1 6.9 1.35 5.7 5.7 0 0 1 1.35 2 5.98 5.98 0 0 1 .26 4.18c-.17.56-.4 1.07-.7 1.55l4.08 4.1c.2.12.28.29.28.48Zm-8.03-4.02c.5-.22.95-.53 1.34-.9a4.37 4.37 0 0 0 1.24-2.98c0-.59-.12-1.12-.34-1.63-.22-.5-.53-.96-.9-1.35a4.34 4.34 0 0 0-2.96-1.24 3.9 3.9 0 0 0-1.62.34c-.5.23-.95.53-1.35.9a4.37 4.37 0 0 0-1.23 2.98c0 .6.12 1.13.34 1.63.22.5.53.96.9 1.35a4.34 4.34 0 0 0 2.96 1.24 4 4 0 0 0 1.62-.34Z"
-                                                fill="currentColor"></path>
-                                </svg>
-                            </button>
+                           
 
                             {/* User Account Section - Hidden on mobile */}
                             <div className="relative hidden sm:block">
@@ -400,26 +474,117 @@ const Navbar = () => {
                     <div className="lg:hidden border-t shadow-lg" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
                         <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-4 sm:pb-6 space-y-3 sm:space-y-4">
                             <div className="space-y-1 sm:space-y-2">
+                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('products')}</div>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('features-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('protectionFeatures')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('protection-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('childProtection')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('education-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('safeEducation')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('pricing-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('pricingTable')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('testimonials-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('reviews')}
+                                </button>
                 </div>
                             
+                            {/* Tải xuống - Mobile Dropdown */}
                             <div className="space-y-1 sm:space-y-2">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Dành cho doanh nghiệp</div>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Sản phẩm</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các bản tải về</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Doanh nghiệp</button>
+                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('download')}</div>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        alert('Phiên bản Android đang được phát triển. Vui lòng quay lại sau!');
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('android')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        alert('Phiên bản iOS đang được phát triển. Vui lòng quay lại sau!');
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('ios')}
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        const element = document.getElementById('download-section');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        }
+                                        // Trigger download popup và zip file
+                                        setTimeout(() => {
+                                            const downloadButton = element?.querySelector('button[onclick*="setShowTutorialPopup"]');
+                                            if (downloadButton) {
+                                                downloadButton.click();
+                                            }
+                                        }, 500);
+                                    }} 
+                                    className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                >
+                                    {t('windows')}
+                                </button>
                 </div>
                             
-                                <div className="space-y-1 sm:space-y-2">
-                                    <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Đối tác</div>
-                                    <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp cho doanh nghiệp</button>
-                                    <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Các đơn vị cung cấp giải pháp tiêu dùng</button>
-                                            </div>
                             
                             <div className="space-y-1 sm:space-y-2">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">Giới thiệu về Chúng tôi</div>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Tìm hiểu về chúng tôi</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Liên hệ với chúng tôi</button>
-                                <button onClick={() => navigate('/')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700  hover:text-blue-600 transition-colors rounded-lg">Nghề nghiệp</button>
+                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('navAboutUs')}</div>
+                                <button onClick={() => navigate('/about')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('learnAboutUs')}</button>
+                                <button onClick={() => navigate('/contact')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('contactUs')}</button>
+                                <button onClick={() => navigate('/careers')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('careers')}</button>
                             </div>
                             
                             {/* Mobile Authentication Section */}

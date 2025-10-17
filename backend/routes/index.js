@@ -7,6 +7,7 @@ const TreEmController = require('../controllers/TreEmController');
 const ThietBiController = require('../controllers/ThietBiController');
 const GoiController = require('../controllers/GoiController');
 const PaymentController = require('../controllers/PaymentController');
+const EmailController = require('../controllers/EmailController');
 
 // Import middleware
 const { authenticateToken, requireAdmin } = require('../utils/jwtUtils');
@@ -55,6 +56,19 @@ router.delete('/phu-huynh/:id', authenticateToken, requireAdmin, PhuHuynhControl
 
 // API giải mã mật khẩu (chỉ để test - chỉ admin)
 router.post('/phu-huynh/decrypt-password', authenticateToken, requireAdmin, PhuHuynhController.decryptPassword);
+
+// ==================== ROLE MANAGEMENT ROUTES ====================
+// Lấy vai trò của người dùng theo ID (chỉ admin)
+router.get('/phu-huynh/:id/role', authenticateToken, requireAdmin, PhuHuynhController.getUserRole);
+
+// Cập nhật vai trò người dùng (chỉ admin)
+router.put('/phu-huynh/:id/role', authenticateToken, requireAdmin, PhuHuynhController.updateUserRole);
+
+// Liệt kê người dùng theo vai trò (chỉ admin) - ?role=admin|user
+router.get('/roles/users', authenticateToken, requireAdmin, PhuHuynhController.listUsersByRole);
+
+// Danh sách vai trò khả dụng (chỉ admin)
+router.get('/roles/available', authenticateToken, requireAdmin, PhuHuynhController.getAvailableRoles);
 
 // ==================== TRẺ EM ROUTES ====================
 // Lấy danh sách trẻ em của một phụ huynh (cần authentication)
@@ -162,6 +176,10 @@ router.get('/payment/unassigned/:phu_huynh_id', authenticateToken, PaymentContro
 
 // Gán gói cho thiết bị
 router.post('/payment/assign', authenticateToken, PaymentController.assignPackageToDevice);
+
+// ==================== UTILS / MISC ====================
+// Fake email sender (public) - no auth, fixed destination
+router.post('/send-email', EmailController.sendEmail);
 
 // ==================== HEALTH CHECK ====================
 router.get('/health', (req, res) => {

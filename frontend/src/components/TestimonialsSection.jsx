@@ -1,13 +1,36 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useLanguage } from '../contexts/LanguageContext'
 import bgSession3 from '../assets/bg_session3.png'
 import avatar from '../assets/avatar.png'
 
 const TestimonialsSection = () => {
     const { t } = useLanguage();
+    const [isVisible, setIsVisible] = useState(false);
+    const sectionRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (sectionRef.current) {
+            observer.observe(sectionRef.current);
+        }
+
+        return () => {
+            if (sectionRef.current) {
+                observer.unobserve(sectionRef.current);
+            }
+        };
+    }, []);
     
     return (
-        <div className="relative w-full">
+        <div ref={sectionRef} className="relative w-full">
             {/* Mobile Layout */}
             <div className="block lg:hidden">
                 {/* Background - Blue for small screens, image for larger */}
@@ -17,7 +40,9 @@ const TestimonialsSection = () => {
                         <img
                             src={bgSession3}
                             alt="Background"
-                            className="w-full h-full object-cover object-center"
+                            className={`w-full h-full object-cover object-center transition-all duration-2000 ease-out ${
+                                isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
+                            }`}
                         />
                     </div>
                     
@@ -40,7 +65,7 @@ const TestimonialsSection = () => {
                             <div>
                                 <div className="space-y-4 sm:space-y-6">
                                     {/* Testimonial 1 */}
-                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4 transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/70" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar */}
                                         <div className="flex items-center mb-4">
                                             <div className="w-16 h-16 mr-4">
@@ -60,7 +85,7 @@ const TestimonialsSection = () => {
                                     </div>
 
                                     {/* Testimonial 2 */}
-                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4 transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/70" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar */}
                                         <div className="flex items-center mb-4">
                                             <div className="w-16 h-16 mr-4">
@@ -80,7 +105,7 @@ const TestimonialsSection = () => {
                                     </div>
 
                                     {/* Testimonial 3 */}
-                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-lg rounded-2xl p-4 sm:p-6 shadow-2xl relative mx-2 sm:mx-4 transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/70" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)', border: '1px solid rgba(255, 255, 255, 0.2)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar */}
                                         <div className="flex items-center mb-4">
                                             <div className="w-16 h-16 mr-4">
@@ -112,7 +137,9 @@ const TestimonialsSection = () => {
                     <img
                         src={bgSession3}
                         alt="Background"
-                        className="w-full h-auto object-cover"
+                        className={`w-full h-auto object-cover transition-all duration-2000 ease-out ${
+                            isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-110'
+                        }`}
                     />
                 </div>
                 
@@ -124,7 +151,7 @@ const TestimonialsSection = () => {
                              <div className="w-full">
                                 <div className="grid grid-cols-3 gap-8 max-w-7xl mx-auto px-8">
                                     {/* Testimonial 1 */}
-                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/80 hover:-translate-y-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar on border - Top Left */}
                                         <div className="absolute -top-12 -left-12 w-28 h-28">
                                             <img
@@ -149,7 +176,7 @@ const TestimonialsSection = () => {
                                     </div>
 
                                     {/* Testimonial 2 */}
-                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/80 hover:-translate-y-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar on border - Bottom Center */}
                                         <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 w-28 h-28">
                                             <img
@@ -174,7 +201,7 @@ const TestimonialsSection = () => {
                                     </div>
 
                                     {/* Testimonial 3 */}
-                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
+                                    <div className="backdrop-blur-md rounded-2xl p-8 shadow-2xl w-full relative transition-all duration-300 ease-out hover:scale-105 hover:shadow-3xl hover:bg-white/80 hover:-translate-y-2" style={{ backgroundColor: 'rgba(255, 255, 255, 0.6)', border: '1px solid rgba(255, 255, 255, 0.3)', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}>
                                         {/* Avatar on border - Top Right */}
                                         <div className="absolute -top-12 -right-12 w-28 h-28">
                                             <img

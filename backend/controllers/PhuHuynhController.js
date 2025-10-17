@@ -14,6 +14,19 @@ class PhuHuynhController {
     return phone;
   }
 
+  // Role-based helpers
+  static getRoleFromFlag(isAdmin) {
+    // Map boolean flag to role string
+    return isAdmin ? 'admin' : 'user';
+  }
+
+  static getFlagFromRole(role) {
+    // Normalize role input to boolean admin flag
+    if (!role) return false;
+    const normalized = String(role).trim().toLowerCase();
+    return normalized === 'admin';
+  }
+
   // Helper method để xác thực OTP
   static async verifyOTP(phone, otp, purpose) {
     // Normalize phone number
@@ -252,6 +265,147 @@ class PhuHuynhController {
       res.status(500).json({
         success: false,
         message: 'Lỗi server khi cập nhật phụ huynh',
+        error: error.message
+      });
+    }
+  }
+
+  // Lấy vai trò của phụ huynh theo ID
+  static async getUserRole(req, res) {
+    try {
+      const { id } = req.params;
+      const phuHuynh = await PhuHuynh.findByPk(id, {
+        attributes: ['ma_phu_huynh', 'email_phu_huynh', 'sdt', 'ten_phu_huynh', 'la_admin']
+      });
+
+      if (!phuHuynh) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy phụ huynh'
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy vai trò thành công',
+        data: {
+          ma_phu_huynh: phuHuynh.ma_phu_huynh,
+          role: PhuHuynhController.getRoleFromFlag(phuHuynh.la_admin)
+        }
+      });
+    } catch (error) {
+      console.error('Lỗi khi lấy vai trò:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi lấy vai trò',
+        error: error.message
+      });
+    }
+  }
+
+  // Cập nhật vai trò của phụ huynh (yêu cầu admin)
+  static async updateUserRole(req, res) {
+    try {
+      // req.user được set bởi authenticateToken middleware
+      if (!req.user || !req.user.la_admin) {
+        return res.status(403).json({
+          success: false,
+          message: 'Yêu cầu quyền admin'
+        });
+      }
+
+      const { id } = req.params;
+      const { role } = req.body; // 'admin' | 'user'
+
+      if (!role || !['admin', 'user'].includes(String(role).toLowerCase())) {
+        return res.status(400).json({
+          success: false,
+          message: 'Giá trị role không hợp lệ (chỉ chấp nhận: admin, user)'
+        });
+      }
+
+      // Chặn tự hạ quyền chính mình để tránh mất quyền toàn hệ thống
+      if (Number(id) === Number(req.user.ma_phu_huynh) && String(role).toLowerCase() === 'user') {
+        return res.status(400).json({
+          success: false,
+          message: 'Không thể tự hạ quyền của chính bạn'
+        });
+      }
+
+      const phuHuynh = await PhuHuynh.findByPk(id);
+      if (!phuHuynh) {
+        return res.status(404).json({
+          success: false,
+          message: 'Không tìm thấy phụ huynh'
+        });
+      }
+
+      const newFlag = PhuHuynhController.getFlagFromRole(role);
+      await phuHuynh.update({ la_admin: newFlag });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Cập nhật vai trò thành công',
+        data: {
+          ma_phu_huynh: phuHuynh.ma_phu_huynh,
+          role: PhuHuynhController.getRoleFromFlag(newFlag)
+        }
+      });
+    } catch (error) {
+      console.error('Lỗi khi cập nhật vai trò:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi cập nhật vai trò',
+        error: error.message
+      });
+    }
+  }
+
+  // Liệt kê phụ huynh theo vai trò
+  static async listUsersByRole(req, res) {
+    try {
+      const { role } = req.query; // 'admin' | 'user'
+      if (!role || !['admin', 'user'].includes(String(role).toLowerCase())) {
+        return res.status(400).json({
+          success: false,
+          message: 'Giá trị role không hợp lệ (chỉ chấp nhận: admin, user)'
+        });
+      }
+
+      const isAdmin = PhuHuynhController.getFlagFromRole(role);
+      const users = await PhuHuynh.findAll({
+        where: { la_admin: isAdmin },
+        attributes: { exclude: ['mat_khau'] }
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách người dùng theo vai trò thành công',
+        data: users
+      });
+    } catch (error) {
+      console.error('Lỗi khi liệt kê theo vai trò:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi lấy danh sách theo vai trò',
+        error: error.message
+      });
+    }
+  }
+
+  // Danh sách các vai trò khả dụng
+  static async getAvailableRoles(req, res) {
+    try {
+      return res.status(200).json({
+        success: true,
+        message: 'Lấy danh sách vai trò thành công',
+        data: ['admin', 'user']
+      });
+    } catch (error) {
+      console.error('Lỗi khi lấy danh sách vai trò:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Lỗi server khi lấy danh sách vai trò',
         error: error.message
       });
     }

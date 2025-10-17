@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Eye, EyeOff } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useLanguage } from '../contexts/LanguageContext';
+import Navbar from '../components/Navbar';
 
 const ChangePasswordPage = () => {
   const navigate = useNavigate();
@@ -167,20 +168,22 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="text-center">
-          <img 
-            src="/logo.png" 
-            alt="KidsLock" 
-            className="mx-auto h-16 w-auto"
-          />
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{t('changePwdHeader')}</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">{t('changePwdSub')}</p>
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+          <div className="text-center">
+            <img 
+              src="/logo.png" 
+              alt="KidsLock" 
+              className="mx-auto h-16 w-auto"
+            />
+            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">{t('changePwdHeader')}</h2>
+            <p className="mt-2 text-center text-sm text-gray-600">{t('changePwdSub')}</p>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           {/* Progress Steps */}
               <div className="flex items-center justify-center space-x-4 mb-6">
@@ -403,6 +406,7 @@ const ChangePasswordPage = () => {
               </button>
             </div>
           </div>
+        </div>
         </div>
       </div>
       

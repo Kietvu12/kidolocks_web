@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import apiService from '../services/api';
 import Navbar from '../components/Navbar';
 import heroImg from '../assets/hero_img.png';
 import heroWinImg from '../assets/hero_win.png';
+import { translateText, translateTexts } from '../services/libreTranslationService';
 
 const WalletPage = () => {
     const navigate = useNavigate();
+    const { t, language } = useLanguage();
     const [packages, setPackages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
+    const [translatedPackages, setTranslatedPackages] = useState([]);
     const [filters, setFilters] = useState({
         search: '',
         sortBy: 'ngay_mua', // ngay_mua, gia, ten
@@ -34,7 +38,7 @@ const WalletPage = () => {
                 }
             } catch (error) {
                 console.error('Error fetching wallet data:', error);
-                setError('Không thể tải dữ liệu ví gói');
+                setError(t('cannotLoadWalletData'));
             } finally {
                 setLoading(false);
             }
@@ -43,15 +47,74 @@ const WalletPage = () => {
         fetchData();
     }, []);
 
+    // Dịch nội dung từ API khi đổi ngôn ngữ
+    useEffect(() => {
+        const translateApiContent = async () => {
+            if (packages.length > 0 && language === 'en') {
+                const translatedPkgs = await Promise.all(
+                    packages.map(async (pkg) => {
+                        const translatedPkg = { ...pkg };
+                        
+                        // Dịch tên gói
+                        if (pkg.thongTinGoi?.ten) {
+                            translatedPkg.thongTinGoi = {
+                                ...pkg.thongTinGoi,
+                                ten: await translateText(pkg.thongTinGoi.ten, 'en')
+                            };
+                        }
+                        
+                        // Dịch mô tả gói
+                        if (pkg.thongTinGoi?.mo_ta) {
+                            translatedPkg.thongTinGoi = {
+                                ...translatedPkg.thongTinGoi,
+                                mo_ta: await translateText(pkg.thongTinGoi.mo_ta, 'en')
+                            };
+                        }
+                        
+                        // Dịch danh sách tính năng
+                        if (pkg.thongTinGoi?.noiDungList && pkg.thongTinGoi.noiDungList.length > 0) {
+                            const features = pkg.thongTinGoi.noiDungList.map(item => item.noi_dung);
+                            const translatedFeatures = await translateTexts(features, 'en');
+                            
+                            translatedPkg.thongTinGoi = {
+                                ...translatedPkg.thongTinGoi,
+                                noiDungList: pkg.thongTinGoi.noiDungList.map((item, index) => ({
+                                    ...item,
+                                    noi_dung: translatedFeatures[index] || item.noi_dung
+                                }))
+                            };
+                        }
+                        
+                        return translatedPkg;
+                    })
+                );
+                
+                setTranslatedPackages(translatedPkgs);
+            } else {
+                setTranslatedPackages([]);
+            }
+        };
+
+        translateApiContent();
+    }, [language, packages]);
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN').format(price);
     };
 
     const getPackageDuration = (thoiHanThang) => {
-        if (thoiHanThang === 1) return '1 THÁNG';
-        if (thoiHanThang === 12) return '1 NĂM';
-        if (thoiHanThang === 24) return '2 NĂM';
-        return `${thoiHanThang} THÁNG`;
+        if (thoiHanThang === 1) return `1 ${t('month')}`;
+        if (thoiHanThang === 12) return `1 ${t('year')}`;
+        if (thoiHanThang === 24) return `2 ${t('years')}`;
+        return `${thoiHanThang} ${t('month')}`;
+    };
+
+    // Helper function để lấy packages đã dịch
+    const getDisplayPackages = () => {
+        if (language === 'en' && translatedPackages.length > 0) {
+            return translatedPackages;
+        }
+        return packages;
     };
 
     const handleAssignDevice = (packageId) => {
@@ -62,7 +125,8 @@ const WalletPage = () => {
 
     // Filter and sort packages
     const getFilteredPackages = () => {
-        let filtered = [...packages];
+        const displayPackages = getDisplayPackages();
+        let filtered = [...displayPackages];
 
         // Search filter
         if (filters.search) {
@@ -128,7 +192,7 @@ const WalletPage = () => {
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
                     <div className="text-center">
                         <div className="animate-spin rounded-full h-12 w-12 mx-auto mb-4" style={{borderBottomColor: '#2563eb', borderBottomWidth: '2px'}}></div>
-                        <p style={{color: '#4b5563'}}>Đang tải ví gói...</p>
+                        <p style={{color: '#4b5563'}}>{t('loadingWallet')}</p>
                     </div>
                 </div>
             </>
@@ -142,7 +206,7 @@ const WalletPage = () => {
                 <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
                     <div className="text-center">
                         <div style={{color: '#ef4444', fontSize: '3.75rem'}} className="mb-4">⚠️</div>
-                        <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Có lỗi xảy ra</h2>
+                        <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{t('errorOccurred')}</h2>
                         <p className="mb-4" style={{color: '#4b5563'}}>{error}</p>
                         <button
                             onClick={() => navigate('/')}
@@ -151,7 +215,7 @@ const WalletPage = () => {
                             onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
                             onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                         >
-                            Về trang chủ
+                            {t('backToHome')}
                         </button>
                     </div>
                 </div>
@@ -182,7 +246,7 @@ const WalletPage = () => {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm" style={{color: '#6b7280'}}>Tổng gói chưa gán</p>
+                                <p className="text-sm" style={{color: '#6b7280'}}>{t('totalUnassignedPackages')}</p>
                                 <p className="text-2xl font-bold" style={{color: '#2563eb'}}>{packages.length}</p>
                             </div>
                         </div>
@@ -192,10 +256,10 @@ const WalletPage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {/* Search */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Tìm kiếm</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>{t('search')}</label>
                                     <input
                                         type="text"
-                                        placeholder="Tên gói hoặc mã đơn..."
+                                        placeholder={t('searchPlaceholder')}
                                         value={filters.search}
                                         onChange={(e) => setFilters({...filters, search: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -204,43 +268,43 @@ const WalletPage = () => {
 
                                 {/* Sort By */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Sắp xếp theo</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>{t('filter')}</label>
                                     <select
                                         value={filters.sortBy}
                                         onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
-                                        <option value="ngay_mua">Ngày mua</option>
-                                        <option value="gia">Giá</option>
-                                        <option value="ten">Tên gói</option>
+                                        <option value="ngay_mua">{t('sortByDate')}</option>
+                                        <option value="gia">{t('sortByPrice')}</option>
+                                        <option value="ten">{t('sortByName')}</option>
                                     </select>
                                 </div>
 
                                 {/* Sort Order */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Thứ tự</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>{t('sortOrder')}</label>
                                     <select
                                         value={filters.sortOrder}
                                         onChange={(e) => setFilters({...filters, sortOrder: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
-                                        <option value="desc">Mới nhất</option>
-                                        <option value="asc">Cũ nhất</option>
+                                        <option value="desc">{t('sortOrderNewest')}</option>
+                                        <option value="asc">{t('sortOrderOldest')}</option>
                                     </select>
                                 </div>
 
                                 {/* Price Range */}
                                 <div>
-                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>Khoảng giá</label>
+                                    <label className="block text-sm font-medium mb-2" style={{color: '#374151'}}>{t('priceRange')}</label>
                                     <select
                                         value={filters.priceRange}
                                         onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     >
-                                        <option value="all">Tất cả</option>
-                                        <option value="under_100k">Dưới 100k</option>
-                                        <option value="100k_500k">100k - 500k</option>
-                                        <option value="over_500k">Trên 500k</option>
+                                        <option value="all">{t('priceRangeAll')}</option>
+                                        <option value="under_100k">{t('priceRangeUnder100k')}</option>
+                                        <option value="100k_500k">{t('priceRange100k500k')}</option>
+                                        <option value="over_500k">{t('priceRangeOver500k')}</option>
                                     </select>
                                 </div>
                             </div>
@@ -248,7 +312,7 @@ const WalletPage = () => {
                             {/* Results Count */}
                             <div className="mt-4 flex justify-between items-center">
                                 <p className="text-sm" style={{color: '#4b5563'}}>
-                                    Hiển thị {filteredPackages.length} / {packages.length} gói
+                                    {t('showingResults')} {filteredPackages.length} {t('of')} {packages.length} {t('packages')}
                                 </p>
                                 <button
                                     onClick={() => setFilters({
@@ -262,7 +326,7 @@ const WalletPage = () => {
                                     onMouseEnter={(e) => e.target.style.color = '#1d4ed8'}
                                     onMouseLeave={(e) => e.target.style.color = '#2563eb'}
                                 >
-                                    Xóa bộ lọc
+                                    {t('clearFilters')}
                                 </button>
                             </div>
                         </div>
@@ -274,8 +338,8 @@ const WalletPage = () => {
                     {packages.length === 0 ? (
                         <div className="text-center py-12">
                             <div style={{color: '#9ca3af', fontSize: '3.75rem'}} className="mb-4">📦</div>
-                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Chưa có gói nào</h3>
-                            <p className="mb-6" style={{color: '#4b5563'}}>Bạn chưa có gói dịch vụ nào chưa được gán thiết bị</p>
+                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{t('noPackagesYet')}</h3>
+                            <p className="mb-6" style={{color: '#4b5563'}}>{t('noPackagesDescription')}</p>
                             <button
                                 onClick={() => navigate('/')}
                                 className="px-6 py-3 rounded-lg transition-colors"
@@ -283,14 +347,14 @@ const WalletPage = () => {
                                 onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                             >
-                                Mua gói dịch vụ
+                                {t('buyServicePackage')}
                             </button>
                         </div>
                     ) : filteredPackages.length === 0 ? (
                         <div className="text-center py-12">
                             <div style={{color: '#9ca3af', fontSize: '3.75rem'}} className="mb-4">🔍</div>
-                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>Không tìm thấy gói</h3>
-                            <p className="mb-6" style={{color: '#4b5563'}}>Không có gói nào phù hợp với bộ lọc hiện tại</p>
+                            <h3 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{t('noPackagesFound')}</h3>
+                            <p className="mb-6" style={{color: '#4b5563'}}>{t('noPackagesFoundDescription')}</p>
                             <button
                                 onClick={() => setFilters({
                                     search: '',
@@ -303,7 +367,7 @@ const WalletPage = () => {
                                 onMouseEnter={(e) => e.target.style.backgroundColor = '#1d4ed8'}
                                 onMouseLeave={(e) => e.target.style.backgroundColor = '#2563eb'}
                             >
-                                Xóa bộ lọc
+                                {t('clearFilters')}
                             </button>
                         </div>
                     ) : (
@@ -323,22 +387,22 @@ const WalletPage = () => {
                                     {/* Package Details */}
                                     <div className="space-y-2 mb-4">
                                         <div className="flex justify-between text-sm">
-                                            <span style={{color: '#4b5563'}}>Giá:</span>
+                                            <span style={{color: '#4b5563'}}>{t('packagePrice')}</span>
                                             <span className="font-semibold" style={{color: '#16a34a'}}>{formatPrice(pkg.gia)} VND</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span style={{color: '#4b5563'}}>Ngày mua:</span>
+                                            <span style={{color: '#4b5563'}}>{t('purchaseDate')}</span>
                                             <span className="font-semibold">{new Date(pkg.ngay_mua).toLocaleDateString('vi-VN')}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span style={{color: '#4b5563'}}>Mã đơn:</span>
+                                            <span style={{color: '#4b5563'}}>{t('orderCode')}</span>
                                             <span className="font-semibold text-xs">{pkg.vnp_txn_ref}</span>
                                         </div>
                                     </div>
 
                                     {/* Features Preview */}
                                     <div className="mb-4">
-                                        <h4 className="text-sm font-semibold mb-2" style={{color: '#1f2937'}}>Tính năng:</h4>
+                                        <h4 className="text-sm font-semibold mb-2" style={{color: '#1f2937'}}>{t('features')}</h4>
                                         <div className="space-y-1">
                                             {pkg.thongTinGoi?.noiDungList?.slice(0, 3).map((feature, idx) => (
                                                 <div key={idx} className="flex items-center">
@@ -348,7 +412,7 @@ const WalletPage = () => {
                                             ))}
                                             {pkg.thongTinGoi?.noiDungList?.length > 3 && (
                                                 <div className="text-xs italic" style={{color: '#6b7280'}}>
-                                                    +{pkg.thongTinGoi.noiDungList.length - 3} tính năng khác
+                                                    +{pkg.thongTinGoi.noiDungList.length - 3} {t('moreFeatures')}
                                                 </div>
                                             )}
                                         </div>
@@ -382,7 +446,7 @@ const WalletPage = () => {
                         onMouseEnter={(e) => e.target.style.backgroundColor = '#374151'}
                         onMouseLeave={(e) => e.target.style.backgroundColor = '#4b5563'}
                     >
-                        Về trang chủ
+                        {t('backToHome')}
                     </button>
                 </div>
             </div>

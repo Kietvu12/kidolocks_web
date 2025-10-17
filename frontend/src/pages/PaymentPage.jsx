@@ -5,16 +5,19 @@ import Navbar from '../components/Navbar';
 import heroImg from '../assets/hero_img.png';
 import heroWinImg from '../assets/hero_win.png';
 import { useLanguage } from '../contexts/LanguageContext';
+import { translateTexts } from '../services/libreTranslationService';
 
 const PaymentPage = () => {
     const { packageId } = useParams();
     const navigate = useNavigate();
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [packageInfo, setPackageInfo] = useState(null);
     const [loading, setLoading] = useState(true);
     const [processing, setProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [userInfo, setUserInfo] = useState(null);
+    const [translatedTitleDesc, setTranslatedTitleDesc] = useState({ title: null, desc: null });
+    const [translatedFeatures, setTranslatedFeatures] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -40,6 +43,39 @@ const PaymentPage = () => {
 
         fetchData();
     }, [packageId]);
+
+    // Translate package info when language is EN
+    useEffect(() => {
+        async function runTranslation() {
+            setTranslatedTitleDesc({ title: null, desc: null });
+            setTranslatedFeatures([]);
+            if (language !== 'en' || !packageInfo) return;
+
+            try {
+                const titleDescInputs = [];
+                if (packageInfo.ten) titleDescInputs.push(packageInfo.ten);
+                if (packageInfo.mo_ta) titleDescInputs.push(packageInfo.mo_ta);
+
+                if (titleDescInputs.length > 0) {
+                    const td = await translateTexts(titleDescInputs, 'en');
+                    const title = td[0] || packageInfo.ten;
+                    const desc = td[1] || packageInfo.mo_ta;
+                    setTranslatedTitleDesc({ title, desc });
+                }
+
+                const features = (packageInfo.noiDungList || []).map(item => item.noi_dung).slice(0, 50);
+                if (features.length > 0) {
+                    const tf = await translateTexts(features, 'en');
+                    setTranslatedFeatures(tf);
+                }
+            } catch (e) {
+                // keep Vietnamese on failure
+                console.error('Translate error:', e);
+            }
+        }
+
+        runTranslation();
+    }, [language, packageInfo]);
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN').format(price);
@@ -138,21 +174,23 @@ const PaymentPage = () => {
                                 <div className="rounded-full px-6 py-3 text-center mb-4" style={{background: 'linear-gradient(to right, #3b82f6, #4ade80)'}}>
                                     <span className="font-bold text-lg" style={{color: '#ffffff'}}>{getPackageDuration(packageInfo?.thoi_han_thang)}</span>
                                 </div>
-                                <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{packageInfo?.ten}</h2>
-                                <p style={{color: '#4b5563'}}>{packageInfo?.mo_ta}</p>
+                                <h2 className="text-2xl font-bold mb-2" style={{color: '#1f2937'}}>{language === 'en' ? (translatedTitleDesc.title || packageInfo?.ten) : packageInfo?.ten}</h2>
+                                <p style={{color: '#4b5563'}}>{language === 'en' ? (translatedTitleDesc.desc || packageInfo?.mo_ta) : packageInfo?.mo_ta}</p>
                             </div>
 
                             {/* Features */}
                             <div className="space-y-3 mb-6">
                                 <h3 className="text-lg font-semibold mb-3" style={{color: '#1f2937'}}>{t('featuresIncluded')}</h3>
-                                {packageInfo?.noiDungList?.slice(0, 7).map((feature, idx) => (
+                                {(language === 'en' ? translatedFeatures : (packageInfo?.noiDungList || []).map(f => f.noi_dung))
+                                  .slice(0, 7)
+                                  .map((feature, idx) => (
                                     <div key={idx} className="flex items-center">
                                         <div className="w-5 h-5 rounded-full flex items-center justify-center mr-3 flex-shrink-0" style={{backgroundColor: '#3b82f6'}}>
                                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{color: '#ffffff'}}>
                                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                             </svg>
                                         </div>
-                                        <span className="text-sm" style={{color: '#374151'}}>{feature.noi_dung}</span>
+                                        <span className="text-sm" style={{color: '#374151'}}>{language === 'en' ? feature : (packageInfo?.noiDungList?.[idx]?.noi_dung || feature)}</span>
                                     </div>
                                 ))}
                                 {packageInfo?.noiDungList?.length > 7 && (
@@ -162,7 +200,7 @@ const PaymentPage = () => {
                                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                             </svg>
                                         </div>
-                                        <span className="text-sm italic" style={{color: '#6b7280'}}>và còn rất nhiều những điều khác</span>
+                                        <span className="text-sm italic" style={{color: '#6b7280'}}>{language === 'en' ? 'and many more' : 'và còn rất nhiều những điều khác'}</span>
                                     </div>
                                 )}
                             </div>

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://kidolock.com/api_kidolocks/api';
+const API_BASE_URL = 'http://localhost:7000/api';
 
 class ApiService {
   constructor() {
@@ -190,6 +190,24 @@ class ApiService {
 
   async deletePhuHuynh(id) {
     return this.delete(`/phu-huynh/${id}`);
+  }
+
+  // ==================== ROLE MANAGEMENT API ====================
+  async getUserRole(phuHuynhId) {
+    return this.get(`/phu-huynh/${phuHuynhId}/role`);
+  }
+
+  async updateUserRole(phuHuynhId, role) {
+    return this.put(`/phu-huynh/${phuHuynhId}/role`, { role });
+  }
+
+  async listUsersByRole(role) {
+    const search = new URLSearchParams({ role }).toString();
+    return this.get(`/roles/users?${search}`);
+  }
+
+  async getAvailableRoles() {
+    return this.get('/roles/available');
   }
 
   // ==================== TRẺ EM API ====================

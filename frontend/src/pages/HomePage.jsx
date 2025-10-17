@@ -94,10 +94,10 @@ const HomePage = () => {
 
        {/* Underline - Line matching title width */}
        <motion.div 
-         className="absolute top-16 left-8 z-20 sm:left-6 md:left-8 lg:left-12 xl:left-16"
+         className="absolute top-12 left-8 z-20 sm:left-6 sm:top-10 md:left-8 md:top-12 lg:left-12 lg:top-12 xl:left-16 xl:top-12"
          variants={fadeInLeft}
        >
-         <div className="w-96 h-px bg-gray-400"></div>
+         <div className="w-32 sm:w-48 md:w-64 lg:w-80 xl:w-96 h-px bg-gray-400"></div>
        </motion.div>
 
        {/* Main Title and Features - Left Side */}
@@ -166,8 +166,6 @@ const HomePage = () => {
         <div className="flex flex-wrap justify-end items-center gap-1 text-gray-300 hover:text-gray-200 transition-colors font-light text-[7px] sm:text-[9px] md:text-[10px] lg:text-xs" style={{ fontFamily: 'Myriad Pro' }}>
           <span>Windows®</span>
           <span>|</span>
-          <span>macOS®</span>
-          <span>|</span>
           <span>Android™</span>
           <span>|</span>
           <span>iOS®</span>
@@ -191,13 +189,20 @@ const HomePage = () => {
     viewport={{ once: true }}
   >
     <WhyKidolock />
-    <FeaturesSection />
-    <ProtectionSection />
-    <EducationSection />
+    <div id="features-section">
+      <FeaturesSection />
+    </div>
+    <div id="protection-section">
+      <ProtectionSection />
+    </div>
+    <div id="education-section">
+      <EducationSection />
+    </div>
   </motion.div>
   
   {/* Testimonials Section */}
   <motion.div
+    id="testimonials-section"
     initial={{ opacity: 0, y: 100 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1.5, ease: "easeOut" }}
@@ -208,6 +213,7 @@ const HomePage = () => {
   
   {/* Download Section */}
   <motion.div
+    id="download-section"
     initial={{ opacity: 0, y: 100 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1.5, ease: "easeOut" }}
@@ -218,6 +224,7 @@ const HomePage = () => {
   
   {/* Pricing Section */}
   <motion.div
+    id="pricing-section"
     initial={{ opacity: 0, y: 100 }}
     whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 1.5, ease: "easeOut" }}

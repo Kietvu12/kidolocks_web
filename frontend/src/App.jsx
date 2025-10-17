@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { LanguageProvider } from './contexts/LanguageContext'
+import SplashScreen from './components/SplashScreen'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -18,9 +19,20 @@ import GoiPage from './pages/Admin/GoiPage'
 import GoiManagementPage from './pages/Admin/GoiManagementPage'
 import DrillDownPage from './pages/Admin/DrillDownPage'
 import ProtectedRoute from './components/ProtectedRoute'
+import ConditionalContactButtons from './components/ConditionalContactButtons'
 import './App.css'
 
 function App() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  const handleSplashComplete = () => {
+    setShowSplash(false);
+  };
+
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
   return (
     <LanguageProvider>
       <AuthProvider>
@@ -143,6 +155,9 @@ function App() {
             {/* Catch all route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          
+          {/* Floating Contact Buttons - Conditional */}
+          <ConditionalContactButtons />
         </div>
       </Router>
     </AuthProvider>

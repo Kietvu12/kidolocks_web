@@ -23,9 +23,9 @@ const ContactSection = () => {
             backgroundSize: 'cover',
             backgroundPosition: 'center -20%',
             backgroundRepeat: 'no-repeat',
-            minHeight: '100vh'
+            minHeight: '80vh'
         }}>
-            <div className="relative z-10 pt-72 sm:pt-56 md:pt-60 lg:pt-56 xl:pt-60 pb-16 px-4 sm:px-6 lg:px-8 w-full">
+            <div className="relative z-10 pt-56 sm:pt-48 md:pt-52 lg:pt-48 xl:pt-52 pb-12 px-10 sm:px-16 lg:px-28 w-full">
                 <div className="mx-auto">
                     {/* Header Section */}
                     <div className="flex flex-col lg:flex-row items-center justify-between mb-16">
@@ -67,33 +67,12 @@ const ContactSection = () => {
                             </p>
                             
                             <div className="space-y-2">
-                                <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
-                                    <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">{t('mainOffice')}</span>
-                                        <span className="hidden sm:inline">{t('mainOffice')}</span>
+                                <div className="flex flex-col lg:flex-row" style={{color: 'white'}}>
+                                    <span className="font-medium w-15 lg:w-25 mb-1 lg:mb-0">
+                                        <span className="lg:hidden whitespace-nowrap">{t('mainOffice').replace(':', '')}</span>
+                                        <span className="hidden lg:inline whitespace-nowrap">{t('mainOffice')}</span>
                                     </span>
                                     <span>{t('addressMainValue')}</span>
-                                </div>
-                                <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
-                                    <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">{t('trainingAddress2')}</span>
-                                        <span className="hidden sm:inline">{t('trainingAddress2')}</span>
-                                    </span>
-                                    <span>{t('address2Value')}</span>
-                                </div>
-                                <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
-                                    <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">{t('trainingAddress3')}</span>
-                                        <span className="hidden sm:inline">{t('trainingAddress3')}</span>
-                                    </span>
-                                    <span>{t('address3Value')}</span>
-                                </div>
-                                <div className="flex flex-col sm:flex-row" style={{color: 'white'}}>
-                                    <span className="font-medium w-32 sm:w-40 mb-1 sm:mb-0">
-                                        <span className="sm:hidden">{t('trainingAddress4')}</span>
-                                        <span className="hidden sm:inline">{t('trainingAddress4')}</span>
-                                    </span>
-                                    <span>{t('address4Value')}</span>
                                 </div>
                             </div>
                         </div>
