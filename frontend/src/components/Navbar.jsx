@@ -370,6 +370,22 @@ const Navbar = () => {
 
                                                     {/* Menu Items */}
                                                     <div className="py-2">
+                                                        {/* Admin Dashboard Button - Only show for admins */}
+                                                        {isAdmin() && (
+                                                            <button 
+                                                                onClick={() => {
+                                                                    setIsUserDropdownOpen(false);
+                                                                    navigate('/admin');
+                                                                }}
+                                                                className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                                                            >
+                                                                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                                </svg>
+                                                                {t('adminDashboard')}
+                                                            </button>
+                                                        )}
+
                                                         <button 
                                                             onClick={() => {
                                                                 setIsUserDropdownOpen(false);
@@ -596,6 +612,19 @@ const Navbar = () => {
                                             <div className="font-medium">{isAdmin() ? t('adminLabel') : t('parentLabel')}</div>
                                             <div className="text-blue-600 font-semibold">{isAdmin() ? t('adminRole') : t('premiumRole')}</div>
                                         </div>
+                                        
+                                        {/* Admin Dashboard Button - Only show for admins */}
+                                        {isAdmin() && (
+                                            <button 
+                                                onClick={() => {
+                                                    setIsMenuOpen(false);
+                                                    navigate('/admin');
+                                                }}
+                                                className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg"
+                                            >
+                                                {t('adminDashboard')}
+                                            </button>
+                                        )}
                                         
                                         <button 
                                             onClick={() => {

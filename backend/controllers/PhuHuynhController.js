@@ -246,7 +246,10 @@ class PhuHuynhController {
       if (email_phu_huynh) updateData.email_phu_huynh = email_phu_huynh;
       if (sdt) updateData.sdt = sdt;
       if (ten_phu_huynh) updateData.ten_phu_huynh = ten_phu_huynh;
-      if (mat_khau) updateData.mat_khau = mat_khau;
+      if (mat_khau) {
+        // Mã hóa mật khẩu trước khi lưu
+        updateData.mat_khau = passwordEncrypt(mat_khau, 'encryptionkey');
+      }
 
       await phuHuynh.update(updateData);
 

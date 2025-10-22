@@ -306,9 +306,10 @@ class ThietBiController {
         });
       }
 
-      // Hủy các gói đang hoạt động
+      // Hủy các gói đang hoạt động: cập nhật ngày kết thúc = hiện tại, trạng thái = 'HUY'
+      const now = new Date();
       await GoiDichVu.update(
-        { trang_thai: 'HUY' },
+        { trang_thai: 'HUY', ngay_ket_thuc: now },
         {
           where: {
             nguoi_dung_id: thietBiId,

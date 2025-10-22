@@ -6,8 +6,8 @@ const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
   database: process.env.DB_NAME || 'kidolocks',
-  username: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  username: process.env.DB_USER || 'mcp',
+  password: process.env.DB_PASSWORD || 'ZKdP9LAL8QSAvsE@',
   logging: process.env.NODE_ENV === 'development' ? console.log : false,
   define: {
     charset: 'utf8mb4',

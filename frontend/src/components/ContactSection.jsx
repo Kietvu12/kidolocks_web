@@ -29,30 +29,6 @@ const ContactSection = () => {
                 <div className="mx-auto">
                     {/* Header Section */}
                     <div className="flex flex-col lg:flex-row items-center justify-between mb-16">
-                        <div className="text-center lg:text-left mb-8 lg:mb-0 hidden lg:block">
-                            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase mb-4" style={{color: 'white'}}>
-                                {t('contactTitle')}
-                            </h1>
-                        </div>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                type="email"
-                                placeholder={t('emailPlaceholder')}
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="px-6 py-3 rounded-lg text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white/50 min-w-[300px] sm:min-w-[400px]"
-                                style={{backgroundColor: 'white'}}
-                            />
-                            <button
-                                onClick={handleSubmit}
-                                className="px-8 py-3 font-bold rounded-lg transition-colors uppercase"
-                                style={{backgroundColor: 'white', color: '#1f2937'}}
-                                onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                                onMouseLeave={(e) => e.target.style.backgroundColor = 'white'}
-                            >
-                                {t('send')}
-                            </button>
-                        </div>
                     </div>
 
                     {/* Main Content */}

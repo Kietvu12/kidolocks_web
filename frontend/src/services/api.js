@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:7000/api';
+const API_BASE_URL = 'https://kidolock.com/api_kidolocks/api';
 
 class ApiService {
   constructor() {
@@ -192,24 +192,6 @@ class ApiService {
     return this.delete(`/phu-huynh/${id}`);
   }
 
-  // ==================== ROLE MANAGEMENT API ====================
-  async getUserRole(phuHuynhId) {
-    return this.get(`/phu-huynh/${phuHuynhId}/role`);
-  }
-
-  async updateUserRole(phuHuynhId, role) {
-    return this.put(`/phu-huynh/${phuHuynhId}/role`, { role });
-  }
-
-  async listUsersByRole(role) {
-    const search = new URLSearchParams({ role }).toString();
-    return this.get(`/roles/users?${search}`);
-  }
-
-  async getAvailableRoles() {
-    return this.get('/roles/available');
-  }
-
   // ==================== TRẺ EM API ====================
   async getTreEmByPhuHuynh(phuHuynhId) {
     return this.get(`/phu-huynh/${phuHuynhId}/tre-em`);
@@ -367,6 +349,27 @@ class ApiService {
       mat_khau_moi: newPassword,
       otp: otp
     });
+  }
+
+  // ==================== ROLE MANAGEMENT API ====================
+  // Lấy danh sách vai trò khả dụng
+  async getAvailableRoles() {
+    return this.get('/roles/available');
+  }
+
+  // Cập nhật vai trò người dùng
+  async updateUserRole(userId, role) {
+    return this.put(`/phu-huynh/${userId}/role`, { role });
+  }
+
+  // Lấy vai trò của người dùng theo ID
+  async getUserRole(userId) {
+    return this.get(`/phu-huynh/${userId}/role`);
+  }
+
+  // Liệt kê người dùng theo vai trò
+  async listUsersByRole(role) {
+    return this.get(`/phu-huynh/role/${role}`);
   }
 
   // ==================== HEALTH CHECK ====================

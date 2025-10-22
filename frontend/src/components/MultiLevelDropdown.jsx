@@ -177,6 +177,27 @@ const MultiLevelDropdown = () => {
   const [treEmFilters, setTreEmFilters] = useState({ ten: '', lop: '', truong: '', gioiTinh: '' });
   const [thietBiFilters, setThietBiFilters] = useState({ maThietBi: '', tenThietBi: '', loaiThietBi: '', goiDichVu: '' });
   
+  // Filter visibility states for mobile
+  const [showPhuHuynhFilters, setShowPhuHuynhFilters] = useState(false);
+  const [showTreEmFilters, setShowTreEmFilters] = useState(false);
+  const [showThietBiFilters, setShowThietBiFilters] = useState(false);
+  
+  // Pagination states
+  const [phuHuynhPagination, setPhuHuynhPagination] = useState({ currentPage: 1, itemsPerPage: 10 });
+  const [treEmPagination, setTreEmPagination] = useState({ currentPage: 1, itemsPerPage: 10 });
+  const [thietBiPagination, setThietBiPagination] = useState({ currentPage: 1, itemsPerPage: 10 });
+
+  // Pagination logic
+  const getPaginatedData = (data, pagination) => {
+    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
+    const endIndex = startIndex + pagination.itemsPerPage;
+    return data.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = (data, itemsPerPage) => {
+    return Math.ceil(data.length / itemsPerPage);
+  };
+  
   const [filteredPhuHuynhList, setFilteredPhuHuynhList] = useState([]);
   const [filteredTreEmList, setFilteredTreEmList] = useState([]);
   const [filteredThietBiList, setFilteredThietBiList] = useState([]);
@@ -1521,6 +1542,136 @@ const MultiLevelDropdown = () => {
     return goiList.map(goi => goi.ten);
   };
 
+  // Pagination component
+  const PaginationComponent = ({ 
+    currentPage, 
+    totalPages, 
+    onPageChange, 
+    itemsPerPage, 
+    onItemsPerPageChange,
+    totalItems,
+    color = 'blue'
+  }) => {
+    const colorClasses = {
+      blue: {
+        active: 'bg-blue-600 text-white',
+        inactive: 'text-blue-600 hover:bg-blue-50',
+        border: 'border-blue-200'
+      },
+      green: {
+        active: 'bg-green-600 text-white',
+        inactive: 'text-green-600 hover:bg-green-50',
+        border: 'border-green-200'
+      },
+      purple: {
+        active: 'bg-purple-600 text-white',
+        inactive: 'text-purple-600 hover:bg-purple-50',
+        border: 'border-purple-200'
+      }
+    };
+
+    const colors = colorClasses[color] || colorClasses.blue;
+
+    const getVisiblePages = () => {
+      const delta = 2;
+      const range = [];
+      const rangeWithDots = [];
+
+      for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
+        range.push(i);
+      }
+
+      if (currentPage - delta > 2) {
+        rangeWithDots.push(1, '...');
+      } else {
+        rangeWithDots.push(1);
+      }
+
+      rangeWithDots.push(...range);
+
+      if (currentPage + delta < totalPages - 1) {
+        rangeWithDots.push('...', totalPages);
+      } else if (totalPages > 1) {
+        rangeWithDots.push(totalPages);
+      }
+
+      return rangeWithDots;
+    };
+
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t border-gray-200">
+        {/* Items per page selector */}
+        <div className="flex items-center gap-2 text-sm text-gray-600">
+          <span>Hiển thị:</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => onItemsPerPageChange(parseInt(e.target.value))}
+            className="px-2 py-1 border border-gray-300 rounded text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+          </select>
+          <span>trong {totalItems} mục</span>
+        </div>
+
+        {/* Pagination controls */}
+        <div className="flex items-center gap-1">
+          {/* Previous button */}
+          <button
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+              currentPage === 1 
+                ? 'text-gray-400 border-gray-200 cursor-not-allowed' 
+                : `${colors.inactive} border-gray-300 hover:border-gray-400`
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {/* Page numbers */}
+          {getVisiblePages().map((page, index) => (
+            <button
+              key={index}
+              onClick={() => typeof page === 'number' && onPageChange(page)}
+              disabled={page === '...'}
+              className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+                page === '...'
+                  ? 'text-gray-400 border-gray-200 cursor-default'
+                  : page === currentPage
+                    ? `${colors.active} border-transparent`
+                    : `${colors.inactive} border-gray-300 hover:border-gray-400`
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+
+          {/* Next button */}
+          <button
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className={`px-3 py-2 text-sm font-medium rounded-lg border transition-colors ${
+              currentPage === totalPages 
+                ? 'text-gray-400 border-gray-200 cursor-not-allowed' 
+                : `${colors.inactive} border-gray-300 hover:border-gray-400`
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   // Get all data for filter system
   const getAllTreEm = () => {
     return phuHuynhList.reduce((acc, phuHuynh) => {
@@ -1583,59 +1734,81 @@ const MultiLevelDropdown = () => {
         {/* Phụ huynh Filter System */}
         <div className="mb-6">
           <div className="bg-white rounded-lg p-4 shadow-sm border">
-            <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc phụ huynh</h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên phụ huynh</label>
-                <SearchableInput
-                  value={phuHuynhFilters.ten}
-                  onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, ten: value})}
-                  placeholder="Tìm theo tên..."
-                  options={getPhuHuynhNameOptions()}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Email</label>
-                <SearchableInput
-                  value={phuHuynhFilters.email}
-                  onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, email: value})}
-                  placeholder="Tìm theo email..."
-                  options={getPhuHuynhEmailOptions()}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Số điện thoại</label>
-                <SearchableInput
-                  value={phuHuynhFilters.sdt}
-                  onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, sdt: value})}
-                  placeholder="Tìm theo SĐT..."
-                  options={getPhuHuynhPhoneOptions()}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại tài khoản</label>
-                <select
-                  value={phuHuynhFilters.loaiTaiKhoan}
-                  onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, loaiTaiKhoan: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Tất cả</option>
-                  <option value="Premium">Premium</option>
-                  <option value="Free">Free</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Vai trò</label>
-                <select
-                  value={phuHuynhFilters.vaiTro}
-                  onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, vaiTro: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Tất cả</option>
-                  {availableRoles.map(r => (
-                    <option key={r} value={r}>{r === 'admin' ? 'Admin' : 'User'}</option>
-                  ))}
-                </select>
+            {/* Filter Header with Toggle Button */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold" style={{color: '#1f2937'}}>Bộ lọc phụ huynh</h3>
+              {/* Mobile Toggle Button */}
+              <button
+                onClick={() => setShowPhuHuynhFilters(!showPhuHuynhFilters)}
+                className="lg:hidden flex items-center px-3 py-2 text-sm font-medium rounded-lg border transition-all"
+                style={{ 
+                  color: showPhuHuynhFilters ? '#2563eb' : '#6b7280',
+                  borderColor: showPhuHuynhFilters ? '#93c5fd' : '#d1d5db',
+                  backgroundColor: showPhuHuynhFilters ? '#dbeafe' : '#ffffff'
+                }}
+              >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                </svg>
+                {showPhuHuynhFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
+              </button>
+            </div>
+            
+            {/* Filter Content - Hidden on mobile by default */}
+            <div className={`${showPhuHuynhFilters ? 'block' : 'hidden'} lg:block`}>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên phụ huynh</label>
+                  <SearchableInput
+                    value={phuHuynhFilters.ten}
+                    onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, ten: value})}
+                    placeholder="Tìm theo tên..."
+                    options={getPhuHuynhNameOptions()}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Email</label>
+                  <SearchableInput
+                    value={phuHuynhFilters.email}
+                    onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, email: value})}
+                    placeholder="Tìm theo email..."
+                    options={getPhuHuynhEmailOptions()}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Số điện thoại</label>
+                  <SearchableInput
+                    value={phuHuynhFilters.sdt}
+                    onChange={(value) => setPhuHuynhFilters({...phuHuynhFilters, sdt: value})}
+                    placeholder="Tìm theo SĐT..."
+                    options={getPhuHuynhPhoneOptions()}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại tài khoản</label>
+                  <select
+                    value={phuHuynhFilters.loaiTaiKhoan}
+                    onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, loaiTaiKhoan: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Tất cả</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Free">Free</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Vai trò</label>
+                  <select
+                    value={phuHuynhFilters.vaiTro}
+                    onChange={(e) => setPhuHuynhFilters({...phuHuynhFilters, vaiTro: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Tất cả</option>
+                    {availableRoles.map(r => (
+                      <option key={r} value={r}>{r === 'admin' ? 'Admin' : 'User'}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>
@@ -1656,8 +1829,8 @@ const MultiLevelDropdown = () => {
             </div>
           </div>
         )}
-        {/* Parents Table */}
-        <div className="overflow-x-auto">
+        {/* Parents Table - Desktop */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full rounded-lg" style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
             <thead style={{ background: 'linear-gradient(to right, #f9fafb, #f3f4f6)' }}>
               <tr>
@@ -1673,7 +1846,7 @@ const MultiLevelDropdown = () => {
               </tr>
             </thead>
             <tbody style={{ backgroundColor: '#ffffff', borderTopColor: '#e5e7eb' }}>
-              {filteredPhuHuynhList.map((phuHuynh) => (
+              {getPaginatedData(filteredPhuHuynhList, phuHuynhPagination).map((phuHuynh) => (
                 <tr key={phuHuynh.ma_phu_huynh} className="transition-colors" onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#dbeafe'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
                   <td className="px-4 py-4">
                 <div className="flex items-center">
@@ -1825,8 +1998,181 @@ const MultiLevelDropdown = () => {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Parents Cards - Mobile */}
+        <div className="lg:hidden space-y-4">
+          {getPaginatedData(filteredPhuHuynhList, phuHuynhPagination).map((phuHuynh) => (
+            <div key={phuHuynh.ma_phu_huynh} className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
+              {/* Header with Avatar and Basic Info */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center mr-3 shadow-md" style={{ background: 'linear-gradient(to bottom right, #60a5fa, #2563eb)' }}>
+                    <span className="font-bold text-lg" style={{ color: '#ffffff' }}>
+                      {phuHuynh.ten_phu_huynh?.charAt(0)?.toUpperCase() || 'P'}
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold" style={{ color: '#111827' }}>
+                      {phuHuynh.ten_phu_huynh || 'Chưa cập nhật'}
+                    </div>
+                    <div className="text-sm" style={{ color: '#6b7280' }}>ID: {phuHuynh.ma_phu_huynh}</div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-end gap-2">
+                  {isPremiumUser(phuHuynh) ? (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #fbbf24, #f59e0b)', color: '#ffffff' }}>
+                      Premium
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)', color: '#ffffff' }}>
+                      Free
+                    </span>
+                  )}
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold"
+                    style={{
+                      background: phuHuynh.la_admin ? '#dbeafe' : '#f3f4f6',
+                      color: phuHuynh.la_admin ? '#1d4ed8' : '#374151'
+                    }}
+                  >
+                    {phuHuynh.la_admin ? 'Admin' : 'User'}
+                  </span>
+                </div>
               </div>
 
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 gap-3 mb-4">
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <div>
+                    <div className="text-sm font-medium" style={{ color: '#111827' }}>{phuHuynh.email_phu_huynh}</div>
+                    <div className="text-xs" style={{ color: '#6b7280' }}>Email</div>
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                  </svg>
+                  <div>
+                    <div className="text-sm font-medium" style={{ color: '#111827' }}>{phuHuynh.sdt || 'Chưa có SĐT'}</div>
+                    <div className="text-xs" style={{ color: '#6b7280' }}>Số điện thoại</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Password Section */}
+              <div className="mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium" style={{ color: '#374151' }}>Mật khẩu:</span>
+                  {showPassword[phuHuynh.ma_phu_huynh] ? (
+                    <div className="flex items-center">
+                      <span className="font-mono text-sm px-2 py-1 rounded mr-2" style={{ color: '#16a34a', backgroundColor: '#f0fdf4' }}>
+                        {phuHuynh.mat_khau || 'Không có mật khẩu'}
+                      </span>
+                      <button
+                        onClick={() => handleHidePassword(phuHuynh.ma_phu_huynh)}
+                        className="p-1 rounded flex items-center"
+                        style={{ color: '#ef4444' }}
+                        title="Ẩn mật khẩu"
+                      >
+                        <EyeOff className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <span className="text-sm mr-2" style={{ color: '#6b7280' }}>••••••••</span>
+                      <button
+                        onClick={() => handleShowPassword(phuHuynh.ma_phu_huynh)}
+                        className="p-1 rounded flex items-center"
+                        style={{ color: '#3b82f6' }}
+                        title="Xem mật khẩu"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold mr-2" style={{ backgroundColor: '#dcfce7', color: '#166534' }}>
+                    {getTotalChildren(phuHuynh)}
+                  </div>
+                  <span className="text-sm" style={{ color: '#374151' }}>Trẻ em</span>
+                </div>
+                <div className="flex items-center">
+                  <div className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold mr-2" style={{ backgroundColor: '#f3e8ff', color: '#7c3aed' }}>
+                    {getTotalDevices(phuHuynh)}
+                  </div>
+                  <span className="text-sm" style={{ color: '#374151' }}>Thiết bị</span>
+                </div>
+                <div className="flex items-center">
+                  <select
+                    className="border text-xs rounded px-2 py-1"
+                    value={phuHuynh.la_admin ? 'admin' : 'user'}
+                    onChange={(e) => handleChangeUserRole(phuHuynh.ma_phu_huynh, e.target.value)}
+                    disabled={!!isUpdatingRoleByUserId[phuHuynh.ma_phu_huynh]}
+                  >
+                    {availableRoles.map(r => (
+                      <option key={r} value={r}>{r === 'admin' ? 'Admin' : 'User'}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => openWalletModal(phuHuynh)}
+                  className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                  style={{ color: '#0ea5e9', borderColor: '#bae6fd', backgroundColor: '#ffffff' }}
+                >
+                  <Package className="w-4 h-4 mr-1" />
+                  Ví gói
+                </button>
+                <button
+                  onClick={() => handleOpenTreEmPopup(phuHuynh)}
+                  className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                  style={{ color: '#16a34a', borderColor: '#bbf7d0', backgroundColor: '#ffffff' }}
+                >
+                  <Users className="w-4 h-4 mr-1" />
+                  Xem trẻ em
+                </button>
+                <button
+                  onClick={() => openEditForm('phuHuynh', phuHuynh)}
+                  className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                  style={{ color: '#2563eb', borderColor: '#93c5fd', backgroundColor: '#ffffff' }}
+                >
+                  <Edit className="w-3 h-3 mr-1" />
+                  Sửa
+                </button>
+                <button
+                  onClick={() => handleDeletePhuHuynh(phuHuynh.ma_phu_huynh)}
+                  className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                  style={{ color: '#dc2626', borderColor: '#fecaca', backgroundColor: '#ffffff' }}
+                >
+                  <Trash2 className="w-3 h-3 mr-1" />
+                  Xóa
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Pagination for Parents */}
+        <PaginationComponent
+          currentPage={phuHuynhPagination.currentPage}
+          totalPages={getTotalPages(filteredPhuHuynhList, phuHuynhPagination.itemsPerPage)}
+          onPageChange={(page) => setPhuHuynhPagination({...phuHuynhPagination, currentPage: page})}
+          itemsPerPage={phuHuynhPagination.itemsPerPage}
+          onItemsPerPageChange={(itemsPerPage) => setPhuHuynhPagination({...phuHuynhPagination, itemsPerPage, currentPage: 1})}
+          totalItems={filteredPhuHuynhList.length}
+          color="blue"
+        />
 
         {filteredPhuHuynhList.length === 0 && !isLoading && (
           <div className="text-center py-12" style={{color: '#6b7280'}}>
@@ -1888,43 +2234,65 @@ const MultiLevelDropdown = () => {
 
             {/* Filter Section */}
             <div className="p-6 border-b bg-gray-50">
-              <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc trẻ em</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên trẻ em</label>
-                  <SearchableInput
-                    value={treEmFilters.ten}
-                    onChange={(value) => setTreEmFilters({...treEmFilters, ten: value})}
-                    placeholder="Tìm theo tên..."
-                    options={getTreEmNameOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Lớp</label>
-                  <SearchableInput
-                    value={treEmFilters.lop}
-                    onChange={(value) => setTreEmFilters({...treEmFilters, lop: value})}
-                    placeholder="Tìm theo lớp..."
-                    options={getTreEmClassOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Trường</label>
-                  <SearchableInput
-                    value={treEmFilters.truong}
-                    onChange={(value) => setTreEmFilters({...treEmFilters, truong: value})}
-                    placeholder="Tìm theo trường..."
-                    options={getTreEmSchoolOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Giới tính</label>
-                  <SearchableInput
-                    value={treEmFilters.gioiTinh}
-                    onChange={(value) => setTreEmFilters({...treEmFilters, gioiTinh: value})}
-                    placeholder="Tìm theo giới tính..."
-                    options={getTreEmGenderOptions()}
-                  />
+              {/* Filter Header with Toggle Button */}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold" style={{color: '#1f2937'}}>Bộ lọc trẻ em</h3>
+                {/* Mobile Toggle Button */}
+                <button
+                  onClick={() => setShowTreEmFilters(!showTreEmFilters)}
+                  className="lg:hidden flex items-center px-3 py-2 text-sm font-medium rounded-lg border transition-all"
+                  style={{ 
+                    color: showTreEmFilters ? '#16a34a' : '#6b7280',
+                    borderColor: showTreEmFilters ? '#bbf7d0' : '#d1d5db',
+                    backgroundColor: showTreEmFilters ? '#f0fdf4' : '#ffffff'
+                  }}
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                  </svg>
+                  {showTreEmFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
+                </button>
+              </div>
+              
+              {/* Filter Content - Hidden on mobile by default */}
+              <div className={`${showTreEmFilters ? 'block' : 'hidden'} lg:block`}>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên trẻ em</label>
+                    <SearchableInput
+                      value={treEmFilters.ten}
+                      onChange={(value) => setTreEmFilters({...treEmFilters, ten: value})}
+                      placeholder="Tìm theo tên..."
+                      options={getTreEmNameOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Lớp</label>
+                    <SearchableInput
+                      value={treEmFilters.lop}
+                      onChange={(value) => setTreEmFilters({...treEmFilters, lop: value})}
+                      placeholder="Tìm theo lớp..."
+                      options={getTreEmClassOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Trường</label>
+                    <SearchableInput
+                      value={treEmFilters.truong}
+                      onChange={(value) => setTreEmFilters({...treEmFilters, truong: value})}
+                      placeholder="Tìm theo trường..."
+                      options={getTreEmSchoolOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Giới tính</label>
+                    <SearchableInput
+                      value={treEmFilters.gioiTinh}
+                      onChange={(value) => setTreEmFilters({...treEmFilters, gioiTinh: value})}
+                      placeholder="Tìm theo giới tính..."
+                      options={getTreEmGenderOptions()}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -1937,23 +2305,24 @@ const MultiLevelDropdown = () => {
                   <span className="text-lg font-bold" style={{ color: '#ffffff' }}>TE</span>
                 </div>
               </div>
-                        <button
-                          onClick={() => {
-                            setShowTreEmForm(true);
-                            setEditingItem(null);
-                            resetTreEmForm();
-                          }}
+              <button
+                onClick={() => {
+                  setShowTreEmForm(true);
+                  setEditingItem(null);
+                  resetTreEmForm();
+                }}
                 className="px-3 sm:px-4 py-2 rounded-lg transition-all flex items-center font-medium shadow-md hover:shadow-lg min-w-fit"
                 style={{ backgroundColor: '#16a34a', color: '#ffffff' }}
                 onMouseEnter={(e) => { e.target.style.backgroundColor = '#15803d'; }}
                 onMouseLeave={(e) => { e.target.style.backgroundColor = '#16a34a'; }}
-                        >
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Thêm trẻ em
-                        </button>
-                      </div>
+              </button>
+            </div>
 
-            <div className="overflow-x-auto">
+            {/* Children Table - Desktop */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                 <thead style={{ background: 'linear-gradient(to right, #f0fdf4, #dcfce7)' }}>
                   <tr>
@@ -1966,7 +2335,7 @@ const MultiLevelDropdown = () => {
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: '#ffffff', borderTopColor: '#e5e7eb' }}>
-                    {filteredTreEmList.map((treEm) => (
+                    {getPaginatedData(filteredTreEmList, treEmPagination).map((treEm) => (
                     <tr key={treEm.ma_tre_em} className="transition-colors" onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#f0fdf4'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}>
                       <td className="px-4 py-4">
                               <div className="flex items-center">
@@ -2044,7 +2413,111 @@ const MultiLevelDropdown = () => {
                   ))}
                 </tbody>
               </table>
-              </div>
+            </div>
+
+            {/* Children Cards - Mobile */}
+            <div className="lg:hidden space-y-4">
+              {getPaginatedData(filteredTreEmList, treEmPagination).map((treEm) => (
+                <div key={treEm.ma_tre_em} className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
+                  {/* Header with Avatar and Basic Info */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center mr-3 shadow-md" style={{ background: 'linear-gradient(to bottom right, #4ade80, #16a34a)' }}>
+                        <span className="text-sm font-bold" style={{ color: '#ffffff' }}>TE</span>
+                      </div>
+                      <div>
+                        <div className="text-lg font-semibold" style={{ color: '#111827' }}>{treEm.ten_tre}</div>
+                        <div className="text-sm" style={{ color: '#6b7280' }}>ID: {treEm.ma_tre_em}</div>
+                        {treEm.ngay_sinh && treEm.ngay_sinh !== '0000-00-00' && (
+                          <div className="text-xs" style={{ color: '#9ca3af' }}>
+                            Ngày sinh: {(() => {
+                              const date = new Date(treEm.ngay_sinh);
+                              return isNaN(date.getTime()) ? 'Ngày không hợp lệ' : date.toLocaleDateString('vi-VN');
+                            })()}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold mr-2" style={{ backgroundColor: '#f3e8ff', color: '#7c3aed' }}>
+                        {getChildDevicesCount(treEm)}
+                      </div>
+                      <span className="text-sm" style={{ color: '#374151' }}>Thiết bị</span>
+                    </div>
+                  </div>
+
+                  {/* Information Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    <div className="flex items-center">
+                      <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <div>
+                        <div className="text-sm font-medium" style={{ color: '#111827' }}>{treEm.gioi_tinh || 'Chưa xác định'}</div>
+                        <div className="text-xs" style={{ color: '#6b7280' }}>Giới tính</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                      </svg>
+                      <div>
+                        <div className="text-sm font-medium" style={{ color: '#111827' }}>{treEm.lop || 'Chưa có lớp'}</div>
+                        <div className="text-xs" style={{ color: '#6b7280' }}>Lớp học</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center col-span-2">
+                      <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      <div>
+                        <div className="text-sm font-medium" style={{ color: '#111827' }}>{treEm.truong || 'Chưa có trường'}</div>
+                        <div className="text-xs" style={{ color: '#6b7280' }}>Trường học</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => handleOpenThietBiPopup(treEm, selectedPhuHuynhForPopup)}
+                      className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                      style={{ color: '#9333ea', borderColor: '#d8b4fe', backgroundColor: '#ffffff' }}
+                    >
+                      <Smartphone className="w-4 h-4 mr-1" />
+                      Xem thiết bị
+                    </button>
+                    <button
+                      onClick={() => openEditForm('treEm', treEm)}
+                      className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                      style={{ color: '#2563eb', borderColor: '#93c5fd', backgroundColor: '#ffffff' }}
+                    >
+                      <Edit className="w-3 h-3 mr-1" />
+                      Sửa
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTreEm(treEm.ma_tre_em)}
+                      className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                      style={{ color: '#dc2626', borderColor: '#fecaca', backgroundColor: '#ffffff' }}
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      Xóa
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination for Children */}
+            <PaginationComponent
+              currentPage={treEmPagination.currentPage}
+              totalPages={getTotalPages(filteredTreEmList, treEmPagination.itemsPerPage)}
+              onPageChange={(page) => setTreEmPagination({...treEmPagination, currentPage: page})}
+              itemsPerPage={treEmPagination.itemsPerPage}
+              onItemsPerPageChange={(itemsPerPage) => setTreEmPagination({...treEmPagination, itemsPerPage, currentPage: 1})}
+              totalItems={filteredTreEmList.length}
+              color="green"
+            />
             </div>
                             </div>
           </div>
@@ -2082,74 +2555,95 @@ const MultiLevelDropdown = () => {
 
             {/* Filter Section */}
             <div className="p-6 border-b bg-gray-50">
-              <h3 className="text-lg font-semibold mb-4" style={{color: '#1f2937'}}>Bộ lọc thiết bị</h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên thiết bị</label>
-                  <SearchableInput
-                    value={thietBiFilters.tenThietBi}
-                    onChange={(value) => setThietBiFilters({...thietBiFilters, tenThietBi: value})}
-                    placeholder="Tìm theo tên..."
-                    options={getThietBiNameOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại thiết bị</label>
-                  <SearchableInput
-                    value={thietBiFilters.loaiThietBi}
-                    onChange={(value) => setThietBiFilters({...thietBiFilters, loaiThietBi: value})}
-                    placeholder="Tìm theo loại..."
-                    options={getThietBiTypeOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Mã thiết bị</label>
-                  <SearchableInput
-                    value={thietBiFilters.maThietBi}
-                    onChange={(value) => setThietBiFilters({...thietBiFilters, maThietBi: value})}
-                    placeholder="Tìm theo mã..."
-                    options={getThietBiCodeOptions()}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Gói dịch vụ</label>
-                  <SearchableInput
-                    value={thietBiFilters.goiDichVu}
-                    onChange={(value) => setThietBiFilters({...thietBiFilters, goiDichVu: value})}
-                    placeholder="Tìm theo gói..."
-                    options={getGoiDichVuOptions()}
-                  />
+              {/* Filter Header with Toggle Button */}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold" style={{color: '#1f2937'}}>Bộ lọc thiết bị</h3>
+                {/* Mobile Toggle Button */}
+                <button
+                  onClick={() => setShowThietBiFilters(!showThietBiFilters)}
+                  className="lg:hidden flex items-center px-3 py-2 text-sm font-medium rounded-lg border transition-all"
+                  style={{ 
+                    color: showThietBiFilters ? '#9333ea' : '#6b7280',
+                    borderColor: showThietBiFilters ? '#d8b4fe' : '#d1d5db',
+                    backgroundColor: showThietBiFilters ? '#faf5ff' : '#ffffff'
+                  }}
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z" />
+                  </svg>
+                  {showThietBiFilters ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
+                </button>
+              </div>
+              
+              {/* Filter Content - Hidden on mobile by default */}
+              <div className={`${showThietBiFilters ? 'block' : 'hidden'} lg:block`}>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Tên thiết bị</label>
+                    <SearchableInput
+                      value={thietBiFilters.tenThietBi}
+                      onChange={(value) => setThietBiFilters({...thietBiFilters, tenThietBi: value})}
+                      placeholder="Tìm theo tên..."
+                      options={getThietBiNameOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Loại thiết bị</label>
+                    <SearchableInput
+                      value={thietBiFilters.loaiThietBi}
+                      onChange={(value) => setThietBiFilters({...thietBiFilters, loaiThietBi: value})}
+                      placeholder="Tìm theo loại..."
+                      options={getThietBiTypeOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Mã thiết bị</label>
+                    <SearchableInput
+                      value={thietBiFilters.maThietBi}
+                      onChange={(value) => setThietBiFilters({...thietBiFilters, maThietBi: value})}
+                      placeholder="Tìm theo mã..."
+                      options={getThietBiCodeOptions()}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1" style={{color: '#374151'}}>Gói dịch vụ</label>
+                    <SearchableInput
+                      value={thietBiFilters.goiDichVu}
+                      onChange={(value) => setThietBiFilters({...thietBiFilters, goiDichVu: value})}
+                      placeholder="Tìm theo gói..."
+                      options={getGoiDichVuOptions()}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Content */}
-            <div className="p-6 overflow-y-auto max-h-[60vh]">
+            <div className="p-6 pb-8 overflow-y-auto" style={{ maxHeight: 'calc(100vh - 300px)' }}>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center mr-3">
                   <span className="text-lg font-bold" style={{color: '#ffffff'}}>TB</span>
                 </div>
               </div>
-                <div className="flex gap-2">
-                                      <button
-                                        onClick={() => {
-                                          setShowThietBiForm(true);
-                                          setEditingItem(null);
-                                          resetThietBiForm();
-                                        }}
+              <button
+                onClick={() => {
+                  setShowThietBiForm(true);
+                  setEditingItem(null);
+                  resetThietBiForm();
+                }}
                 className="px-3 sm:px-4 py-2 rounded-lg transition-all flex items-center font-medium shadow-md hover:shadow-lg min-w-fit"
                 style={{ backgroundColor: '#9333ea', color: '#ffffff' }}
                 onMouseEnter={(e) => { e.target.style.backgroundColor = '#7c3aed'; }}
                 onMouseLeave={(e) => { e.target.style.backgroundColor = '#9333ea'; }}
-                                      >
+              >
                 <Plus className="w-4 h-4 mr-2" />
                 Thêm thiết bị
-                  </button>
-                                    </div>
-              </div>
+              </button>
+            </div>
 
-            <div className="overflow-x-auto">
+            {/* Devices Table - Desktop */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                 <thead className="bg-gradient-to-r from-purple-50 to-purple-100">
                   <tr>
@@ -2161,7 +2655,7 @@ const MultiLevelDropdown = () => {
                   </tr>
                 </thead>
                 <tbody style={{ backgroundColor: '#ffffff', borderTopColor: '#e5e7eb' }}>
-                    {filteredThietBiList.map((thietBi) => {
+                    {getPaginatedData(filteredThietBiList, thietBiPagination).map((thietBi) => {
                                         const activeGoi = getActiveGoi(thietBi);
                                         return (
                       <tr key={thietBi.nguoi_dung_id} className="hover:bg-purple-50 transition-colors">
@@ -2254,7 +2748,122 @@ const MultiLevelDropdown = () => {
                   })}
                 </tbody>
               </table>
-                                            </div>
+            </div>
+
+            {/* Devices Cards - Mobile */}
+            <div className="lg:hidden space-y-4">
+              {getPaginatedData(filteredThietBiList, thietBiPagination).map((thietBi) => {
+                const activeGoi = getActiveGoi(thietBi);
+                return (
+                  <div key={thietBi.nguoi_dung_id} className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
+                    {/* Header with Avatar and Basic Info */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center mr-3 shadow-md">
+                          <span className="text-sm font-bold" style={{color: '#ffffff'}}>TB</span>
+                        </div>
+                        <div>
+                          <div className="text-lg font-semibold" style={{color: '#111827'}}>
+                            {thietBi.ten_thiet_bi || 'Chưa đặt tên'}
+                          </div>
+                          <div className="text-sm" style={{color: '#6b7280'}}>ID: {thietBi.nguoi_dung_id}</div>
+                        </div>
+                      </div>
+                      {activeGoi && activeGoi.thongTinGoi && activeGoi.thong_tin_goi_id ? (
+                        <div className="text-right">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #4ade80, #22c55e)', color: '#ffffff' }}>
+                            {activeGoi.thongTinGoi.ten}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold shadow-md" style={{ background: 'linear-gradient(to right, #9ca3af, #6b7280)', color: '#ffffff' }}>
+                          Chưa có gói
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Information Grid */}
+                    <div className="grid grid-cols-1 gap-3 mb-4">
+                      <div className="flex items-center">
+                        <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                          <div className="text-sm font-medium" style={{color: '#111827'}}>{thietBi.loai_thiet_bi || 'Chưa xác định'}</div>
+                          <div className="text-xs" style={{color: '#6b7280'}}>Loại thiết bị</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        <svg className="w-4 h-4 mr-2" style={{ color: '#6b7280' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
+                        </svg>
+                        <div>
+                          <div className="text-sm font-medium font-mono" style={{color: '#111827'}}>{thietBi.ma_thiet_bi || 'Chưa có mã'}</div>
+                          <div className="text-xs" style={{color: '#6b7280'}}>Mã định danh</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Package Information */}
+                    {activeGoi && activeGoi.thongTinGoi && activeGoi.thong_tin_goi_id && (
+                      <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div className="text-sm font-medium text-green-800 mb-1">Gói dịch vụ hiện tại:</div>
+                        <div className="text-sm text-green-700">
+                          <div className="font-semibold">{activeGoi.thongTinGoi.ten}</div>
+                          <div className="text-xs">{formatPrice(activeGoi.thongTinGoi.gia)}</div>
+                          <div className="text-xs">
+                            {new Date(activeGoi.ngay_bat_dau).toLocaleDateString('vi-VN')} - {new Date(activeGoi.ngay_ket_thuc).toLocaleDateString('vi-VN')}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => openEditForm('thietBi', thietBi)}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                        style={{ color: '#2563eb', borderColor: '#93c5fd', backgroundColor: '#ffffff' }}
+                      >
+                        <Edit className="w-3 h-3 mr-1" />
+                        Sửa
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedThietBi(thietBi);
+                          setChangePackageForm({ selectedGoiId: '' });
+                          setShowChangePackageForm(true);
+                        }}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                        style={{ color: '#f97316', borderColor: '#fed7aa', backgroundColor: '#ffffff' }}
+                      >
+                        <Package className="w-3 h-3 mr-1" />
+                        Đổi gói
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedThietBiForGoi(thietBi);
+                          setShowGoiManagement(true);
+                        }}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                        style={{ color: '#9333ea', borderColor: '#d8b4fe', backgroundColor: '#ffffff' }}
+                      >
+                        <Calendar className="w-3 h-3 mr-1" />
+                        Quản lý gói
+                      </button>
+                      <button
+                        onClick={() => handleDeleteThietBi(thietBi.nguoi_dung_id)}
+                        className="flex-1 text-xs px-3 py-2 rounded-lg border transition-all font-medium flex items-center justify-center shadow-sm"
+                        style={{ color: '#dc2626', borderColor: '#fecaca', backgroundColor: '#ffffff' }}
+                      >
+                        <Trash2 className="w-3 h-3 mr-1" />
+                        Xóa
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
                                           </div>
                                   </div>
                           </div>

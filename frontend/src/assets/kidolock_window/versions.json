@@ -1,10 +1,17 @@
 [
   {
-    "version": "1.0.4",
-    "filename": "KidoLock 1.0.4.msi",
+    "version": "1.0.6",
+    "filename": "KidoLock 1.0.6.msi",
     "isLatest": true,
     "description": "Phiên bản mới nhất với các tính năng cải tiến",
     "descriptionEn": "Latest version with improved features"
+  },
+  {
+    "version": "1.0.4",
+    "filename": "KidoLock 1.0.4.msi",
+    "isLatest": true,
+    "description": "Phiên bản ổn định đã được kiểm tra kỹ lưỡng",
+    "descriptionEn": "Stable version that has been thoroughly tested"
   },
   {
     "version": "1.0.3", 

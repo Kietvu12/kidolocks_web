@@ -500,18 +500,16 @@ class GoiController {
       const { ma_thiet_bi } = req.params;
       const { ngay_bat_dau, ngay_ket_thuc } = req.body;
 
-      // Kiểm tra thiết bị có gói đang hoạt động không
-      const activeGoi = await GoiDichVu.findOne({
-        where: { 
-          ma_thiet_bi,
-          trang_thai: 'DANG_HOAT_DONG'
-        }
+      // Tìm gói gần nhất của thiết bị (kể cả đã hết hạn) để cho phép chỉnh sửa & kích hoạt lại
+      const goiToUpdate = await GoiDichVu.findOne({
+        where: { ma_thiet_bi },
+        order: [['ngay_ket_thuc', 'DESC']]
       });
 
-      if (!activeGoi) {
+      if (!goiToUpdate) {
         return res.status(404).json({
           success: false,
-          message: 'Thiết bị không có gói dịch vụ đang hoạt động'
+          message: 'Thiết bị chưa có gói dịch vụ nào để cập nhật'
         });
       }
 
@@ -534,21 +532,18 @@ class GoiController {
         });
       }
 
-      if (endDate <= now) {
-        return res.status(400).json({
-          success: false,
-          message: 'Ngày kết thúc phải lớn hơn thời gian hiện tại'
-        });
-      }
+      // Xác định trạng thái mới dựa trên ngày kết thúc
+      const newStatus = endDate <= now ? 'HUY' : 'DANG_HOAT_DONG';
 
-      // Cập nhật thời gian
-      await activeGoi.update({
+      // Cập nhật thời gian và trạng thái
+      await goiToUpdate.update({
         ngay_bat_dau: startDate.toISOString(),
-        ngay_ket_thuc: endDate.toISOString()
+        ngay_ket_thuc: endDate.toISOString(),
+        trang_thai: newStatus
       });
 
       // Lấy thông tin đã cập nhật
-      const updatedGoi = await GoiDichVu.findByPk(activeGoi.id, {
+      const updatedGoi = await GoiDichVu.findByPk(goiToUpdate.id, {
         include: [{
           model: ThongTinGoi,
           as: 'thongTinGoi',

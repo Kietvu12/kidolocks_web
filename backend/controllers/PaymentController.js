@@ -366,6 +366,20 @@ class PaymentController {
         });
       }
 
+      // Chặn nếu thiết bị đang có gói hoạt động
+      const existingActive = await GoiDichVu.findOne({
+        where: {
+          ma_thiet_bi: ma_thiet_bi,
+          trang_thai: 'DANG_HOAT_DONG'
+        }
+      });
+      if (existingActive) {
+        return res.status(400).json({
+          success: false,
+          message: 'Thiết bị đang có gói DANG_HOAT_DONG. Vui lòng đổi gói thay vì gán mới.'
+        });
+      }
+
       // Tính ngày kết thúc
       const ngayBatDau = new Date();
       const ngayKetThuc = new Date();
