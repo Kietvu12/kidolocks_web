@@ -111,14 +111,14 @@ const HomePage = () => {
          </h1>
          
         {/* Subtitle */}
-        <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-white leading-tight mb-6" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
+        <h2 className="text-lg sm:text-xl md:text-xl lg:text-2xl xl:text-3xl font-bold text-white leading-tight mb-6" style={{ fontFamily: 'Myriad Pro', fontWeight: 700 }}>
           <div>{t('subtitle1')}</div>
           <div>{t('subtitle2')}</div>
-          <div>
-            {t('subtitle3_prefix')}
-            {"\u00a0"}
-            "<span className="text-orange-400">{t('subtitle3_highlight_trash_internet')}</span>"
-            {t('subtitle3_suffix')}
+          <div className='uppercase'>
+            {t('subtitle3_highlight_trash_internet')}
+          </div>
+          <div className='uppercase'>
+            <span className="text-orange-400 uppercase">{t('subtitle3_suffix')}</span>
           </div>
         </h2>
          

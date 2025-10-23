@@ -8,18 +8,18 @@ const WhyKidolock = () => {
     const { t } = useLanguage();
     const features = [
         {
+            title: t('protectTitle'),
+            content: t('protectContent'),
+            image: componentSlide1
+        },
+        {
             title: t('trackTitle'),
             content: t('trackContent'),
-            image: componentSlide1
+            image: componentSlide2
         },
         {
             title: t('educateTitle'), 
             content: t('educateContent'),
-            image: componentSlide2
-        },
-        {
-            title: t('protectTitle'),
-            content: t('protectContent'),
             image: componentSlide3
         }
     ]
@@ -55,10 +55,10 @@ const WhyKidolock = () => {
                                     
                                     {/* Content Section - Outside image */}
                                     <div className="text-center px-4">
-                                        <h3 className="text-xl sm:text-2xl font-bold mb-4" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
+                                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4" style={{ color: '#1251A4', fontFamily: 'Myriad Pro', fontWeight: 800 }}>
                                             {feature.title}
                                         </h3>
-                                        <p className="leading-relaxed text-base sm:text-lg" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
+                                        <p className="leading-relaxed text-base sm:text-lg md:text-xl font-semibold" style={{ color: '#071F55', fontFamily: 'Myriad Pro', fontWeight: 600 }}>
                                             {feature.content}
                                         </p>
                                     </div>
@@ -82,7 +82,7 @@ const WhyKidolock = () => {
                                     {/* Title for second image - positioned above */}
                                     {index === 1 && (
                                         <div className="mb-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro', fontWeight: 800 }}>
                                                 {feature.title}
                                             </h3>
                                         </div>
@@ -101,7 +101,7 @@ const WhyKidolock = () => {
                                         
                                         {/* Overlay with content - positioned over gradient */}
                                         <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8" style={{borderRadius: '0 0 1rem 1rem'}}>
-                                            <p className="leading-relaxed text-xs md:text-sm lg:text-sm" style={{ color: '#071F55', fontFamily: 'Myriad Pro' }}>
+                                            <p className="leading-relaxed text-xs md:text-sm lg:text-base xl:text-lg font-semibold" style={{ color: '#071F55', fontFamily: 'Myriad Pro', fontWeight: 600 }}>
                                                 {feature.content}
                                             </p>
                                         </div>
@@ -110,14 +110,14 @@ const WhyKidolock = () => {
                                     {/* Title positioned outside based on image index */}
                                     {index === 0 && (
                                         <div className="mt-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro', fontWeight: 800 }}>
                                                 {feature.title}
                                             </h3>
                                         </div>
                                     )}
                                     {index === 2 && (
                                         <div className="mt-4 text-left">
-                                            <h3 className="text-lg md:text-xl lg:text-2xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro' }}>
+                                            <h3 className="text-lg md:text-xl lg:text-2xl xl:text-3xl font-bold" style={{ color: '#1251A4', fontFamily: 'Myriad Pro', fontWeight: 800 }}>
                                                 {feature.title}
                                             </h3>
                                         </div>
