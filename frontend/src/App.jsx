@@ -18,6 +18,7 @@ import ThietBiPage from './pages/Admin/ThietBiPage'
 import GoiPage from './pages/Admin/GoiPage'
 import GoiManagementPage from './pages/Admin/GoiManagementPage'
 import DrillDownPage from './pages/Admin/DrillDownPage'
+import AboutUsPage from './pages/AboutUsPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import ConditionalContactButtons from './components/ConditionalContactButtons'
 import './App.css'
@@ -41,6 +42,7 @@ function App() {
             <Routes>
             {/* Public Routes */}
             <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutUsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />

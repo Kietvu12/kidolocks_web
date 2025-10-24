@@ -263,36 +263,9 @@ const Navbar = () => {
                             </div>
 
                             <div className="relative group">
-                                <button className="px-2 py-3 text-sm xl:text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
+                                <button onClick={() => navigate('/about')} className="px-2 py-3 text-sm xl:text-base font-medium transition-colors rounded-md" style={{color: '#374151'}} onMouseEnter={(e) => e.target.style.color = '#2563eb'} onMouseLeave={(e) => e.target.style.color = '#374151'}>
                                     {t('navAboutUs')}
                                 </button>
-                                <div className="absolute left-0 mt-2 w-[400px] sm:w-[350px] md:w-[375px] lg:w-[400px] rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 border" style={{backgroundColor: 'white', borderColor: '#e5e7eb'}}>
-                                    <div className="p-4 sm:p-6 lg:p-8">
-                                        <div className="space-y-6">
-                                            <h3 className="text-2xl font-bold text-gray-900 mb-8 tracking-tight">{t('aboutUs')}</h3>
-                                            <div className="space-y-6">
-                                                <a href="/about" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                    </svg>
-                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('learnAboutUs')}</span>
-                                                </a>
-                                                <a href="/contact" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                    </svg>
-                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('contactUs')}</span>
-                                                </a>
-                                                <a href="/careers" className="flex items-center space-x-4 p-4 rounded-lg  group">
-                                                    <svg className="w-8 h-8 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
-                                                    </svg>
-                                                    <span className="text-gray-900 font-semibold group-hover:text-blue-600 transition-colors">{t('careers')}</span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                                         </div>
                         </nav>
                         {/* Header Actions */}
@@ -597,10 +570,7 @@ const Navbar = () => {
                             
                             
                             <div className="space-y-1 sm:space-y-2">
-                                <div className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('navAboutUs')}</div>
-                                <button onClick={() => navigate('/about')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('learnAboutUs')}</button>
-                                <button onClick={() => navigate('/contact')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('contactUs')}</button>
-                                <button onClick={() => navigate('/careers')} className="block w-full text-left px-4 sm:px-6 py-2 sm:py-3 text-xs sm:text-sm text-gray-700 hover:text-blue-600 transition-colors rounded-lg">{t('careers')}</button>
+                                <div onClick={() => navigate('/about')} className="px-2 sm:px-3 py-2 text-sm sm:text-base font-semibold text-gray-900 border-b border-gray-200">{t('navAboutUs')}</div>
                             </div>
                             
                             {/* Mobile Authentication Section */}

@@ -299,7 +299,7 @@ const PricingSection = () => {
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
+                                                    <span className="text-sm sm:text-base" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
                                                 </div>
                                             ))}
                                                     </div>
@@ -382,7 +382,7 @@ const PricingSection = () => {
                                                                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                                                     </svg>
                                                                                 </div>
-                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
+                                                    <span className="text-sm sm:text-base" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
                                                                             </div>
                                                                         ))}
                                     </div>
@@ -618,7 +618,7 @@ const PricingSection = () => {
                                                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <span className="text-sm" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
+                                                    <span className="text-sm sm:text-base" style={{color: '#374151', fontFamily: 'Myriad Pro, sans-serif'}}>{feature}</span>
                                                 </div>
                                             ))}
                                         </div>
@@ -700,7 +700,7 @@ const PricingSection = () => {
                                                             </svg>
                                                         )}
                                                     </div>
-                                                    <span className="text-sm" style={{color: idx < 2 ? '#374151' : '#9ca3af', fontFamily: 'Myriad Pro, sans-serif'}}>
+                                                    <span className="text-sm sm:text-base" style={{color: idx < 2 ? '#374151' : '#9ca3af', fontFamily: 'Myriad Pro, sans-serif'}}>
                                                         {feature}
                                                     </span>
                                                 </div>

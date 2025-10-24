@@ -585,6 +585,54 @@ export const LanguageProvider = ({ children }) => {
             sendEmail: 'Gửi email',
             emailSent: 'Chúng tôi sẽ sớm liên hệ lại với bạn',
 
+            // Session2 translations
+            session2Title: 'GIẢI PHÁP AN TOÀN CHO TRẺ TRONG THẾ GIỚI TRỰC TUYẾN',
+            session2Content1: '<span className="font-semibold">KidoLock</span> (Kid Online Lock) là một sản phẩm thuộc hệ sinh thái <span className="font-semibold">Kilovia</span> (Kid Online Via), được nghiên cứu và phát triển bởi <span className="font-semibold">Viện Tin Học Xây Dựng – Trường Đại học Xây Dựng Hà Nội</span>.',
+            session2Content2: '<span className="font-semibold">KidoLock</span> mang sứ mệnh đồng hành cùng cha mẹ trong việc bảo vệ, định hướng và giáo dục trẻ em sử dụng Internet một cách <span className="font-semibold">an toàn, thông minh và cân bằng</span>.',
+            
+            // Session3 translations
+            session3Title1: 'QUẢN LÝ VÀ ĐỊNH HƯỚNG TRẺ EM',
+            session3Title2: 'TRONG MÔI TRƯỜNG SỐ',
+            session3DesktopTitle: 'KIDOLOCK DESKTOP',
+            session3DesktopContent: 'Ứng dụng cài trên máy tính giúp kiểm soát việc trẻ sử dụng máy tính, phần mềm và truy cập Internet.',
+            session3MobileTitle: 'KIDOLOCK MOBILE',
+            session3MobileContent: 'Phiên bản dành cho thiết bị Android, giúp giới hạn thời gian sử dụng và truy cập nội dung trực tuyến.',
+            session3ParentTitle: 'KIDOLOCK PARENT APP',
+            session3ParentContent: 'Ứng dụng dành cho cha mẹ, cho phép theo dõi, thống kê và điều khiển hoạt động của trẻ từ xa.',
+            
+            // Session4 translations
+            session4Title: 'HỆ SINH THÁI',
+            session4Content: 'Bao gồm các bài tập, trò chơi giáo dục giúp trẻ rèn luyện kiến thức Toán, Tiếng Việt, kỹ năng mềm và tư duy logic.',
+            session4AiTitle: 'TÍCH HỢP AI',
+            session4AiFeature1: 'Gợi ý từng bước giải bài tập.',
+            session4AiFeature2: 'Hướng dẫn tư duy thay vì cho đáp án.',
+            session4AiFeature3: 'Đề xuất bài học phù hợp năng lực của từng trẻ.',
+            session4LearnPlayTitle: 'VỪA HỌC VỪA CHƠI',
+            session4LearnPlayFeature1: 'Làm bài tập tích điểm',
+            session4LearnPlayFeature2: 'Quy đổi thành thời gian giải trí',
+            
+            // Session5 translations
+            session5Title1: 'SỨ MỆNH CỦA',
+            session5Title2: 'KIDOLOCK',
+            session5Content: 'Trong thời đại số, Internet vừa là kho tri thức vô hạn, vừa tiềm ẩn nhiều rủi ro. Sứ mệnh của KidoLock là giúp cha mẹ bảo vệ, định hướng và nuôi dưỡng con trong môi trường số an toàn – lành mạnh – cân bằng.',
+            session5Subtitle1: 'MỘT PHẦN MỀM',
+            session5Subtitle2: 'MỘT NGƯỜI BẠN',
+            session5Description: 'Chúng tôi không chỉ tạo ra một phần mềm kiểm soát, mà là <span className="font-semibold" style="color: #1e40af">người bạn đồng hành thông minh</span> của gia đình Việt.',
+            session5Benefit1: 'Giúp trẻ sử dụng thiết bị đúng cách, học tập hiệu quả, giải trí lành mạnh...',
+            session5Benefit2: 'Giúp cha mẹ yên tâm theo dõi, hướng dẫn con trên hành trình trưởng thành kỹ thuật số',
+            
+            // Session6 translations
+            session6Quote: '"Khi công nghệ được định hướng đúng, nó trở thành sức mạnh giúp trẻ phát triển toàn diện – cả về tri thức và nhân cách."',
+            session6Author: 'Khuyết danh',
+            
+            // FinalSession translations
+            finalSessionLabel: 'ĐƠN VỊ',
+            finalSessionTitle: 'HỢP TÁC PHÁT TRIỂN',
+            finalSessionContent: '<strong>KidoLock và hệ sinh thái Kilovia</strong> được phát triển thông qua sự hợp tác giữa sinh viên và giảng viên của <strong>Viện Tin Học Xây Dựng – Trường Đại học Xây Dựng</strong>, cùng với các thầy cô giáo của <strong>Tiểu học Thị trấn Cổ Lễ</strong> thuộc huyện Trực Ninh, tỉnh Ninh Bình. Sự kết hợp giữa <strong>công nghệ học thuật</strong> và <strong>kinh nghiệm sư phạm thực tế</strong> đã tạo ra một sản phẩm hiện đại, hữu ích và gần gũi với giáo dục Việt Nam.',
+            finalSessionCopyright: '© Bản quyền',
+            finalSessionCopyrightText1: 'Bản quyền thuộc Viện Tin Học Xây Dựng - Trường Đại học Xây Dựng Hà Nội.',
+            finalSessionCopyrightText2: 'Mọi quyền được bảo lưu. Việc sao chép, chỉnh sửa hoặc sử dụng lại sản phẩm cần có sự đồng ý bằng văn bản của Viện Tin Học Xây Dựng.',
+            
             // Common Actions
             save: 'LƯU',
             cancel: 'HỦY',
@@ -1167,6 +1215,54 @@ export const LanguageProvider = ({ children }) => {
             callNow: 'Call Now',
             sendEmail: 'Send Email',
             emailSent: 'We will contact you soon',
+
+            // Session2 translations
+            session2Title: 'SAFE SOLUTION FOR CHILDREN IN THE ONLINE WORLD',
+            session2Content1: '<span className="font-semibold">KidoLock</span> (Kid Online Lock) is a product of the <span className="font-semibold">Kilovia</span> (Kid Online Via) ecosystem, researched and developed by <span className="font-semibold">Institute of Information Technology in Construction – Hanoi University of Civil Engineering</span>.',
+            session2Content2: '<span className="font-semibold">KidoLock</span> carries the mission of accompanying parents in protecting, guiding and educating children to use the Internet in a <span className="font-semibold">safe, smart and balanced</span> way.',
+
+            // Session3 translations
+            session3Title1: 'MANAGING AND GUIDING CHILDREN',
+            session3Title2: 'IN THE DIGITAL ENVIRONMENT',
+            session3DesktopTitle: 'KIDOLOCK DESKTOP',
+            session3DesktopContent: 'Application installed on computers to help control children\'s computer usage, software and Internet access.',
+            session3MobileTitle: 'KIDOLOCK MOBILE',
+            session3MobileContent: 'Version for Android devices, helping to limit usage time and access to online content.',
+            session3ParentTitle: 'KIDOLOCK PARENT APP',
+            session3ParentContent: 'Application for parents, allowing remote monitoring, statistics and control of children\'s activities.',
+
+            // Session4 translations
+            session4Title: 'ECOSYSTEM',
+            session4Content: 'Includes educational exercises and games to help children practice Math, Vietnamese, soft skills and logical thinking.',
+            session4AiTitle: 'AI INTEGRATION',
+            session4AiFeature1: 'Step-by-step exercise solving suggestions.',
+            session4AiFeature2: 'Guide thinking instead of giving answers.',
+            session4AiFeature3: 'Suggest lessons suitable for each child\'s ability.',
+            session4LearnPlayTitle: 'LEARNING WHILE PLAYING',
+            session4LearnPlayFeature1: 'Complete exercises to earn points',
+            session4LearnPlayFeature2: 'Convert to entertainment time',
+
+            // Session5 translations
+            session5Title1: 'MISSION OF',
+            session5Title2: 'KIDOLOCK',
+            session5Content: 'In the digital age, the Internet is both an infinite source of knowledge and a place with many potential risks. KidoLock\'s mission is to help parents protect, guide and nurture their children in a safe – healthy – balanced digital environment.',
+            session5Subtitle1: 'A SOFTWARE',
+            session5Subtitle2: 'A FRIEND',
+            session5Description: 'We don\'t just create control software, but a <span className="font-semibold" style="color: #1e40af">smart companion</span> for Vietnamese families.',
+            session5Benefit1: 'Helps children use devices correctly, learn effectively, entertain healthily...',
+            session5Benefit2: 'Helps parents feel secure monitoring, guiding their children on their digital growth journey',
+
+            // Session6 translations
+            session6Quote: '"When technology is correctly oriented, it becomes a power that helps children develop comprehensively – both in knowledge and character."',
+            session6Author: 'Anonymous',
+
+            // FinalSession translations
+            finalSessionLabel: 'UNIT',
+            finalSessionTitle: 'DEVELOPMENT COOPERATION',
+            finalSessionContent: '<strong>KidoLock and Kilovia ecosystem</strong> were developed through cooperation between students and lecturers from <strong>Institute of Information Technology in Construction – Hanoi University of Civil Engineering</strong>, along with teachers from <strong>Co Le Town Primary School</strong> located in Truc Ninh, Ninh Binh, Vietnam. The combination of <strong>academic technology</strong> and <strong>practical pedagogical experience</strong> has created a modern, useful and relatable product for Vietnamese education.',
+            finalSessionCopyright: '© Copyright',
+            finalSessionCopyrightText1: 'Copyright belongs to Institute of Information Technology in Construction - Hanoi University of Civil Engineering.',
+            finalSessionCopyrightText2: 'All rights reserved. Copying, editing or reusing the product requires written consent from the Institute of Information Technology in Construction.',
 
             // Common Actions
             save: 'SAVE',

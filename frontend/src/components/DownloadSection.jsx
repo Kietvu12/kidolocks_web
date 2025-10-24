@@ -286,10 +286,13 @@ const DownloadSection = () => {
                                     setShowTutorialPopup(true);
                                     setActiveTab('download');
                                 }}
-                                className="px-8 py-4 rounded-lg font-bold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 ease-out" 
+                                className="px-8 py-4 rounded-lg font-bold text-lg hover:opacity-90 hover:scale-105 transition-all duration-300 ease-out inline-flex items-center space-x-3" 
                                 style={{ background: 'linear-gradient(to right, #F97316, #2563EB)', color: 'white' }}
                             >
-                                {t('downloadExe')}
+                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M3 12V6.75l6-1.32v6.48L3 12zm17-9v8.75l-10 .15V5.21L20 3zM3 13l6 .09v6.81l-6-1.15V13zm17 .25V22l-10-1.91v-6.75l10 .15z"/>
+                                </svg>
+                                <span>{t('downloadExe')}</span>
                             </button>
                         </div>
                     </div>
